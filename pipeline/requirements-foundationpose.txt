@@ -1,0 +1,10 @@
+# Entorno aislado; PyTorch y el runtime común se comparten mediante assembly_runtime.pth.
+open3d-cpu==0.19.0
+warp-lang==1.6.2
+kornia>=0.7,<0.8
+ruamel.yaml>=0.18,<0.19
+transformations
+pybind11>=2.13,<3
+fvcore
+iopath
+ninja

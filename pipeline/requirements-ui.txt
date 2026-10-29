@@ -1,0 +1,4 @@
+# Additional CAD rendering dependencies; use the existing assembly-runtime environment.
+pyrender==0.1.45
+PyOpenGL==3.1.0
+pyglet==2.1.19

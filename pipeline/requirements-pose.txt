@@ -1,0 +1,11 @@
+# Additions to the already installed torch 2.5.1+cu124 / numpy 1.26.4 runtime.
+ultralytics==8.0.135
+gorilla-core==0.2.7.8
+gdown==5.2.0
+ninja==1.13.2
+pandas==2.3.3
+seaborn==0.13.2
+psutil==7.2.2
+addict==2.4.0
+yapf==0.43.0
+tensorboard==2.21.0

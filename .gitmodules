@@ -1,0 +1,3 @@
+[submodule "SAM-6D"]
+	path = SAM-6D
+	url = https://github.com/JiehongLin/SAM-6D

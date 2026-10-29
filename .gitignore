@@ -1,0 +1,17 @@
+# Generated inputs, outputs and local maintenance snapshots.
+/captures/
+/results/
+/maintenance/
+/pipeline/prepared/
+/pipeline/native/
+
+# Runtime caches, compiled extensions and local environments.
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.venv/
+venv/
+.env
+.env.*
+*.log
