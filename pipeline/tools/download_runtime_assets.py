@@ -1,13 +1,16 @@
 """Download the official ISM checkpoints into a selected cache, then link them."""
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(next(p for p in _Path(__file__).resolve().parents if (p / 'settings.py').is_file())))
 from pathlib import Path
+import os
 import argparse
 import hashlib
 import json
 import time
 import urllib.request
 
-PROJECTS = Path(__file__).resolve().parents[2]
-ISM = PROJECTS / "SAM6D/SAM-6D/SAM-6D/Instance_Segmentation_Model"
+from settings import ISM, PREPARED
 ASSETS = [
     ("sam_vit_h_4b8939.pth", "https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth", "segment-anything"),
     ("dinov2_vitl14_pretrain.pth", "https://dl.fbaipublicfiles.com/dinov2/dinov2_vitl14/dinov2_vitl14_pretrain.pth", "dinov2"),
@@ -52,12 +55,11 @@ def main():
         if link.is_symlink() and link.resolve() != target:
             raise ValueError(f"Checkpoint link already points elsewhere: {link}")
         if not link.exists() and not link.is_symlink():
-            link.symlink_to(target)
+            link.symlink_to(os.path.relpath(target, link.parent))
         report.append({"name": name, "url": url, "cache": str(target),
                        "bytes": target.stat().st_size, "sha256": digest.hexdigest()})
         print(f"Ready: {name}, {target.stat().st_size / 1e6:.0f} MB", flush=True)
-    output = PROJECTS / "SAM6D/pipeline/prepared/runtime_checkpoints.json"
-    output.write_text(json.dumps(report, indent=2) + "\n")
+    print(json.dumps(report, indent=2))
 
 
 if __name__ == "__main__":

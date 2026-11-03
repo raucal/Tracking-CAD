@@ -1,0 +1,51 @@
+# CAD Tracking: datos, interfaz, ISM/PEM y renderizado.
+numpy>=1.23
+Pillow>=9
+PyYAML>=6
+trimesh>=4.6
+
+# Additions to the already installed torch 2.5.1+cu124 / numpy 1.26.4 runtime.
+ultralytics==8.0.135
+gorilla-core==0.2.7.8
+gdown==5.2.0
+ninja==1.13.2
+pandas==2.3.3
+seaborn==0.13.2
+psutil==7.2.2
+addict==2.4.0
+yapf==0.43.0
+tensorboard==2.21.0
+
+# Additional CAD rendering dependencies; use the existing assembly-runtime environment.
+pyrender==0.1.45
+PyOpenGL==3.1.0
+pyglet==2.1.19
+
+# Imports principales del runtime; las versiones efectivas están en constraints.
+torch
+torchvision
+hydra-core
+hydra-colorlog
+omegaconf
+pytorch-lightning
+torchmetrics
+segment-anything
+opencv-python
+einops
+timm
+pycocotools
+distinctipy
+imageio
+scikit-image
+scikit-learn
+scipy
+matplotlib
+tqdm
+pyrealsense2
+h5py
+lmdb
+gpustat
+fvcore
+iopath
+tensorboardx
+pytest

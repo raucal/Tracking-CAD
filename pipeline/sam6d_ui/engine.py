@@ -13,9 +13,7 @@ import torch
 from hydra import compose, initialize_config_dir
 from hydra.utils import instantiate
 
-ROOT = Path(__file__).resolve().parents[3]
-PIPELINE = Path(__file__).resolve().parents[1]
-ISM = ROOT / "SAM6D/SAM-6D/SAM-6D/Instance_Segmentation_Model"
+from settings import ROOT, PIPELINE, ISM, NATIVE, PREPARED, CONFIG, path, display_names
 sys.path.insert(0, str(ISM))
 from model.utils import Detections, mask_to_rle  # noqa: E402
 from run_inference_pddl import visualize  # noqa: E402
@@ -31,7 +29,7 @@ def environment():
             "sam_weights": {name: (ISM / "checkpoints/segment-anything" / filename).is_file() for name, filename in WEIGHTS.items()},
             "dino_weights": (ISM / "checkpoints/dinov2/dinov2_vitl14_pretrain.pth").is_file(),
             "fastsam_weights": (ISM / "checkpoints/FastSAM/FastSAM-x.pt").is_file(),
-            "pose_available": (ISM.parent / "Pose_Estimation_Model/checkpoints/sam-6d-pem-base.pth").is_file() and bool(list((PIPELINE / "native/pointnet2").glob("*.so"))), "render_backend": "Blender 3.3.1 Cycles CPU; inference CUDA/CPU"}
+            "pose_available": (ISM.parent / "Pose_Estimation_Model/checkpoints/sam-6d-pem-base.pth").is_file() and bool(list((NATIVE / "pointnet2").glob("*.so"))), "render_backend": "Blender 3.3.1 Cycles CPU; inference CUDA/CPU"}
 
 
 def rgb_inference(model, rgb, part, device, min_score):
@@ -82,10 +80,10 @@ class Engine:
         self.model_key = None
         self.reference_token = None
         self.reference_record = None
-        self.manifest_path = PIPELINE / "prepared/manifest.json"
+        self.manifest_path = PREPARED / "manifest.json"
         self.manifest = json.loads(self.manifest_path.read_text())
-        self.names = json.loads((PIPELINE / "cad_name_corrections.json").read_text())["names"]
-        self.reference_cache = Path("/dev/shm/pddl-assembly-runtime/ui_reference_features")
+        self.names = display_names()
+        self.reference_cache = path("ui_reference_cache")
 
     def prepare_cad(self, folder, inputs, update):
         raw = (folder / inputs["cad_filename"]).read_bytes()
@@ -165,8 +163,13 @@ class Engine:
         torch.set_num_threads(16)
         key = (config["segmentor"], config["backbone"], str(device))
         weights = environment()
-        if not (weights["sam_weights"][config["backbone"]] if config["segmentor"] == "sam" else weights["fastsam_weights"]) or not weights["dino_weights"]:
-            raise ValueError("Faltan checkpoints del modelo seleccionado. Restaura los pesos antes de ejecutar.")
+        selected = ISM / "checkpoints" / ("segment-anything/" + WEIGHTS[config["backbone"]] if config["segmentor"] == "sam" else "FastSAM/FastSAM-x.pt")
+        required = [selected, ISM / "checkpoints/dinov2/dinov2_vitl14_pretrain.pth"]
+        missing = [path for path in required if not path.is_file()]
+        if missing:
+            temporary = any(path.is_symlink() and str(path.resolve()).startswith("/dev/shm/") for path in missing)
+            detail = " Los enlaces apuntan a /dev/shm, que es temporal y se vacía al reiniciar el equipo." if temporary else ""
+            raise ValueError("Faltan checkpoints: " + ", ".join(path.name for path in missing) + "." + detail + " Consulta la sección de recuperación de pesos del README de la interfaz.")
         timing = {}
         os.chdir(ISM)
         reused_model = self.prepare_model(config,device,update,timing)
@@ -237,7 +240,9 @@ class Engine:
                 pose_input = folder / "pose_detections.json"
                 pose_input.write_text(json.dumps([detections[i] for i in accepted]))
                 pose_output = folder / "pose.json"
-                command = [sys.executable, str(PIPELINE / "pose_worker.py"), "--rgb", str(folder / "input_rgb.png"),
+                transform_path=folder/'model_from_input_mm.json'
+                transform_path.write_text(json.dumps(model_from_input.tolist()))
+                command = [sys.executable, str(PIPELINE / "workers/pose_worker.py"), "--model-from-input",str(transform_path),"--rgb", str(folder / "input_rgb.png"),
                     "--depth", str(folder / "depth.png"), "--camera", str(folder / "camera.json"),
                     "--cad", str(base / part["sam_ply"]), "--templates", str(base / part["sam_template_dir"]),
                     "--detections", str(pose_input), "--output", str(pose_output), "--min-score", str(max(0, config["confidence"] - 1e-7))]

@@ -1,10 +1,14 @@
 """Portable report of measured SAM-6D runs; no model execution or inferred ground truth."""
 from __future__ import annotations
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(next(p for p in _Path(__file__).resolve().parents if (p / 'settings.py').is_file())))
 
 import csv
 import copy
 import hashlib
 import html
+from settings import PREPARED, display_names, run_dataset
 import json
 import math
 from pathlib import Path
@@ -78,6 +82,91 @@ def decision_overlay(folder, rows, chosen):
     image.save(folder / "overlay_decision.png")
 
 
+SCORE_FIELDS=['semantic_score','appearance_score','geometry_score','visible_ratio','geometry_contribution','score_reconstructed','ism_formula_matches']
+
+
+def score_components(detection):
+    values={key:detection.get(key) for key in SCORE_FIELDS[:4]}
+    complete=all(isinstance(v,(int,float)) and math.isfinite(v) for v in values.values())
+    geometric=values['geometry_score']*values['visible_ratio'] if complete else None
+    reconstructed=(values['semantic_score']+values['appearance_score']+geometric)/(2+values['visible_ratio']) if complete else None
+    return {**values,'geometry_contribution':geometric,'score_reconstructed':reconstructed,
+            'ism_formula_matches':math.isclose(reconstructed,detection['score'],abs_tol=2e-5) if complete and detection.get('score') is not None else None}
+
+
+def pose_section(pose,relative):
+    e=html.escape
+    if pose is None:return '<section class="pose"><h3>Pose 6D · PEM</h3><p>Esta ejecución no calculó poses. Usa <code>suite run --pose</code> o <code>suite pose --output CARPETA_SUITE</code>.</p></section>'
+    block=['<section class="pose"><h3>Pose 6D · PEM</h3><p>Traslación en mm. T transforma puntos del CAD original a cámara OpenCV: X derecha, Y abajo, Z hacia delante. El score combinado de PEM incorpora el score ISM y sirve para ordenar poses; no es otra confianza de detección ni una probabilidad calibrada.</p>']
+    if pose.get('elapsed_s') is not None:block.append(f'<p>Tiempo PEM, separado del ISM: {pose["elapsed_s"]:.3f} s.</p>')
+    for overlay in pose.get('overlays',[]):
+        url=relative+'/'+quote(overlay['path'],safe='/')
+        block.append(f'<figure><img style="max-width:100%" src="{url}" loading="lazy" alt="Pose PEM con triedro del CAD"><figcaption>{e(overlay["part_key"])} · X rojo, Y verde, Z azul · origen del CAD original</figcaption></figure>')
+    for index,item in enumerate(pose.get('poses',[])):
+        transform=item.get('T_camera_from_input_cad_mm',item.get('T_camera_from_model_mm'))
+        translation=[row[3] for row in transform[:3]] if transform else item.get('t_mm')
+        rotation=[row[:3] for row in transform[:3]] if transform else item.get('R')
+        title=f'{item.get("part_key","CAD")} · detección {item.get("detection_index",index)}'
+        values={'R_camara_desde_CAD':rotation,'t_CAD_mm':translation,'T_camara_desde_CAD_mm':transform,
+                'T_camara_desde_modelo_PEM_mm':item.get('T_camera_from_model_mm')}
+        matrix_text=lambda matrix:'\n'.join('[ '+' '.join(f'{float(value): .6f}' for value in row)+' ]' for row in matrix)
+        t_text=', '.join(f'{float(value):.3f}' for value in translation) if translation else '—'
+        block.append(f'<h4>{e(title)}</h4><p>ISM: {item.get("segmentation_score",0):.3f} · score combinado PEM × ISM: {item.get("pose_score",0):.3f} · <b>t CAD = ({e(t_text)}) mm</b></p>')
+        if rotation is not None:block.append('<p>R cámara ← CAD:</p><pre>'+e(matrix_text(rotation))+'</pre>')
+        if transform is not None:block.append('<p>T cámara ← CAD (traslación en mm):</p><pre>'+e(matrix_text(transform))+'</pre>')
+        block.append('<details><summary>Valores completos y transformación del modelo centrado</summary><pre>'+e(json.dumps(values,ensure_ascii=False,indent=2))+'</pre></details>')
+    if not pose.get('poses'):block.append('<p>No hay una pose calculada: '+e(pose.get('status','sin resultado'))+'.</p>')
+    for error in pose.get('errors',[]):block.append('<p class="error">'+e(error.get('part_key','CAD')+': '+error['error'])+'</p>')
+    block.append(f'<a href="{relative}/pose.json">JSON de poses y auditoría geométrica</a></section>')
+    return ''.join(block)
+
+
+def pose_gallery(frames, poses_by_frame):
+    """Link the overview directly to saved CAD-frame pose matrices and overlays."""
+    cards=[]
+    for frame in frames:
+        pose=poses_by_frame.get(frame['name']) or {}
+        anchor=f"frame{frame['frame_id']}-pose"
+        label=html.escape(frame['name'])
+        overlays=pose.get('overlays',[])
+        if not overlays:
+            status='Sin detección aceptada' if pose.get('status')=='no_accepted_detection' else 'Pose no calculada'
+            cards.append(f'<div><a href="#{anchor}">{label}</a><p>{status}</p></div>')
+        for overlay in overlays:
+            url=quote('cases/'+frame['name']+'/'+overlay['path'],safe='/')
+            cad=html.escape(overlay['part_key'])
+            cards.append(f'<a href="#{anchor}" class="pose-card"><img src="{url}" loading="lazy" alt="Triedro PEM de {cad}"><strong>{label}</strong><span>{cad}</span><span>Ver matrices R, t y T</span></a>')
+    return ('<section class="panel" id="poses"><h2>Matrices y triedros · Pose 6D PEM</h2>'
+            '<p>Selecciona una imagen para ver su rotación R, traslación t en milímetros y transformación T de 4×4. '
+            'Los ejes son X rojo, Y verde y Z azul, en el origen del CAD original.</p>'
+            '<div class="pose-gallery">'+''.join(cards)+'</div></section>')
+
+
+def publish_dashboard(report_dir, dashboard=None):
+    """Keep the served dashboard on the last exported report; preserve a legacy export."""
+    import os
+    import uuid
+    from datetime import datetime,timezone
+    from settings import RESULTS
+    report_dir=Path(report_dir).resolve()
+    dashboard=Path(dashboard) if dashboard is not None else RESULTS/'dashboard'
+    if not (report_dir/'index.html').is_file(): raise ValueError('Falta index.html del informe')
+    if dashboard.resolve()==report_dir: return dashboard
+    if dashboard.resolve() in report_dir.parents: raise ValueError('El informe no puede estar dentro del dashboard que se sustituye')
+    if dashboard.exists() and not dashboard.is_symlink():
+        if not (dashboard/'.sam6d_suite_export').is_file(): raise ValueError('El dashboard contiene archivos ajenos; se conserva sin cambios')
+        stamp=datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+        dashboard.rename(dashboard.with_name(dashboard.name+'_legacy_'+stamp+'_'+uuid.uuid4().hex[:6]))
+    dashboard.parent.mkdir(parents=True,exist_ok=True)
+    temporary=dashboard.with_name('.'+dashboard.name+'-'+uuid.uuid4().hex)
+    try:
+        temporary.symlink_to(os.path.relpath(report_dir,dashboard.parent),target_is_directory=True)
+        temporary.replace(dashboard)
+    finally:
+        if temporary.is_symlink():temporary.unlink()
+    return dashboard
+
+
 def final_confidences(run, source):
     """Read actual final ISM scores; an unassigned CAD has no saved final score."""
     catalog = {p["key"]: p for p in run["catalog"]}
@@ -96,6 +185,7 @@ def final_confidences(run, source):
             best = max(assigned, key=lambda item: item[1]["score"]) if assigned else None
             per_cad.append({"imagen": frame["name"], "cad_predicho": part["key"], "nombre_catalogo": part["name"],
                             "confianza_final_sam6d": best[1]["score"] if best else None,
+                            **score_components(best[1] if best else {}),
                             "detecciones_conservadas": len(assigned), "indice_deteccion": best[0] if best else None,
                             "supera_umbral": best[1]["score"] >= run["settings"]["confidence"] if best else False,
                             "origen_score": "detection_ism.json:score",
@@ -165,7 +255,7 @@ def chart(frames, target):
     plt.close(fig)
 
 
-def export_report(source, target):
+def export_report(source, target, create_archive=False):
     source, target = Path(source).resolve(), Path(target).resolve()
     if target == source or source in target.parents or target in source.parents:
         raise ValueError("La exportación debe estar separada de la ejecución original.")
@@ -176,17 +266,33 @@ def export_report(source, target):
         raise ValueError("La carpeta de exportación contiene archivos ajenos a esta herramienta.")
     marker.touch()
     shutil.copy2(source / "run.json", target / "resultados_completos.json")
+    if (source/"dataset_manifest.json").is_file(): shutil.copy2(source/"dataset_manifest.json", target/"dataset_manifest.json")
     if (source / "execution.log").is_file():
         shutil.copy2(source / "execution.log", target / "execution.log")
     if (source / "cases").is_dir():
         shutil.copytree(source / "cases", target / "cases", dirs_exist_ok=True)
-    manifest_path = Path(run["manifest"])
-    if not manifest_path.is_file():
-        manifest_path = Path(__file__).parent / "prepared/manifest_at_execution.json"
-    base = manifest_path.parent
+    manifest_path, base = run_dataset(run, source)
     dataset = json.loads(manifest_path.read_text())
     frame_lookup = {f["name"]: f for f in dataset["frames"]}
     detections_by_frame, final_per_cad = final_confidences(run, source)
+    poses_by_frame={};pose_rows=[]
+    if (source/'pose_run.json').is_file():
+        pose_run=json.loads((source/'pose_run.json').read_text())
+        if pose_run.get('source_run_sha256')!=hashlib.sha256((source/'run.json').read_bytes()).hexdigest():raise ValueError('Las poses no corresponden a esta suite ISM')
+        shutil.copy2(source/'pose_run.json',target/'pose_run.json')
+    for frame in run['frames']:
+        pose=frame.get('pose');saved_pose=source/'cases'/frame['name']/'pose.json'
+        if saved_pose.is_file():pose=json.loads(saved_pose.read_text())
+        poses_by_frame[frame['name']]=pose
+        for item in (pose or {}).get('poses',[]):
+            transform=item.get('T_camera_from_input_cad_mm',item.get('T_camera_from_model_mm'))
+            pose_rows.append({'imagen':frame['name'],'cad':item.get('part_key'),'deteccion':item.get('detection_index'),
+                              'score_ism':item.get('segmentation_score'),'score_pem':item.get('pose_score'),
+                              'tx_mm':transform[0][3] if transform else None,'ty_mm':transform[1][3] if transform else None,'tz_mm':transform[2][3] if transform else None,
+                              'R_camara_desde_CAD':json.dumps([r[:3] for r in transform[:3]]) if transform else None,
+                              'T_camara_desde_CAD_mm':json.dumps(transform),'unidad':'mm','referencia':'CAD original a cámara OpenCV'})
+    (target/'resultados_poses.json').write_text(json.dumps({'backend':'pem','translation_unit':'mm','source_ism_sha256':hashlib.sha256((source/'run.json').read_bytes()).hexdigest(),'frames':poses_by_frame},ensure_ascii=False,indent=2,allow_nan=False)+'\n')
+    save_csv(target/'poses_pem.csv',pose_rows,['imagen','cad','deteccion','score_ism','score_pem','tx_mm','ty_mm','tz_mm','R_camara_desde_CAD','T_camara_desde_CAD_mm','unidad','referencia'])
     diagnostic_path = source / "all_cad_primary_region.json"
     diagnostic = json.loads(diagnostic_path.read_text()) if diagnostic_path.is_file() else None
     dense_by_name = {}
@@ -203,8 +309,7 @@ def export_report(source, target):
         save_csv(target / "scores_todos_cad_region_principal.csv", dense_csv,
                  ["imagen", "cad", "nombre", "score_hipotesis", "semantic", "appearance", "geometry", "visible_ratio", "alcance"])
     inference_catalog = copy.deepcopy(run["catalog"])
-    correction_file = Path(__file__).with_name("cad_name_corrections.json")
-    corrections = json.loads(correction_file.read_text()) if correction_file.is_file() else {"names": {}}
+    corrections = {"names": display_names()}
     names = corrections["names"]
     # Keep the original JSON exports untouched; only presentation names are corrected.
     run = copy.deepcopy(run)
@@ -247,7 +352,7 @@ def export_report(source, target):
     (target / "origen_etiquetas.json").write_text(json.dumps(label_provenance, ensure_ascii=False, indent=2) + "\n")
     save_csv(target / "confianza_sam6d_por_cad.csv", final_per_cad,
              ["imagen", "cad_predicho", "nombre_catalogo", "confianza_final_sam6d", "detecciones_conservadas",
-              "indice_deteccion", "supera_umbral", "origen_score", "alcance"])
+              "indice_deteccion", "supera_umbral", "origen_score", "alcance",*SCORE_FIELDS])
     # Export calibration together with lossless depth for each real capture.
     for frame in run["frames"]:
         original = frame_lookup[frame["name"]]
@@ -287,10 +392,10 @@ def export_report(source, target):
                         "confianza_final_sam6d": f["candidate"]["score"] if f["candidate"] else None,
                         "identificacion_aceptada": f["recognized"], "umbral": run["settings"]["confidence"],
                         "tiempo_proceso_s": f["timing"]["processing_s"], "origen_score": "detection_ism.json:score",
-                        "etiqueta_real_verificada": False} for f in run["frames"]]
+                        **score_components(f['candidate'] or {}), "etiqueta_real_verificada": False} for f in run["frames"]]
     save_csv(target / "confianza_sam6d_por_imagen.csv", confidence_rows,
              ["archivo_original", "cad_predicho", "nombre_catalogo", "confianza_final_sam6d", "identificacion_aceptada",
-              "umbral", "tiempo_proceso_s", "origen_score", "etiqueta_real_verificada"])
+              "umbral", "tiempo_proceso_s", "origen_score", "etiqueta_real_verificada",*SCORE_FIELDS])
     save_csv(target / "comparacion_todos_los_cad.csv", comparisons,
              ["imagen", "dispositivo", "region_propuesta", "alcance_region", "part_key", "part_name", "category_id",
               "semantic_score", "best_template", "compared_proposals", "semantic_comparison_ms", "semantic_comparison_s"])
@@ -324,9 +429,19 @@ def export_report(source, target):
                         f'{fmt(item["semantic_score"]) if item["compared"] else "—"}</td>'
                         for item in checked["candidates"])
         coverage_rows.append(f'<tr data-image="{e(frame["name"])}"><td><a href="#{anchor}">{e(filename)}</a></td>{cells}</tr>')
+        components=score_components(c or {})
+        pose=poses_by_frame.get(frame['name'])
+        candidates=(pose or {}).get('poses',[])
+        associated=[item for item in candidates if c and item.get('part_key')==c['part_key']]
+        selected_pose=max(associated or candidates,key=lambda item:item.get('pose_score',0),default=None)
+        pose_caption='No calculada'
+        if selected_pose:
+            transform=selected_pose.get('T_camera_from_input_cad_mm',selected_pose.get('T_camera_from_model_mm'))
+            pose_caption=selected_pose.get('part_key','CAD')+': t = ('+', '.join(f'{row[3]:.2f}' for row in transform[:3])+') mm'
         tables.append(f'<tr><td><a href="#{anchor}">{e(filename)}</a></td><td>{e(label)}</td>'
-                      f'<td data-score-source="score"><b>{fmt(score)}</b></td><td>{e(status)}</td>'
-                      f'<td>{fmt(t["processing_s"])}</td></tr>')
+                      f'<td data-score-source="score"><b>{fmt(score)}</b></td>'
+                      f'<td>{fmt(components["semantic_score"])}</td><td>{fmt(components["appearance_score"])}</td><td>{fmt(components["geometry_score"])}</td><td>{fmt(components["visible_ratio"])}</td><td>{e(status)}</td>'
+                      f'<td>{fmt(t["processing_s"])}</td><td><a href="#{anchor}-pose">{e(pose_caption)}</a></td></tr>')
         ordered = sorted(frame["comparisons"], key=lambda item: item["semantic_score"] if item["semantic_score"] is not None else -1, reverse=True)
         ranking = "".join(f'<tr><td>{rank}</td><td>{e(item["part_key"])}</td><td>{e(item["part_name"])}</td>'
                           f'<td>{fmt(item["semantic_score"])}</td><td>{item["semantic_comparison_s"] * 1000:.3f}</td></tr>'
@@ -350,12 +465,14 @@ def export_report(source, target):
         final_rows.sort(key=lambda r: r["confianza_final_sam6d"] if r["confianza_final_sam6d"] is not None else -1, reverse=True)
         final_table = "".join(f'<tr class="{score_style(r["confianza_final_sam6d"], r["cad_predicho"] == chosen)}"><td>{e(r["cad_predicho"])}</td>'
                               f'<td data-score-source="score"><b>{fmt(r["confianza_final_sam6d"])}</b></td>'
+                              f'<td>{fmt(r.get("semantic_score"))}</td><td>{fmt(r.get("appearance_score"))}</td><td>{fmt(r.get("geometry_score"))}</td><td>{fmt(r.get("visible_ratio"))}</td>'
                               f'<td>{"Elegida" if r["cad_predicho"] == chosen else "Alternativa > 0,40" if r["confianza_final_sam6d"] > 0.4 else "Puntuación baja"}</td>'
                               f'<td><a href="{rel}/mask_{r["indice_deteccion"]:03d}.png">Ver región</a></td></tr>'
                               for r in final_rows if r["confianza_final_sam6d"] is not None)
         saved = detections_by_frame[frame["name"]]
         detection_rows = "".join(f'<tr><td>{i + 1}</td><td>{e(d["part_key"])}</td>'
                                  f'<td data-score-source="score">{fmt(d["score"])}</td>'
+                                 f'<td>{fmt(d.get("semantic_score"))}</td><td>{fmt(d.get("appearance_score"))}</td><td>{fmt(d.get("geometry_score"))}</td><td>{fmt(d.get("visible_ratio"))}</td>'
                                  f'<td>{"Supera umbral" if d["score"] >= run["settings"]["confidence"] else "Bajo umbral"}</td>'
                                  f'<td><a href="{rel}/mask_{i:03d}.png">Ver máscara</a></td></tr>' for i, d in enumerate(saved))
         meter = f'<meter min="0" max="1" value="{score}" aria-label="Score final SAM-6D"></meter>' if score is not None and frame["recognized"] else ""
@@ -363,36 +480,39 @@ def export_report(source, target):
         dense_block = ""
         if dense:
             dense_rows = "".join(f'<tr class="{score_style(s["score"], s["part_key"] == chosen)}"><td>{e(s["part_key"])}</td>'
-                                  f'<td>{e(names.get(s["part_key"], s["part_name"]))}</td><td>{fmt(s["score"])}</td></tr>'
+                                  f'<td>{e(names.get(s["part_key"], s["part_name"]))}</td><td>{fmt(s["score"])}</td><td>{fmt(s.get("semantic"))}</td><td>{fmt(s.get("appearance"))}</td><td>{fmt(s.get("geometry"))}</td><td>{fmt(s.get("visible_ratio"))}</td></tr>'
                                   for s in sorted(dense["scores"], key=lambda s: s["score"], reverse=True))
             dense_block = ('<section class="diagnostic"><h3>Scores de los diez CAD sobre esta misma región</h3>'
                            f'<img class="roi-detail" src="{rel}/primary_region.png" alt="Recorte de la región principal evaluada" loading="lazy">'
                            '<p>Evaluación adicional sin descartar scores bajos: se supone, por turno, que esta región es cada uno de los diez CAD. '
                            'Se calcula la fórmula completa de SAM-6D con apariencia y geometría. Son hipótesis sobre este recorte, '
                            'no diez piezas detectadas ni probabilidades. La predicción original se conserva.</p>'
-                           '<table><thead><tr><th>CAD evaluado</th><th>Nombre corregido</th><th>Score de la hipótesis</th></tr></thead>'
+                           '<table><thead><tr><th>CAD evaluado</th><th>Nombre corregido</th><th>Score de la hipótesis</th><th>Semántica</th><th>Apariencia</th><th>Geométrica</th><th>Visibilidad</th></tr></thead>'
                            f'<tbody>{dense_rows}</tbody></table></section>')
         cards.append(f'<article id="{anchor}"><h2>Imagen {number:02d} · {e(filename)}</h2>'
                      f'<div class="prediction"><div><small>CAD predicho por SAM-6D</small><p><b>{e(label)}</b></p>'
                      f'<small>Nombre asociado en el catálogo: {e(c["part_name"] if c else "—")}</small></div>'
                      f'<div class="confidence"><small>Confianza final SAM-6D · ISM</small><strong style="color:{confidence_color}" data-score-source="score">{fmt(score)}</strong>{meter}'
                      f'<small>{e(status)} · umbral {run["settings"]["confidence"]:.2f}</small></div></div>'
+                     f'<p class="ism-components">Semántica: <b>{fmt(components["semantic_score"])}</b> · Apariencia: <b>{fmt(components["appearance_score"])}</b> · Geométrica: <b>{fmt(components["geometry_score"])}</b> · Visibilidad: {fmt(components["visible_ratio"])} · Aporte geométrico: {fmt(components["geometry_contribution"])}</p>'
+                     f'<p>ISM = (semántica + apariencia + geometría × visibilidad) / (2 + visibilidad). Reconstruido: {fmt(components["score_reconstructed"])}.</p>'
                      f'<p>Proceso: {fmt(t["processing_s"])} s · Dispositivo: {e(frame["device"])}. '
                      f'Componentes visibles aceptados: {e(visible)}.</p>'
                      f'<div class="pictures"><img src="{rel}/rgb.png" alt="RGB original" loading="lazy">'
                      f'<img src="{rel}/overlay_decision.png" alt="Elegida en verde y alternativas mayores de 0,40 en naranja" loading="lazy"></div>'
+                     f'<div id="{anchor}-pose">{pose_section(pose,rel)}</div>'
                      f'{dense_block}'
                      '<p class="provenance">El nombre de la captura procede del archivo RGB. La etiqueta predicha procede del CAD elegido '
                      'y de su nombre en el catálogo; no se ha tomado del nombre de esta foto.</p>'
                      '<h3>Detecciones originales conservadas en esta imagen</h3>'
                      '<p>Verde: pieza elegida. Naranja: otra clase con score final &gt; 0,40, que puede corresponder a otra pieza o a una confusión. '
                      'Cada fila muestra solo la región de mayor score de esa clase; varias máscaras no equivalen a varias piezas.</p>'
-                     '<table><thead><tr><th>CAD candidato</th><th>Score final SAM-6D</th><th>Interpretación</th><th>Región evaluada</th></tr></thead>'
+                     '<table><thead><tr><th>CAD candidato</th><th>Score final ISM</th><th>Semántica</th><th>Apariencia</th><th>Geométrica</th><th>Visibilidad</th><th>Interpretación</th><th>Región evaluada</th></tr></thead>'
                      f'<tbody>{final_table}</tbody></table>'
                      f'<p>Se compararon los diez CAD. Los demás no tienen una detección conservada en esta imagen. '
                      f'La aceptación automática sigue en {run["settings"]["confidence"]:.2f}; el naranja es una ayuda visual, no una aceptación nueva.</p>'
                      f'<details><summary>Todas las detecciones guardadas y sus máscaras ({len(saved)})</summary>'
-                     '<table><thead><tr><th>Detección</th><th>CAD predicho</th><th>Confianza final SAM-6D</th><th>Estado</th><th>Máscara</th></tr></thead>'
+                     '<table><thead><tr><th>Detección</th><th>CAD predicho</th><th>Score final ISM</th><th>Semántica</th><th>Apariencia</th><th>Geométrica</th><th>Visibilidad</th><th>Estado</th><th>Máscara</th></tr></thead>'
                      f'<tbody>{detection_rows}</tbody></table></details>'
                      '<details><summary>Detalle técnico interno: similitud DINOv2 y tiempos</summary>'
                      f'<p>SAM propuso {checked["valid_proposals"]} regiones válidas en total. Cada una se comparó con los diez CAD. '
@@ -406,6 +526,8 @@ def export_report(source, target):
                      f'<a href="{rel}/case.json">JSON del caso</a> · <a href="{rel}/detection_ism.json">Detecciones y máscaras RLE</a>'
                      '</details><p><a href="#inicio">Volver al resumen</a></p></article>')
     setup = run["setup_timing"]
+    settings=run['settings'];sam=settings.get('segmentor','sam')=='sam'
+    stability_note=('SAM · YAML: '+str(settings.get('stability_score_yaml','no registrado'))+' · solicitado: '+str(settings.get('stability_score'))+' · efectivo en el generador: '+str(settings.get('stability_score_effective','no registrado en esta ejecución antigua'))) if sam else 'FastSAM: el umbral de estabilidad SAM no es aplicable.' 
     note = json.loads((target / audit.name).read_text()).get("note_es", "") if audit.is_file() else ""
     cad_gallery = "".join(f'<div><div class="cad-views"><img src="{e(cad_previews[p["key"]])}" alt="Vista oblicua CAD {e(p["key"])}" loading="lazy">'
                           f'<img src="{e(str(Path(cad_previews[p["key"]]).with_stem(p["key"] + "_frontal")))}" alt="Segunda vista CAD {e(p["key"])}" loading="lazy"></div>'
@@ -429,7 +551,8 @@ body{{font:16px system-ui,sans-serif;background:#eef2f6;color:#16293a;max-width:
 article,.panel{{background:white;border-radius:12px;padding:22px;margin:20px 0;overflow:auto}}table{{border-collapse:collapse;width:100%;font-size:14px}}
 td,th{{padding:8px;border-bottom:1px solid #ccd5dd;text-align:left}}th{{background:#e9eff5}}a{{color:#075a9f}}
 .pictures{{display:flex;gap:12px;flex-wrap:wrap}}.pictures img{{width:min(100%,600px);height:auto}}img.chart{{max-width:100%}}
-pre{{white-space:pre-wrap}}details{{margin-top:14px}}.device{{font-size:24px;font-weight:bold}}h1{{margin-bottom:0}}
+pre{{white-space:pre-wrap}}
+.pose-gallery{{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}}.pose-card{{display:flex;flex-direction:column;gap:5px;padding:12px;background:#edf5f3;border-radius:8px}}.pose-card img{{width:100%;height:auto}}details{{margin-top:14px}}.device{{font-size:24px;font-weight:bold}}h1{{margin-bottom:0}}
 .prediction{{display:flex;justify-content:space-between;gap:20px;padding:18px;background:#edf5f3;border-radius:10px;flex-wrap:wrap}}
 .prediction p{{margin:5px 0}}.prediction small{{display:block;color:#526979}}.confidence strong{{display:block;font-size:42px;color:#116b5a}}
 meter{{width:180px;height:16px}}.provenance{{padding:12px;background:#f0f3f7;border-left:3px solid #8aa9ba;font-size:14px}}
@@ -443,12 +566,14 @@ meter{{width:180px;height:16px}}.provenance{{padding:12px;background:#f0f3f7;bor
 .diagnostic{{background:#f5f7fb;border:1px solid #d8e2ed;border-radius:8px;padding:16px;margin-top:16px}}
 </style><body id="inicio"><h1>SAM-6D · Confianza final por imagen</h1>
 <p class="device">Dispositivo real: {e(run["device"]["used"])} {e(run["device"].get("gpu_name") or "")}</p>
-<p><a href="#comparacion-cads">Ver elegidas y alternativas por imagen · {coverage["verified_image_cad_pairs"]}/{coverage["expected_image_cad_pairs"]} comparaciones verificadas</a></p>
+<p><a href="#poses">Ver matrices y triedros de pose 6D</a> · <a href="#comparacion-cads">Ver elegidas y alternativas por imagen · {coverage["verified_image_cad_pairs"]}/{coverage["expected_image_cad_pairs"]} comparaciones verificadas</a></p>
 <div class="panel"><p>Estado: {e(run["status"])} · {stats["processed"]}/{stats["selected"]} capturas procesadas ·
 {len(run["catalog"])} CAD × 42 vistas · {stats["recognized"]} imágenes con identificación aceptada.</p>
 <p>Tiempo de proceso medio: <b>{fmt(stats["mean_processing_s"])} s</b> · mediana: {fmt(stats["median_processing_s"])} s.
 Carga de modelos: {fmt(setup.get("model_load_s"))} s · preparación/carga de referencias: {fmt(setup.get("references_s"))} s.
 Estos dos costes se pagan una vez por ejecución y se muestran aparte del tiempo por imagen.</p>
+<p>PEM: {len(pose_rows)} poses calculadas en {sum(bool((pose or {}).get("poses")) for pose in poses_by_frame.values())} capturas. Los valores y errores de pose se muestran aparte de la confianza ISM.</p>
+<p><b>Estabilidad efectiva:</b> {e(stability_note)}</p>
 <p><b>La confianza mostrada es el score final de detección y segmentación de SAM-6D (ISM), en escala 0–1.</b>
 No es una probabilidad calibrada ni una confianza de pose 6D. Una imagen puede contener varias piezas; el candidato principal es la detección de mayor score.
 El umbral configurado para aceptar y dibujar es {run["settings"]["confidence"]:.2f}; se conservan también detecciones desde {run["settings"]["min_score"]:.2f}.</p>
@@ -456,9 +581,10 @@ El umbral configurado para aceptar y dibujar es {run["settings"]["confidence"]:.
 El nombre semántico asociado al CAD procede del catálogo de piezas preparado, con las correcciones de nombres confirmadas por el usuario. No hay una etiqueta real verificada por foto y no se usa el nombre del archivo para clasificar.
 <a href="origen_etiquetas.json">Consultar el mapeo de etiquetas</a>. {e(note)}</div>
 <p><a href="confianza_sam6d_por_imagen.csv">CSV de confianza final por imagen</a> · <a href="confianza_sam6d_por_cad.csv">CSV de scores finales por CAD</a> ·
-<a href="resultados_completos.json">JSON completo</a></p>
-<table id="resumen-confianza"><thead><tr><th>Archivo original de la captura</th><th>CAD predicho / candidato</th><th>Confianza final SAM-6D</th><th>Estado</th><th>Proceso (s)</th>
+<a href="poses_pem.csv">CSV de poses PEM</a> · <a href="resultados_poses.json">JSON de poses</a> · <a href="resultados_completos.json">JSON completo ISM</a></p>
+<table id="resumen-confianza"><thead><tr><th>Archivo original de la captura</th><th>CAD predicho / candidato</th><th>Score final ISM</th><th>Semántica</th><th>Apariencia</th><th>Geométrica</th><th>Visibilidad</th><th>Estado</th><th>Proceso ISM (s)</th><th>Pose PEM</th>
 </tr></thead><tbody>{''.join(tables)}</tbody></table></div>
+{pose_gallery(run["frames"], poses_by_frame)}
 <section class="panel" id="comparacion-cads"><h2>{matrix_title}</h2>
 <p>{matrix_description} Pulsa la foto para ver el detalle.</p>
 <div class="legend"><span class="score-winner">Verde: predicción original aceptada</span><span class="score-alternative">Naranja: otra hipótesis &gt; 0,40</span>
@@ -480,13 +606,14 @@ La confianza final combina similitud semántica, apariencia y coherencia geomét
 PyTorch: {e(run["device"]["torch"])} · CUDA: {e(run["device"].get("torch_cuda_build"))}.</p>
 <p><a href="tiempos_por_imagen.csv">CSV de tiempos</a> · <a href="comparacion_todos_los_cad.csv">CSV de similitudes internas DINOv2 (no score final)</a> ·
 <a href="resumen.json">Resumen numérico</a></p><img class="chart" src="tiempos_por_imagen.png" alt="Tiempos por etapa"></details>{''.join(cards)}
-<p>Extrae el ZIP completo y abre index.html en tu navegador. El informe funciona sin conexión y contiene RGB, profundidad original de 16 bits,
+<p>Abre index.html en tu navegador. El informe funciona sin conexión; usa <code>suite report --zip</code> para crear un ZIP cuando lo necesites. Contiene RGB, profundidad original de 16 bits,
 calibración, máscaras, scores y mediciones. No incluye los pesos de los modelos.</p></body></html>'''
     (target / "index.html").write_text(page, encoding="utf-8")
     # Retirar la entrada anterior al regenerar una exportación de esta herramienta.
     legacy = target / "ABRIR_EN_WINDOWS.html"
     if legacy.is_file():
         legacy.unlink()
+    if not create_archive: return None
     bundle = target.with_suffix(".zip")
     temporary = bundle.with_suffix(".zip.tmp")
     with zipfile.ZipFile(temporary, "w", zipfile.ZIP_DEFLATED) as archive:

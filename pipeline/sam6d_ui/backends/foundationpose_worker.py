@@ -1,4 +1,7 @@
 """FoundationPose original: registro RGB-D y seguimiento de una grabación."""
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(next(p for p in _Path(__file__).resolve().parents if (p / 'settings.py').is_file())))
 import argparse
 import importlib.util
 import json
@@ -8,9 +11,9 @@ import sys
 import time
 
 
-PROJECTS = Path(__file__).resolve().parents[4]
-FOUNDATIONPOSE = Path(os.environ.get('FOUNDATIONPOSE_ROOT', PROJECTS / 'FoundationPose'))
-NATIVE = Path(os.environ.get('FOUNDATIONPOSE_NATIVE', PROJECTS / 'SAM6D/pipeline/native/foundationpose'))
+from settings import path
+FOUNDATIONPOSE = Path(os.environ.get('FOUNDATIONPOSE_ROOT', path('foundationpose')))
+NATIVE = Path(os.environ.get('FOUNDATIONPOSE_NATIVE', path('native')/'foundationpose'))
 
 
 def probe():

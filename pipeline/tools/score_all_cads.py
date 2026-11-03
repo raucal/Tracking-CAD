@@ -1,5 +1,8 @@
 """Compute unfiltered SAM-6D-formula hypotheses for every CAD on one saved region per image."""
 from __future__ import annotations
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(next(p for p in _Path(__file__).resolve().parents if (p / 'settings.py').is_file())))
 
 import argparse
 from datetime import datetime, timezone
@@ -15,7 +18,7 @@ import torch
 from hydra import compose, initialize_config_dir
 from hydra.utils import instantiate
 
-ISM = Path(__file__).resolve().parents[2] / "SAM6D/SAM-6D/SAM-6D/Instance_Segmentation_Model"
+from settings import ISM, PREPARED, path, display_names, run_dataset
 sys.path.insert(0, str(ISM))
 from model.utils import Detections  # noqa: E402
 from run_suite_pddl import choose_device, compare_all, hash_files, load_references, measured, write_json  # noqa: E402
@@ -44,18 +47,16 @@ def main():
     parser.add_argument("--run", type=Path, required=True)
     parser.add_argument("--device", choices=("cuda", "cpu", "auto"), default="cuda")
     parser.add_argument("--threads", type=int, default=16)
-    parser.add_argument("--reference-cache", type=Path, default=Path("/dev/shm/pddl-assembly-runtime/reference_features"))
+    parser.add_argument("--reference-cache", type=Path, default=path("reference_cache"))
     args = parser.parse_args()
     source = args.run.resolve()
     original = json.loads((source / "run.json").read_text())
-    manifest_path = Path(original["manifest"])
-    if not manifest_path.is_file():
-        manifest_path = Path(__file__).parent / "prepared/manifest_at_execution.json"
+    manifest_path, manifest_base = run_dataset(original, source)
     if hash_files([manifest_path]) != original["manifest_sha256"]:
         raise ValueError("El manifest cambió desde la inferencia original.")
     manifest = json.loads(manifest_path.read_text())
     by_name = {f["name"]: f for f in manifest["frames"]}
-    corrections = json.loads(Path(__file__).with_name("cad_name_corrections.json").read_text())["names"]
+    corrections = display_names()
     target = source / "all_cad_primary_region.json"
     if target.exists():
         raise ValueError("El diagnóstico ya existe; se preserva el resultado anterior.")
@@ -83,7 +84,7 @@ def main():
             model.descriptor_model.model.to(device)
             model.descriptor_model.model.device = device
         with measured(report["setup_timing"], "references_s", device):
-            report["references"] = load_references(model, manifest["parts"], manifest_path.parent, device, args.reference_cache)
+            report["references"] = load_references(model, manifest["parts"], manifest_base, device, args.reference_cache)
         for number, frame in enumerate(original["frames"], 1):
             print(f"[{number}/{len(original['frames'])}] Scores de los diez CAD: {frame['name']}", flush=True)
             folder = source / "cases" / frame["name"]
@@ -100,9 +101,9 @@ def main():
             with Image.open(folder / "mask_000.png") as source_mask:
                 mask = torch.from_numpy((np.array(source_mask) > 0).astype(np.float32))[None].to(device)
             frame_meta = by_name[frame["name"]]
-            with Image.open(manifest_path.parent / frame_meta["depth"]) as source_depth:
+            with Image.open(manifest_base / frame_meta["depth"]) as source_depth:
                 depth = torch.from_numpy(np.array(source_depth).astype(np.int32))[None].to(device)
-            camera = json.loads((manifest_path.parent / frame_meta["camera"]).read_text())
+            camera = json.loads((manifest_base / frame_meta["camera"]).read_text())
             batch = {"depth": depth,
                      "cam_intrinsic": torch.tensor(camera["cam_K"], dtype=torch.float32, device=device).reshape(1, 3, 3),
                      "depth_scale": torch.tensor([camera["depth_scale"]], device=device)}

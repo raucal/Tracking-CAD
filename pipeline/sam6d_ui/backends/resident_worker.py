@@ -9,6 +9,8 @@ from types import SimpleNamespace
 
 import foundationpose_worker as backend
 from geometry import projected_bbox
+from tracking_quality import PoseHealth
+from settings import profile
 
 
 def reply(request_id,**value):
@@ -39,7 +41,8 @@ def main():
                     import numpy as np
                     import trimesh
                     origin,extents=trimesh.bounds.oriented_bounds(runtime['mesh'])
-                    runtime.update(inv_origin=np.linalg.inv(origin),bounds=np.stack([-extents/2,extents/2]))
+                    runtime.update(inv_origin=np.linalg.inv(origin),bounds=np.stack([-extents/2,extents/2]),
+                                   health=PoseHealth(runtime['mesh'],profile('interface')['tracking']['quality']))
                     result={'ready':True}
                 elif command=='relocalize':
                     import numpy as np
@@ -54,7 +57,14 @@ def main():
                     with torch.inference_mode():pose=backend.valid_pose(estimator.register(K=K,rgb=rgb,depth=depth,ob_mask=mask,iteration=5))
                     if estimator.pose_last is None:raise ValueError('No se pudo registrar la nueva detección.')
                     torch.cuda.synchronize()
-                    result={'seconds':time.perf_counter()-started}
+                    runtime['health'].reset()
+                    timestamp_path=scratch/'timestamp.json'
+                    timestamp=json.loads(timestamp_path.read_text()) if timestamp_path.is_file() else time.time()
+                    quality=runtime['health'].evaluate(pose,depth,K,timestamp)
+                    if not quality['ok']:
+                        estimator.pose_last=None
+                        raise ValueError('La pose recuperada no concuerda con la profundidad: '+', '.join(quality['reasons']))
+                    result={'seconds':time.perf_counter()-started,'quality':quality}
                 elif command=='track':
                     import cv2
                     import numpy as np
@@ -65,7 +75,12 @@ def main():
                     with np.load(scratch/'frame.npz',allow_pickle=False) as frame:
                         rgb=frame['rgb'];depth=frame['depth'].astype(np.float32)*float(frame['scale'])*.001;K=frame['K']
                     if np.count_nonzero(depth>.001)<30:raise ValueError('No hay profundidad suficiente para seguir la pieza.')
-                    with torch.inference_mode():pose=backend.valid_pose(runtime['estimator'].track_one(rgb=rgb,depth=depth,K=K,iteration=2))
+                    estimator=runtime['estimator'];accepted_pose=estimator.pose_last.clone()
+                    with torch.inference_mode():pose=backend.valid_pose(estimator.track_one(rgb=rgb,depth=depth,K=K,iteration=2))
+                    timestamp_path=scratch/'timestamp.json'
+                    timestamp=json.loads(timestamp_path.read_text()) if timestamp_path.is_file() else time.time()
+                    quality=runtime['health'].evaluate(pose,depth,K,timestamp)
+                    if not quality['ok']: estimator.pose_last=accepted_pose
                     torch.cuda.synchronize()
                     mesh=runtime['mesh']
                     image=draw_posed_3d_box(K,img=rgb.copy(),ob_in_cam=pose@runtime['inv_origin'],bbox=runtime['bounds'])
@@ -75,7 +90,7 @@ def main():
                     if not ok:raise RuntimeError('Error al codificar el visor.')
                     (scratch/'preview.jpg').write_bytes(jpeg.tobytes())
                     transform=pose.copy();transform[:3,3]*=1000
-                    result={'seconds':time.perf_counter()-started,'bbox_xyxy':projected_bbox(mesh.bounds,pose,K,rgb.shape),'T_camera_from_input_cad_mm':(transform@runtime['model_from_input']).tolist()}
+                    result={'seconds':time.perf_counter()-started,'quality':quality,'bbox_xyxy':projected_bbox(mesh.bounds,pose,K,rgb.shape),'T_camera_from_input_cad_mm':(transform@runtime['model_from_input']).tolist()}
                 else:raise ValueError('Operación de pose no válida.')
             reply(rid,status='ok',result=result)
         except Exception as error:

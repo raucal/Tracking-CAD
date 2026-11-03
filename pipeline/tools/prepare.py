@@ -1,12 +1,14 @@
-"""Prepare real PDDL RGB-D captures and CADs for SAM-6D and ASAP, without models.
+"""Prepare RGB-D captures and CADs for detection and pose estimation, without models.
 
 All output paths in manifest.json are relative to that manifest. Originals are
 read-only. This step does not produce detections or a physically validated plan.
 """
 from __future__ import annotations
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(next(p for p in _Path(__file__).resolve().parents if (p / 'settings.py').is_file())))
 
 import argparse
-import ast
 import hashlib
 import json
 import os
@@ -16,7 +18,8 @@ import numpy as np
 from PIL import Image
 import yaml
 
-HERE = Path(__file__).resolve().parent
+from settings import PREPARED, dataset_path
+HERE = dataset_path().parent
 
 
 def write_json(path, value):
@@ -58,23 +61,6 @@ def camera_from_metadata(metadata, depth, rgb_size):
     return {"cam_K": [fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0], "depth_scale": scale}
 
 
-def check_placements(config, source):
-    """Read constants from the CAD source with AST; never import/execute CadQuery."""
-    tree = ast.parse(source.read_text())
-    found = {}
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "PartSpec":
-            key = ast.literal_eval(node.args[0])
-            found[key] = float(ast.literal_eval(node.args[3]))
-    for key, expected in found.items():
-        if config["assembled_y_mm"].get(key) != expected:
-            raise ValueError(f"Posición desactualizada respecto al generador CAD: {key}")
-    if len(found) != 7:
-        raise ValueError("No se reconocen las siete posiciones en el generador CAD.")
-    cassette_y = found["03_option_cassette"]
-    if any(config["assembled_y_mm"][key] != cassette_y for key in
-           ("03a_vertical_option_a", "03b_vertical_option_b")):
-        raise ValueError("Las opciones deben usar la posición de la cassette.")
 
 
 def repair_topology(mesh):
@@ -114,18 +100,17 @@ def prepare(config_path, output, repair=False):
     for source in (cad_dir, photos):
         if output == source or source in output.parents or output in source.parents:
             raise ValueError("La salida debe estar separada de los datos originales.")
-    check_placements(cfg, resolve("placement_source"))
     catalog = yaml.safe_load(resolve("catalog").read_text())
     by_key = {p["cad_stem"]: dict(p, name=name, fixed=False)
               for name, p in catalog["parts"].items()}
     by_key.update({p["cad_stem"]: dict(p, name=name, fixed=True, optional=False)
                    for name, p in catalog["fixed_parts"].items()})
     stls = {p.stem: p for p in cad_dir.glob("*.stl")}
-    if set(stls) != set(by_key) or set(stls) != set(cfg["assembled_y_mm"]):
-        raise ValueError("El inventario CAD, catálogo y posiciones no coincide.")
+    if set(stls) != set(by_key):
+        raise ValueError("El inventario CAD y catálogo no coincide.")
     output.mkdir(parents=True, exist_ok=True)
     # An existing output must belong to this tool, avoiding stale optional meshes.
-    marker = output / ".pddl_prepared"
+    marker = output / ".cad_tracking_prepared"
     if not marker.exists() and any(output.iterdir()):
         raise ValueError("El directorio de salida no está vacío ni pertenece a esta herramienta.")
     marker.touch()
@@ -134,17 +119,13 @@ def prepare(config_path, output, repair=False):
     manifest = {"schema_version": 1, "assembly_id": cfg["assembly_id"],
                 "status": "data_prepared_not_inferred", "parts": [], "frames": [],
                 "warnings": [], "provenance": {key: sha256(resolve(key)) for key in
-                ("catalog", "placement_source")}}
-    assembled_meshes = []
+                ("catalog",)}}
     for category_id, key in enumerate(sorted(stls), 1):
         mesh = trimesh.load_mesh(stls[key], process=True)
         if not isinstance(mesh, trimesh.Trimesh) or len(mesh.faces) == 0:
             raise ValueError(f"Malla vacía o no triangular: {key}")
         if not np.all(np.isfinite(mesh.vertices)) or mesh.volume <= 0:
             raise ValueError(f"Geometría no válida: {key}")
-        generator_export = resolve("placement_source").parent / stls[key].name
-        if not generator_export.is_file() or sha256(generator_export) != sha256(stls[key]):
-            raise ValueError(f"El STL no coincide con el export del generador de posiciones: {key}")
         original_watertight = bool(mesh.is_watertight)
         if not original_watertight and repair:
             mesh = repair_topology(mesh)
@@ -158,18 +139,13 @@ def prepare(config_path, output, repair=False):
         obj = model_dir / f"obj_{category_id:06d}.obj"
         centered.export(ply)
         centered.export(obj, include_color=False)
-        pose = translation(y=cfg["assembled_y_mm"][key])
-        placed = mesh.copy()
-        placed.apply_transform(pose)
-        assembled_meshes.append(placed)
         edges_count = np.bincount(mesh.edges_unique_inverse)
-        part = {"category_id": category_id, "key": key, "name": info["name"],
+        part = {"category_id": category_id, "key": key, "name": cfg.get("display_names", {}).get(key, info["name"]),
                 "fixed": info["fixed"], "optional": info.get("optional", False),
                 "source_stl": rel(stls[key]), "source_sha256": sha256(stls[key]),
                 "sam_ply": rel(ply), "sam_obj": rel(obj),
                 "sam_template_dir": f"sam6d/templates/{key}/templates",
                 "T_local_from_sam_mm": translation(*center).tolist(),
-                "T_assembly_from_local_mm": pose.tolist(),
                 "bounds_local_mm": mesh.bounds.tolist(),
                 "topology_repair": "split_coincident_vertices_same_triangles" if not original_watertight and repair else None,
                 "source_watertight": original_watertight,
@@ -180,32 +156,7 @@ def prepare(config_path, output, repair=False):
                     "faces": len(mesh.faces), "volume_mm3": float(mesh.volume)}}
         manifest["parts"].append(part)
         if not mesh.is_watertight:
-            manifest["warnings"].append(f"ASAP bloqueado por malla no cerrada/manifold: {key}")
-
-    # A single transform for the complete assembly preserves every CAD placement.
-    bounds = np.array([m.bounds for m in assembled_meshes])
-    low, high = bounds[:, 0].min(axis=0), bounds[:, 1].max(axis=0)
-    scale = float(cfg["asap_bbox_size"]) / float(np.max(high - low))
-    anchor = (low + high) / 2
-    anchor[2] = low[2]  # keep the assembly on z=0
-    transform = np.eye(4)
-    transform[:3, :3] *= scale
-    transform[:3, 3] = -scale * anchor
-    manifest["T_asap_from_assembly_mm"] = transform.tolist()
-    manifest["T_assembly_mm_from_asap"] = np.linalg.inv(transform).tolist()
-    for variant in ("with_options", "without_options"):
-        target = output / "asap" / variant
-        target.mkdir(parents=True, exist_ok=True)
-        for part, mesh in zip(manifest["parts"], assembled_meshes):
-            path = target / f"{part['key']}.obj"
-            if variant == "without_options" and part["optional"]:
-                if path.exists():
-                    path.unlink()
-                continue
-            converted = mesh.copy()
-            converted.apply_transform(transform)
-            converted.export(path, include_color=False)
-    manifest["asap_assemblies"] = {v: f"asap/{v}" for v in ("with_options", "without_options")}
+            manifest["warnings"].append(f"Malla CAD no cerrada; revisar antes de usarla en simulación: {key}")
 
     seen_rgb = set()
     names = {p["name"] for p in manifest["parts"]}
@@ -236,6 +187,7 @@ def prepare(config_path, output, repair=False):
             "rgb": rel(frame_dir / "rgb.png"), "depth": rel(frame_dir / "depth.png"),
             "camera": rel(frame_dir / "camera.json"), "source_rgb": rel(rgb),
             "source_depth": rel(depth_file), "source_metadata": rel(path),
+            "source_rgb_sha256": sha256(rgb), "prepared_rgb_sha256": sha256(frame_dir / "rgb.png"),
             "filename_hint_only": hint,
             "valid_depth_fraction": float(np.mean(depth > 0)),
             "depth_percentiles_mm": (np.percentile(depth[depth > 0], [1, 50, 99]) * camera["depth_scale"]).tolist()})
@@ -243,7 +195,6 @@ def prepare(config_path, output, repair=False):
     manifest["unpaired_rgb"] = unpaired
     if unpaired:
         manifest["warnings"].append("RGB sin profundidad/calibración: " + ", ".join(unpaired))
-    manifest["asap_meshes_ready"] = all(p["mesh_quality"]["watertight"] for p in manifest["parts"])
     write_json(output / "manifest.json", manifest)
     print(f"Preparadas {len(manifest['parts'])} piezas y {len(manifest['frames'])} capturas RGB-D: {output}")
     for warning in manifest["warnings"]:
@@ -253,8 +204,8 @@ def prepare(config_path, output, repair=False):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", type=Path, default=HERE / "config.json")
-    parser.add_argument("--output", type=Path, default=HERE / "prepared")
+    parser.add_argument("--config", type=Path, default=dataset_path())
+    parser.add_argument("--output", type=Path, default=PREPARED)
     parser.add_argument("--repair-topology", action="store_true", help="Repair singular topology without changing triangles; requires manifold3d.")
     args = parser.parse_args()
     prepare(args.config, args.output, repair=args.repair_topology)

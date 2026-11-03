@@ -6,11 +6,11 @@ import subprocess
 import time
 
 
-PROJECTS = Path(__file__).resolve().parents[4]
+from settings import RESULTS, path
 
 
 def python_path():
-    return Path(os.environ.get('FOUNDATIONPOSE_PYTHON', PROJECTS / '.venvs/foundationpose/bin/python'))
+    return Path(os.environ.get('FOUNDATIONPOSE_PYTHON', path('foundationpose_python')))
 
 
 def availability():
@@ -38,7 +38,7 @@ def resident(log_path=None):
             import atexit
             from .resident import ResidentPose
             _resident=ResidentPose(python_path(),Path(__file__).with_name('resident_worker.py'),
-                                   log_path or PROJECTS/'SAM6D/results/interface/logs/foundationpose-worker.log')
+                                   log_path or RESULTS/'interface/logs/foundationpose-worker.log')
             atexit.register(_resident.close)
         return _resident
 

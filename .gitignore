@@ -1,11 +1,13 @@
-# Generated inputs, outputs and local maintenance snapshots.
+# Generated data, histories, weights and native builds.
 /captures/
 /results/
-/maintenance/
-/pipeline/prepared/
+/archives/maintenance/
+/data/prepared/
 /pipeline/native/
-
-# Runtime caches, compiled extensions and local environments.
+/checkpoints/
+/.cache/
+# Independent upstream checkout; its own Git history remains intact.
+/models/FoundationPose/
 __pycache__/
 *.py[cod]
 *.so

@@ -1,0 +1,15 @@
+{
+  "manifest": "../data/prepared/manifest.json",
+  "output_root": "../results/suites",
+  "export_root": "../results/reports",
+  "device": "auto",
+  "min_score": 0.4,
+  "confidence": 0.5,
+  "stability_score": 0.97,
+  "segmentor": "sam",
+  "backbone": "vit_h",
+  "threads": 16,
+  "reference_cache": "../.cache/reference_features",
+  "pose": true,
+  "frame": []
+}

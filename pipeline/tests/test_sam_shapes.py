@@ -9,7 +9,7 @@ try:
     import torch
 except ImportError:
     torch = None
-ISM = Path(__file__).resolve().parents[3] / "SAM6D/SAM-6D/SAM-6D/Instance_Segmentation_Model"
+ISM = Path(__file__).resolve().parents[3] / "CADTracking/models/SAM-6D/SAM-6D/Instance_Segmentation_Model"
 
 
 def method(path, class_name, name, globals_dict):

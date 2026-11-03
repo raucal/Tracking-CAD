@@ -12,6 +12,7 @@ import numpy as np
 from PIL import Image
 
 from .realsense import RealSenseSource
+from settings import profile
 
 
 def identifier(value):
@@ -22,6 +23,7 @@ def identifier(value):
 
 class CameraService:
     def __init__(self, root, source_factory=RealSenseSource):
+        self.config = profile('interface')['camera']
         self.root = Path(root).resolve()
         self.root.mkdir(parents=True, exist_ok=True)
         self.source_factory = source_factory
@@ -49,7 +51,7 @@ class CameraService:
     def start(self, options):
         if not isinstance(options, dict):
             raise ValueError('Configuración de cámara no válida.')
-        width, height, fps = (options.get('width', 640), options.get('height', 480), options.get('fps', 15))
+        width, height, fps = (options.get('width', self.config['width']), options.get('height', self.config['height']), options.get('fps', self.config['fps']))
         if (width, height) not in ((640, 480), (1280, 720)) or fps not in (15, 30):
             raise ValueError('Utiliza 640×480 o 1280×720 y 15 o 30 FPS.')
         with self.operations:
@@ -75,8 +77,8 @@ class CameraService:
                 frame['received'] = time.monotonic()
                 output = BytesIO()
                 preview = Image.fromarray(frame['rgb'])
-                preview.thumbnail((640, 480))
-                preview.save(output, format='JPEG', quality=70)
+                preview.thumbnail((self.config['preview_width'], self.config['preview_height']))
+                preview.save(output, format='JPEG', quality=self.config['jpeg_quality'])
                 with self.condition:
                     self.latest = frame
                     self.sequence += 1

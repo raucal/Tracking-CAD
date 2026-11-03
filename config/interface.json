@@ -1,0 +1,61 @@
+{
+  "server": {
+    "port": 8770,
+    "preload": "sam",
+    "backbone": "vit_h",
+    "data_dir": "../results/interface",
+    "capture_dir": "../captures",
+    "file_root": "../.."
+  },
+  "inference": {
+    "mode": "rgb",
+    "device": "cuda",
+    "backbone": "vit_h",
+    "cad_units": "mm",
+    "segmentor": "sam",
+    "pose": false,
+    "pose_backend": "pem",
+    "fastsam_conf": 0.05,
+    "fastsam_iou": 0.9,
+    "min_score": 0.3,
+    "confidence": 0.5,
+    "stability": 0.97,
+    "pred_iou": 0.88,
+    "points_per_batch": 64,
+    "nms": 0.25,
+    "aggregation": "avg_5"
+  },
+  "camera": {
+    "width": 640,
+    "height": 480,
+    "fps": 15,
+    "preview_width": 640,
+    "preview_height": 480,
+    "jpeg_quality": 70
+  },
+  "tracking": {
+    "redetect_interval_s": 10.0,
+    "recovery_retry_s": 1.0,
+    "max_detection_age_s": 5.0,
+    "quality_bad_frames": 3,
+    "quality": {
+      "enabled": true,
+      "sample_points": 1024,
+      "depth_tolerance_mm": 20.0,
+      "min_depth_samples": 20,
+      "min_depth_support": 0.35,
+      "min_valid_depth_fraction": 0.25,
+      "min_visible_fraction": 0.1,
+      "max_occlusion_fraction": 0.7,
+      "translation_slack_mm": 20.0,
+      "max_translation_speed_mm_s": 1000.0,
+      "rotation_slack_deg": 20.0,
+      "max_rotation_speed_deg_s": 360.0,
+      "max_motion_gap_s": 0.5
+    }
+  },
+  "examples": {
+    "frame": "control_board",
+    "cad": "05_control_board"
+  }
+}

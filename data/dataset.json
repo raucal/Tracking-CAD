@@ -1,0 +1,14 @@
+{
+  "assembly_id": "converter_demo_v1",
+  "cad_dir": "../../PDDL/Assembly CAD/Assembly parts",
+  "photos_dir": "../../PDDL/DINOPDDL/realsense_photos",
+  "catalog": "../../PDDL/DINOPDDL/catalogs/printed_assembly_catalog.yaml",
+  "photo_aliases": {
+    "front_housing_2": "front_housing",
+    "termal_fan": "thermal_core"
+  },
+  "display_names": {
+    "03a_vertical_option_a": "sensor_module",
+    "03b_vertical_option_b": "communications_module"
+  }
+}

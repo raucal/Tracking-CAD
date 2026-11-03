@@ -1,5 +1,6 @@
 """Loopback-only HTTP UI with one serialized GPU worker and bounded uploads."""
 import argparse
+import os
 import base64
 from concurrent.futures import ThreadPoolExecutor
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -19,21 +20,22 @@ from .camera.tracking import LivePoseTracker, validate_interval
 
 HERE = Path(__file__).resolve().parent
 PIPELINE = HERE.parent
+from settings import PREPARED, CONFIG, path, profile, display_names
+from .inputs import DEFAULTS
 
 
 class App:
     def __init__(self, data_root, file_root=None, capture_root=None):
-        self.files = ServerFiles(file_root or PIPELINE.parents[1])
+        self.files = ServerFiles(file_root or path("file_root"))
         self.data_root = data_root.resolve()
         self.jobs_root = self.data_root / "jobs"
         self.jobs_root.mkdir(parents=True, exist_ok=True)
-        self.legacy_jobs_root = PIPELINE / 'prepared/sam6d_ui/jobs'
-        self.camera = CameraService(capture_root if capture_root is not None else PIPELINE.parent / 'captures')
+        self.camera = CameraService(capture_root if capture_root is not None else path('captures'))
         from .backends.foundationpose import resident
         self.pose_worker = lambda: resident(self.data_root/'logs/foundationpose-worker.log')
         self.tracker = LivePoseTracker(self.camera, self.data_root/'live', resident_factory=self.pose_worker)
         self.foundationpose_status = None
-        self.manifest_path = PIPELINE / "prepared/manifest.json"
+        self.manifest_path = PREPARED / "manifest.json"
         self.manifest = json.loads(self.manifest_path.read_text())
         self.jobs = {}
         self.lock = threading.Lock()
@@ -81,17 +83,18 @@ class App:
         if self.foundationpose_status is None:
             self.foundationpose_status = availability()
         env = environment()
-        names = json.loads((PIPELINE / "cad_name_corrections.json").read_text())["names"]
+        names = display_names()
         return {"environment": env, "foundationpose": self.foundationpose_status,
                 "startup":dict(self.startup), "mode": "local_gpu_service", "pose_available": env["pose_available"],
                 "examples": [{"name": f["name"], "label": f["name"]} for f in self.manifest["frames"]],
                 "catalog": [{"key": p["key"], "name": names.get(p["key"], p["name"])} for p in self.manifest["parts"]],
                 "file_root": str(self.files.root),
+                "defaults": dict(DEFAULTS), "camera_defaults": profile("interface")["camera"],
+                "tracking_defaults": profile("interface")["tracking"], "example_defaults": profile("interface")["examples"],
                 "max_image_pixels": 4_000_000, "cad_formats": ["STL", "OBJ", "PLY"]}
 
     def start_tracking(self, request):
         if not isinstance(request,dict):raise ValueError('Se requiere una petición JSON.')
-        interval=validate_interval(request.get('redetect_interval_s',0))
         with self.submission_lock:
             with self.lock:
                 if any(j['status'] in ('queued','running') for j in self.jobs.values()):
@@ -107,6 +110,7 @@ class App:
             import time
             if time.time()-captured['timestamp']>120:
                 raise ValueError('La pose inicial es antigua. Vuelve a localizar la pieza.')
+            interval=validate_interval(request['redetect_interval_s'] if 'redetect_interval_s' in request else (0 if 'manual_bbox' in inputs else profile('interface')['tracking']['redetect_interval_s']))
             if interval and 'manual_bbox' in inputs:
                 raise ValueError('Selecciona inicialización automática para activar los refrescos SAM.')
             from .camera.redetection import Redetector
@@ -157,7 +161,7 @@ class App:
             base = self.manifest_path.parent
             def file(path):
                 return {"name": Path(path).name, "data": base64.b64encode((base / path).read_bytes()).decode()}
-            cad_path = (PIPELINE.parents[1] / "PDDL/Assembly CAD/Assembly parts" / (part["key"] + ".stl")).resolve()
+            cad_path = (base / part["source_stl"]).resolve()
             rgb = file(frame["rgb"])
             rgb["name"] = frame["name"] + ".png"
             request = {"options": request.get("options", {}), "rgb": rgb,
@@ -258,7 +262,7 @@ class App:
     def job_folder(self, job_id):
         if len(job_id) != 32 or any(c not in '0123456789abcdef' for c in job_id):
             raise KeyError(job_id)
-        for root in (self.jobs_root / 'sam6d', self.jobs_root / 'foundationpose', self.jobs_root, self.legacy_jobs_root):
+        for root in (self.jobs_root / 'sam6d', self.jobs_root / 'foundationpose', self.jobs_root):
             folder = root / job_id
             if folder.is_dir():
                 return folder
@@ -484,17 +488,25 @@ def handler(app):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--port", type=int, default=8770)
-    parser.add_argument("--data-dir", type=Path, default=PIPELINE.parent / "results/interface")
-    parser.add_argument("--capture-dir", type=Path, default=PIPELINE.parent / "captures", help="Carpeta para imágenes y vídeos de cámara")
-    parser.add_argument("--file-root", type=Path, default=PIPELINE.parents[1], help='Carpeta del servidor disponible en el selector')
-    parser.add_argument('--preload', choices=('sam','fastsam','none'), default='sam', help='Segmentador a precargar con DINOv2 y FoundationPose; none desactiva la precarga')
-    parser.add_argument('--backbone', choices=('vit_h','vit_l','vit_b'), default='vit_h', help='Variante SAM a precargar; se ignora con FastSAM')
+    parser.add_argument('--config', type=Path, help='Interface JSON profile; CLI flags take precedence')
+    selector = argparse.ArgumentParser(add_help=False)
+    selector.add_argument('--config', type=Path)
+    selected, _ = selector.parse_known_args()
+    if selected.config: os.environ['CAD_TRACKING_INTERFACE_CONFIG'] = str(selected.config.expanduser().resolve())
+    config = profile('interface')
+    DEFAULTS.clear(); DEFAULTS.update(config['inference'])
+    options({})  # Validate numerical and backend settings before opening the service.
+    parser.add_argument("--port", type=int, default=config['server']['port'])
+    parser.add_argument("--data-dir", type=Path, default=config['server']['data_dir'])
+    parser.add_argument("--capture-dir", type=Path, default=config['server']['capture_dir'], help="Carpeta para imágenes y vídeos de cámara")
+    parser.add_argument("--file-root", type=Path, default=config['server']['file_root'], help='Carpeta del servidor disponible en el selector')
+    parser.add_argument('--preload', choices=('sam','fastsam','none'), default=config['server']['preload'], help='Segmentador a precargar con DINOv2 y FoundationPose; none desactiva la precarga')
+    parser.add_argument('--backbone', choices=('vit_h','vit_l','vit_b'), default=config['server']['backbone'], help='Variante SAM a precargar; se ignora con FastSAM')
     args = parser.parse_args()
     app = App(args.data_dir, args.file_root, args.capture_dir)
     server = ThreadingHTTPServer(("127.0.0.1", args.port), handler(app))
     if args.preload!='none':app.preload(args.preload,args.backbone)
-    print(f"Interfaz SAM-6D / FoundationPose: http://127.0.0.1:{args.port}/", flush=True)
+    print(f"CAD Tracking: http://127.0.0.1:{args.port}/", flush=True)
     print("Servicio local para túnel SSH. Ctrl+C para detenerlo.", flush=True)
     try:
         server.serve_forever()

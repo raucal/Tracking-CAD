@@ -10,7 +10,7 @@ function note(text,error=false){$('camera-status').textContent=text;$('camera-st
 function selectionChanged(){
   const manual=!!window.VisionManual?.active();
   $('sam-refresh').disabled=manual||fastPreparing;
-  $('sam-refresh-note').textContent=manual?'Solo FoundationPose: los refrescos SAM están desactivados. Selecciona inicialización automática para utilizarlos.':'Intervalo entre inicios de detección; 0 desactiva. Puedes cambiarlo durante el seguimiento. SAM comprueba en segundo plano. La pose solo se reinicia al recuperar el seguimiento; no se acumulan trabajos.';
+  $('sam-refresh-note').textContent=manual?'Solo FoundationPose: los refrescos SAM están desactivados. Selecciona inicialización automática para utilizarlos.':'SAM recupera inmediatamente al perder el seguimiento. Este intervalo controla solo el respaldo periódico; 0 lo desactiva y mantiene la recuperación automática. Una sola detección pendiente; modelos cargados en GPU.';
   if($('fast-start'))$('fast-start').disabled=pending||!live||!active||fastActive||fastPreparing||!!window.VisionApp?.isBusy()||!!window.VisionApp?.isLiveDetection()||$('pose-backend').value!=='foundationpose';
   $('track-recording').disabled=fastActive||fastPreparing||pending||!!window.VisionApp?.isBusy()||!!window.VisionApp?.isLiveDetection()||!$('camera-recording').value||$('pose-backend').value!=='foundationpose';
 }
@@ -145,10 +145,12 @@ async function trackingStatus(){
     if(!fastActive)return;
     if(!data.running){fastActive=false;controls();window.VisionVideo.stop($('fast-preview'));$('fast-status').textContent=data.error||'Seguimiento detenido.';return;}
     const interval=data.redetect_interval_s||0;
-    const refresh=interval?' · SAM cada '+interval+' s · '+(data.redetections||0)+' recuperaciones · '+(data.sam_checks||0)+' comprobaciones'+(data.sam_running?' · SAM en segundo plano':''):' · refresco SAM desactivado';
+    const refresh=interval?' · respaldo SAM cada '+interval+' s · '+(data.redetections||0)+' recuperaciones · '+(data.sam_checks||0)+' comprobaciones'+(data.sam_running?' · SAM en segundo plano':''):(data.automatic_recovery?' · SAM al perder seguimiento; respaldo desactivado':' · inicialización manual; sin recuperación SAM');
     let source='/api/tracking/stream';
     if(data.state==='tracking'){
       $('fast-status').textContent=data.fps.toFixed(1)+' FPS de seguimiento · latencia '+Math.round(data.latency_s*1000)+' ms'+refresh+(data.last_detection_score!==undefined?' · último score '+data.last_detection_score.toFixed(3):'')+(data.redetect_error?' · '+data.redetect_error:'');
+    }else if(data.state==='checking'){
+      source='/api/camera/stream';$('fast-status').textContent='Comprobando profundidad y estabilidad de la pose ('+(data.consecutive_quality_failures||0)+') · '+(data.redetect_error||'');
     }else if(data.state==='redetecting'){
       source='/api/camera/stream';$('fast-status').textContent='Recuperando pose con FoundationPose…'+refresh;
     }else if(data.state==='recovering'){

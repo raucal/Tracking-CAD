@@ -1,4 +1,7 @@
 """Image + CAD detection, optionally followed by official RGB-D PEM pose estimation."""
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(next(p for p in _Path(__file__).resolve().parents if (p / 'settings.py').is_file())))
 from pathlib import Path
 import argparse
 import base64
@@ -8,8 +11,7 @@ import sys
 
 from sam6d_ui.inputs import prepare_upload
 
-ROOT=Path(__file__).resolve().parents[2]
-PIPELINE=Path(__file__).resolve().parent
+from settings import ROOT, PIPELINE, PREPARED, RESULTS
 
 def file(path):
     path=Path(path).resolve()
@@ -37,7 +39,7 @@ def main():
             'cad_units':a.cad_units,'confidence':a.confidence,'min_score':a.min_score,'fastsam_conf':a.fastsam_conf}
     if a.example:
         if a.rgb or a.cad or a.depth or a.camera:p.error('Use --example o archivos propios, no ambos.')
-        base=PIPELINE/'prepared';data=json.loads((base/'manifest.json').read_text())
+        base=PREPARED;data=json.loads((base/'manifest.json').read_text())
         frame=next((f for f in data['frames'] if f['name']==a.example),None)
         part=next((v for v in data['parts'] if v['key']==a.part),None)
         if not frame or not part:p.error('Captura o CAD desconocidos.')
@@ -50,11 +52,11 @@ def main():
         if a.camera:request['camera']=file(a.camera)
     request['options']=config
     stamp=datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
-    output=(a.output or ROOT/'SAM6D/results/runs'/stamp).resolve()
+    output=(a.output or RESULTS/'runs'/stamp).resolve()
     if output.exists():p.error('La salida ya existe; elige una carpeta nueva para conservar los resultados.')
     inputs=prepare_upload(request,output)
     from sam6d_ui.engine import Engine
-    result=Engine(PIPELINE/'prepared/sam6d_ui').run(output,inputs,lambda text:print(text,flush=True))
+    result=Engine(RESULTS/'interface').run(output,inputs,lambda text:print(text,flush=True))
     print(json.dumps({'output':str(output),'device':result['device'],'segmentor':a.segmentor,'best_score':result['best_score'],
                       'recognized':result['recognized'],'pose_6d_estimated':result['pose_6d_estimated'],'timing':result['timing']},indent=2),flush=True)
     return 0

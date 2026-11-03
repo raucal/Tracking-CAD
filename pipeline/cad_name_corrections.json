@@ -1,8 +1,0 @@
-{
-  "source": "Corrección explícita del usuario, 2026-10-28",
-  "scope": "Nombres mostrados en los informes; no modifica IDs, geometrías, scores ni los catálogos de DINOPDDL",
-  "names": {
-    "03a_vertical_option_a": "sensor_module",
-    "03b_vertical_option_b": "communications_module"
-  }
-}

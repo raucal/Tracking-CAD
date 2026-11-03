@@ -1,5 +1,9 @@
 """Check rendered CAD templates and export a contact sheet for the experiment."""
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(next(p for p in _Path(__file__).resolve().parents if (p / 'settings.py').is_file())))
 from pathlib import Path
+from settings import PREPARED
 import argparse
 import json
 
@@ -10,7 +14,8 @@ import trimesh
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--manifest", type=Path, default=Path(__file__).resolve().parent / "prepared/manifest.json")
+    parser.add_argument("--manifest", type=Path, default=PREPARED / "manifest.json")
+    parser.add_argument("--output-dir", type=Path, help="Guardar lámina y auditoría solo si se solicita")
     args = parser.parse_args()
     base = args.manifest.resolve().parent
     data = json.loads(args.manifest.read_text())
@@ -50,8 +55,10 @@ def main():
             with Image.open(folder / f"rgb_{index}.png") as source:
                 thumbnail = source.convert("RGB").resize((176, 176))
             sheet.paste(thumbnail, (15 + column * 195, top + 25))
-    sheet.save(base / "plantillas_cad.png")
-    (base / "template_audit.json").write_text(json.dumps(report, indent=2) + "\n")
+    if args.output_dir:
+        args.output_dir.mkdir(parents=True, exist_ok=True)
+        sheet.save(args.output_dir / "plantillas_cad.png")
+        (args.output_dir / "template_audit.json").write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2))
 
 

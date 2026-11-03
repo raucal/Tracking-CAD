@@ -1,0 +1,26 @@
+{
+  "paths": {
+    "sam6d": "../models/SAM-6D",
+    "foundationpose": "../models/FoundationPose",
+    "prepared": "../data/prepared",
+    "results": "../results",
+    "captures": "../captures",
+    "checkpoints": "../checkpoints",
+    "native": "../pipeline/native",
+    "runtime_python": "../../.venvs/assembly-runtime/bin/python",
+    "foundationpose_python": "../../.venvs/foundationpose/bin/python",
+    "blender": "../../.runtime/blender/blender-3.3.1-linux-x64/blender",
+    "file_root": "../..",
+    "reference_cache": "../.cache/reference_features",
+    "ui_reference_cache": "../.cache/ui_reference_features",
+    "runtime_cache": "../../.runtime/cache",
+    "matplotlib_cache": "../../.runtime/matplotlib",
+    "dataset": "../data/dataset.json"
+  },
+  "runtime": {
+    "threads": 16,
+    "render_size": 256,
+    "render_samples": 16,
+    "build_jobs": 2
+  }
+}

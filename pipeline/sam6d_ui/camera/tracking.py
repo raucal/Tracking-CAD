@@ -14,6 +14,7 @@ import numpy as np
 
 from ..backends.foundationpose import python_path
 from ..backends.geometry import bbox_agreement
+from settings import profile
 
 
 def validate_interval(value):
@@ -25,6 +26,7 @@ def validate_interval(value):
 class LivePoseTracker:
     def __init__(self,camera,root,worker_script=None,resident_factory=None):
         self.camera=camera;self.root=Path(root);self.resident_factory=resident_factory
+        self.tracking_config=profile("interface")["tracking"]
         self.worker_script=Path(worker_script or Path(__file__).parents[1]/'backends/live_pose_worker.py')
         self.lock=threading.RLock();self.condition=threading.Condition(self.lock)
         self.stop_event=threading.Event();self.thread=None;self.process=None
@@ -49,14 +51,14 @@ class LivePoseTracker:
 
     def start(self,folder,redetect_interval_s=0,redetect=None):
         interval=validate_interval(redetect_interval_s)
-        if interval and (redetect is None or self.resident_factory is None):raise ValueError('Se requiere el detector SAM y el trabajador residente para el refresco.')
+        if (interval and redetect is None) or (redetect is not None and self.resident_factory is None):raise ValueError('Se requiere el detector SAM y el trabajador residente para el refresco.')
         with self.lock:
             if self.busy():raise ValueError('El seguimiento ya está activo o cerrándose.')
             self.camera.frame()
             self.stop_event.clear();self.jpeg=None;self.sequence=0
             self.redetect=redetect;self.redetect_interval_s=interval;self.config_revision+=1
             session=uuid.uuid4().hex
-            self.details={'running':True,'state':'loading','frames':0,'fps':0,'session':session,'seed_job':Path(folder).name,'error':None,'redetect_interval_s':interval,'redetect_attempts':0,'redetections':0,'redetect_error':None,'sam_running':False,'sam_checks':0,'sam_discarded':0,'sam_misses':0,'sam_disagreements':0}
+            self.details={'running':True,'state':'loading','frames':0,'fps':0,'session':session,'seed_job':Path(folder).name,'error':None,'redetect_interval_s':interval,'redetect_attempts':0,'redetections':0,'redetect_error':None,'sam_running':False,'sam_checks':0,'sam_discarded':0,'sam_misses':0,'sam_disagreements':0,'automatic_recovery':redetect is not None,'losses':0,'recovery_attempts':0,'backup_attempts':0,'consecutive_quality_failures':0,'sam_reason':None}
             self.thread=threading.Thread(target=self._run,args=(Path(folder),session),name='FoundationPose-live',daemon=True)
             self.thread.start()
             return self.status()
@@ -162,155 +164,217 @@ class LivePoseTracker:
             if session_dir.is_dir():
                 (session_dir/'session.json').write_text(json.dumps(self.status(),indent=2,allow_nan=False))
 
-    def _run_resident(self,folder,session):
-        session_dir=self.root/session
-        executor=None;scratch_context=None;future=None;job=None
+    def _run_resident(self, folder, session):
+        session_dir = self.root / session
+        executor = scratch_context = future = job = None
+        config = self.tracking_config
+        retry_delay = config['recovery_retry_s']
+        max_age = config['max_detection_age_s']
+        failure_limit = config['quality_bad_frames']
         try:
-            session_dir.mkdir(parents=True,exist_ok=True)
-            worker=self.resident_factory();worker.start_tracking(folder)
-            calibration=json.loads((folder/'camera.json').read_text());K=np.asarray(calibration['cam_K']).reshape(3,3)
-            previous=None;published=None;smoothed=None;lost=False;lost_after_frame=-1
-            revision=-1;next_due=float('inf');force_fresh=False;misses=0;disagreements=0
-            scratch_context=tempfile.TemporaryDirectory(prefix='sam6d-live-',dir='/dev/shm' if Path('/dev/shm').is_dir() else None)
-            base=Path(scratch_context.name);scratch=base/'tracking';scratch.mkdir();sam_scratch=base/'sam';sam_scratch.mkdir()
-            executor=ThreadPoolExecutor(max_workers=1,thread_name_prefix='SAM-verification')
+            session_dir.mkdir(parents=True, exist_ok=True)
+            worker = self.resident_factory()
+            worker.start_tracking(folder)
+            calibration = json.loads((folder/'camera.json').read_text())
+            K = np.asarray(calibration['cam_K']).reshape(3, 3)
+            previous = published = smoothed = None
+            lost = False
+            lost_after_frame = -1
+            bad_frames = misses = disagreements = 0
+            revision = -1
+            next_due = float('inf')
+            retry_due = 0.0
+            force_fresh = False
+            scratch_context = tempfile.TemporaryDirectory(prefix='sam6d-live-', dir='/dev/shm' if Path('/dev/shm').is_dir() else None)
+            base = Path(scratch_context.name)
+            scratch = base/'tracking'; scratch.mkdir()
+            sam_scratch = base/'sam'; sam_scratch.mkdir()
+            executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='SAM-verification')
 
             def check_camera(frame):
-                if not np.allclose(K,np.asarray(frame['camera']['cam_K']).reshape(3,3)) or not np.isclose(calibration['depth_scale'],frame['camera']['depth_scale']):
+                if not np.allclose(K, np.asarray(frame['camera']['cam_K']).reshape(3, 3)) or not np.isclose(calibration['depth_scale'], frame['camera']['depth_scale']):
                     raise RuntimeError('Cambió la calibración. Reinicia la detección inicial.')
 
-            def mark_lost(message,frame_number):
-                nonlocal lost,lost_after_frame
-                if not lost:lost_after_frame=frame_number
-                lost=True
+            def mark_lost(message, frame_number):
+                nonlocal lost, lost_after_frame, force_fresh
+                if not lost:
+                    lost_after_frame = frame_number
+                    force_fresh = True
+                    with self.lock: self.details['losses'] += 1
+                    if future is not None and job is not None: job['cancelled'].set()
+                lost = True
                 with self.condition:
-                    self.jpeg=None
-                    self.details.update(state='recovering',pose=None,redetect_error=message,fps=0)
+                    self.jpeg = None
+                    self.details.update(state='recovering', pose=None, redetect_error=message, last_loss_reason=message, fps=0)
                     self.condition.notify_all()
 
-            def detect(snapshot,cancelled):
-                np.savez(sam_scratch/'frame.npz',rgb=snapshot['rgb'],depth=snapshot['depth'],K=K,scale=calibration['depth_scale'])
-                return self.redetect(snapshot,sam_scratch,cancelled)
+            def detect(snapshot, cancelled):
+                np.savez(sam_scratch/'frame.npz', rgb=snapshot['rgb'], depth=snapshot['depth'], K=K, scale=calibration['depth_scale'])
+                (sam_scratch/'timestamp.json').write_text(json.dumps(snapshot['timestamp']))
+                return self.redetect(snapshot, sam_scratch, cancelled)
 
-            def submit_detection(frame,predicted_box,current_revision):
-                nonlocal future,job,next_due,force_fresh
-                snapshot={**frame,'rgb':frame['rgb'].copy(),'depth':frame['depth'].copy()}
-                cancelled=threading.Event();started=time.monotonic()
-                job={'frame':snapshot,'predicted':predicted_box,'revision':current_revision,'started':started,'cancelled':cancelled}
+            def submit_detection(frame, predicted_box, current_revision, reason):
+                nonlocal future, job, next_due, force_fresh
+                if future is not None: return
+                snapshot = {**frame, 'rgb':frame['rgb'].copy(), 'depth':frame['depth'].copy()}
+                cancelled = threading.Event()
+                started = time.monotonic()
                 with self.lock:
-                    if self.stop_event.is_set() or self.config_revision!=current_revision or not self.redetect_interval_s:return
-                    self.detector_cancel=cancelled
-                    self.details.update(sam_running=True,redetect_attempts=self.details['redetect_attempts']+1)
-                future=executor.submit(detect,snapshot,cancelled)
-                force_fresh=False;next_due=started+interval
+                    if self.stop_event.is_set() or self.config_revision != current_revision or self.redetect is None: return
+                    self.detector_cancel = cancelled
+                    self.details.update(sam_running=True, sam_reason=reason, redetect_attempts=self.details['redetect_attempts']+1)
+                    self.details['recovery_attempts' if reason == 'recovery' else 'backup_attempts'] += 1
+                job = {'frame':snapshot, 'predicted':predicted_box, 'revision':current_revision, 'started':started, 'cancelled':cancelled, 'reason':reason}
+                future = executor.submit(detect, snapshot, cancelled)
+                force_fresh = False
+                next_due = started+interval if interval else float('inf')
 
             while not self.stop_event.is_set():
                 with self.lock:
-                    interval=self.redetect_interval_s;current_revision=self.config_revision
-                if revision!=current_revision:
-                    revision=current_revision;next_due=time.monotonic()+interval if interval else float('inf')
-                    if interval and lost:force_fresh=True
-                frame=self.camera.frame();check_camera(frame)
+                    interval = self.redetect_interval_s
+                    current_revision = self.config_revision
+                if revision != current_revision:
+                    revision = current_revision
+                    next_due = time.monotonic()+interval if interval else float('inf')
+                    if lost: force_fresh = True
+                frame = self.camera.frame()
+                check_camera(frame)
 
                 if future is not None and future.done():
-                    elapsed=time.monotonic()-job['started']
-                    entry={'timestamp':time.time(),'frame_number':job['frame']['number'],'elapsed_s':elapsed}
-                    detection=None;error=None
-                    try:detection=future.result()
-                    except Exception as exception:error=str(exception)
-                    future=None
+                    elapsed = time.monotonic()-job['started']
+                    entry = {'timestamp':time.time(), 'frame_number':job['frame']['number'], 'elapsed_s':elapsed, 'reason':job['reason']}
+                    detection = error = None
+                    try: detection = future.result()
+                    except Exception as exception: error = str(exception)
+                    future = None
                     with self.lock:
-                        self.details.update(sam_running=False,last_redetect_s=elapsed,last_redetect_at=time.time())
-                        self.detector_cancel=None
-                    discarded=None
-                    if not interval or current_revision!=job['revision'] or job['cancelled'].is_set():discarded='configuration_changed'
-                    elif lost and job['frame']['number']<=lost_after_frame:discarded='before_tracking_loss'
-                    elif time.time()-job['frame']['timestamp']>2:discarded='stale_image'
+                        self.details.update(sam_running=False, sam_reason=None, last_redetect_s=elapsed, last_redetect_at=time.time())
+                        self.detector_cancel = None
+                    discarded = None
+                    if current_revision != job['revision']: discarded = 'configuration_changed'
+                    elif lost and job['frame']['number'] <= lost_after_frame: discarded = 'before_tracking_loss'
+                    elif job['cancelled'].is_set(): discarded = 'cancelled'
+                    elif time.time()-job['frame']['timestamp'] > max_age: discarded = 'stale_image'
                     if discarded:
-                        entry.update(status='discarded',reason=discarded)
-                        with self.lock:self.details['sam_discarded']+=1
+                        entry.update(status='discarded', reason_discarded=discarded)
+                        with self.lock: self.details['sam_discarded'] += 1
                     elif error:
-                        entry.update(status='detection_error',error=error)
-                        with self.lock:self.details['redetect_error']='Error de comprobación SAM: '+error
+                        entry.update(status='detection_error', error=error)
+                        with self.lock: self.details['redetect_error'] = 'Error de comprobación SAM: '+error
                     else:
-                        with self.lock:self.details['sam_checks']+=1
+                        with self.lock: self.details['sam_checks'] += 1
                         if detection is None:
-                            misses+=1;disagreements=0
-                            warning='SAM no encuentra la pieza ('+str(misses)+'/2).'
-                            with self.lock:self.details.update(sam_misses=misses,sam_disagreements=0,redetect_error=warning)
-                            if misses>=2:mark_lost(warning+' Esperando una detección nueva.',frame['number'])
-                            entry.update(status='not_detected',misses=misses)
+                            misses += 1; disagreements = 0
+                            warning = 'SAM no encuentra la pieza ('+str(misses)+'/2).'
+                            with self.lock: self.details.update(sam_misses=misses, sam_disagreements=0, redetect_error=warning)
+                            if misses >= 2: mark_lost(warning+' Esperando una detección nueva.', frame['number'])
+                            entry.update(status='not_detected', misses=misses)
                         else:
-                            misses=0
-                            agreement=bbox_agreement(job['predicted'],detection.get('bbox_xyxy'))
-                            needs_registration=lost
+                            misses = 0
+                            agreement = bbox_agreement(job['predicted'], detection.get('bbox_xyxy'))
+                            needs_registration = lost
                             if not lost:
-                                if agreement is None:
-                                    entry.update(status='unverified')
+                                if agreement is None: entry.update(status='unverified')
                                 elif agreement['consistent']:
-                                    disagreements=0;entry.update(status='consistent',**agreement)
+                                    disagreements = 0; entry.update(status='consistent', **agreement)
                                 else:
-                                    disagreements+=1;needs_registration=disagreements>=2
-                                    entry.update(status='disagreement',consecutive=disagreements,**agreement)
+                                    disagreements += 1; needs_registration = disagreements >= 2
+                                    entry.update(status='disagreement', consecutive=disagreements, **agreement)
                             with self.lock:
-                                self.details.update(sam_misses=0,sam_disagreements=disagreements,last_detection_score=detection['score'],last_sam_agreement=agreement,redetect_error=None)
+                                self.details.update(sam_misses=0, sam_disagreements=disagreements, last_detection_score=detection['score'], last_sam_agreement=agreement, redetect_error=None)
                             entry.update(**detection)
+                            if needs_registration and not lost:
+                                # A backup result can confirm drift, but registration must use
+                                # a new snapshot captured after declaring tracking lost.
+                                mark_lost('SAM confirma un desvío. Buscando una detección nueva…', frame['number'])
+                                needs_registration = False
+                                entry.update(status='tracking_loss_confirmed')
                             if needs_registration:
-                                mark_lost('Recuperando pose con una detección SAM reciente…',frame['number'])
-                                with self.lock:self.details['state']='redetecting'
+                                mark_lost('Recuperando pose con una detección SAM reciente…', frame['number'])
+                                with self.lock: self.details['state'] = 'redetecting'
                                 try:
                                     check_camera(self.camera.frame())
-                                    if self.stop_event.is_set():break
-                                    registered=worker.relocalize(sam_scratch)
-                                    if self.stop_event.is_set():break
-                                    lost=False;previous=None;published=None;smoothed=None;misses=0;disagreements=0
+                                    if self.stop_event.is_set(): break
+                                    registered = worker.relocalize(sam_scratch)
+                                    if self.stop_event.is_set(): break
+                                    lost = False
+                                    force_fresh = False
+                                    previous = published = smoothed = None
+                                    bad_frames = misses = disagreements = 0
+                                    next_due = time.monotonic()+interval if interval else float('inf')
                                     with self.lock:
-                                        self.details.update(redetections=self.details['redetections']+1,redetect_error=None,sam_misses=0,sam_disagreements=0,last_registration_s=registered.get('seconds'))
-                                    entry.update(status='relocalized',registration_s=registered.get('seconds'))
+                                        self.details.update(redetections=self.details['redetections']+1, redetect_error=None, sam_misses=0, sam_disagreements=0, consecutive_quality_failures=0, last_registration_s=registered.get('seconds'))
+                                    entry.update(status='relocalized', registration_s=registered.get('seconds'))
                                 except Exception as exception:
-                                    if self.stop_event.is_set():break
-                                    mark_lost(str(exception),frame['number']);entry.update(status='registration_error',error=str(exception))
-                    with (session_dir/'redetections.jsonl').open('a') as log:log.write(json.dumps(entry,allow_nan=False)+'\n')
-                    job=None
-                    # No accumulated work: skip ticks missed while the detector was busy.
-                    now=time.monotonic()
-                    if interval and next_due<=now:next_due+=(math.floor((now-next_due)/interval)+1)*interval
-                    frame=self.camera.frame();check_camera(frame)
+                                    if self.stop_event.is_set(): break
+                                    mark_lost(str(exception), frame['number'])
+                                    force_fresh = False
+                                    entry.update(status='registration_error', error=str(exception))
+                    with (session_dir/'redetections.jsonl').open('a') as log: log.write(json.dumps(entry, allow_nan=False)+'\n')
+                    job = None
+                    now = time.monotonic()
+                    retry_due = now+retry_delay
+                    # Skip missed backup ticks instead of accumulating jobs.
+                    if interval and next_due <= now: next_due += (math.floor((now-next_due)/interval)+1)*interval
+                    frame = self.camera.frame()
+                    check_camera(frame)
 
                 if lost:
-                    if not interval:raise RuntimeError(self.details.get('redetect_error') or 'Se perdió la pose. Vuelve a localizar la pieza.')
-                    if future is None and (force_fresh or time.monotonic()>=next_due):submit_detection(frame,None,current_revision)
-                    self.stop_event.wait(.01);continue
-                if frame['number']==previous:
-                    self.stop_event.wait(.005);continue
-                previous=frame['number'];started=time.perf_counter()
-                np.savez(scratch/'frame.npz',rgb=frame['rgb'],depth=frame['depth'],K=K,scale=calibration['depth_scale'])
-                try:result=worker.track(scratch)
+                    if self.redetect is None:
+                        raise RuntimeError(self.details.get('redetect_error') or 'Se perdió la pose. Vuelve a localizar la pieza.')
+                    if future is None and (force_fresh or time.monotonic() >= retry_due):
+                        submit_detection(frame, None, current_revision, 'recovery')
+                    self.stop_event.wait(.01)
+                    continue
+                if frame['number'] == previous:
+                    self.stop_event.wait(.005)
+                    continue
+                previous = frame['number']
+                started = time.perf_counter()
+                np.savez(scratch/'frame.npz', rgb=frame['rgb'], depth=frame['depth'], K=K, scale=calibration['depth_scale'])
+                (scratch/'timestamp.json').write_text(json.dumps(frame['timestamp']))
+                try: result = worker.track(scratch)
                 except Exception as exception:
-                    if not interval:raise
-                    mark_lost('Falló el seguimiento: '+str(exception)+'. Esperando una detección SAM nueva.',frame['number']);force_fresh=True;continue
-                if self.stop_event.is_set():break
-                finished=time.perf_counter();seconds=finished-started if published is None else finished-published;published=finished
-                smoothed=seconds if smoothed is None else .8*smoothed+.2*seconds
-                jpeg=(scratch/'preview.jpg').read_bytes()
+                    mark_lost('Falló el seguimiento: '+str(exception)+'. Esperando una detección SAM nueva.', frame['number'])
+                    continue
+                if self.stop_event.is_set(): break
+                quality = result.get('quality', {'ok':True, 'enabled':False})
+                if not quality['ok']:
+                    bad_frames += 1
+                    labels = {'depth_mismatch':'pose incoherente con la profundidad', 'occluded':'pieza ocluida', 'outside_image':'pieza fuera de imagen', 'insufficient_object_depth':'profundidad insuficiente sobre la pieza', 'no_visible_surface':'CAD sin superficie visible', 'translation_jump':'salto brusco de posición', 'rotation_jump':'salto brusco de orientación', 'invalid_pose':'pose no válida'}
+                    reason = ', '.join(labels.get(key,key) for key in quality['reasons'])
+                    with self.condition:
+                        self.jpeg = None
+                        self.details.update(state='checking', pose=None, pose_quality=quality, consecutive_quality_failures=bad_frames, redetect_error=reason)
+                        self.condition.notify_all()
+                    if bad_frames >= failure_limit: mark_lost('Pérdida de seguimiento: '+reason, frame['number'])
+                    continue
+                was_checking = bad_frames > 0
+                bad_frames = 0
+                finished = time.perf_counter()
+                seconds = finished-started if published is None else finished-published
+                published = finished
+                smoothed = seconds if smoothed is None else .8*smoothed+.2*seconds
+                jpeg = (scratch/'preview.jpg').read_bytes()
                 with self.condition:
-                    self.jpeg=jpeg;self.sequence+=1
-                    self.details.update(state='tracking',frames=self.details['frames']+1,fps=1/smoothed,frame_number=frame['number'],timestamp=frame['timestamp'],latency_s=time.time()-frame['timestamp'],pose=result['T_camera_from_input_cad_mm'],worker_pid=worker.status()['pid'])
+                    self.jpeg = jpeg; self.sequence += 1
+                    self.details.update(state='tracking', frames=self.details['frames']+1, fps=1/smoothed, frame_number=frame['number'], timestamp=frame['timestamp'], latency_s=time.time()-frame['timestamp'], pose=result['T_camera_from_input_cad_mm'], worker_pid=worker.status()['pid'], pose_quality=quality, consecutive_quality_failures=0)
+                    if was_checking: self.details['redetect_error'] = None
                     self.condition.notify_all()
-                if interval and future is None and time.monotonic()>=next_due:
-                    submit_detection(frame,result.get('bbox_xyxy'),current_revision)
+                if self.redetect is not None and interval and future is None and time.monotonic() >= next_due:
+                    submit_detection(frame, result.get('bbox_xyxy'), current_revision, 'backup')
         except Exception as exception:
             if not self.stop_event.is_set():
-                with self.lock:self.details.update(state='error',error=str(exception))
+                with self.lock: self.details.update(state='error', error=str(exception), pose=None)
         finally:
             self.stop_event.set()
             with self.lock:
-                if self.detector_cancel is not None:self.detector_cancel.set()
-            # Keep the session busy until SAM releases the shared engine and RAM workspace.
-            if executor:executor.shutdown(wait=True,cancel_futures=True)
-            if scratch_context:scratch_context.cleanup()
+                if self.detector_cancel is not None: self.detector_cancel.set()
+            if executor: executor.shutdown(wait=True, cancel_futures=True)
+            if scratch_context: scratch_context.cleanup()
             with self.condition:
-                self.detector_cancel=None;self.details.update(sam_running=False,running=False)
-                if self.details['state']!='error':self.details['state']='stopped'
+                self.detector_cancel = None
+                self.details.update(sam_running=False, sam_reason=None, running=False)
+                if self.details['state'] != 'error': self.details['state'] = 'stopped'
                 self.condition.notify_all()
-            if session_dir.is_dir():(session_dir/'session.json').write_text(json.dumps(self.status(),indent=2,allow_nan=False))
+            if session_dir.is_dir(): (session_dir/'session.json').write_text(json.dumps(self.status(), indent=2, allow_nan=False))

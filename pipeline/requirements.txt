@@ -1,4 +1,0 @@
-numpy>=1.23
-Pillow>=9
-PyYAML>=6
-trimesh>=4.6

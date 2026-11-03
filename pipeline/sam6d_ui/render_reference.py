@@ -1,9 +1,13 @@
 """Render single-CAD references with official poses; Blender by default, EGL optional."""
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(next(p for p in _Path(__file__).resolve().parents if (p / 'settings.py').is_file())))
 import os
 os.environ["PYOPENGL_PLATFORM"] = "egl"
 if os.path.isfile("/usr/share/glvnd/egl_vendor.d/10_nvidia.json"):
     os.environ.setdefault("__EGL_VENDOR_LIBRARY_FILENAMES", "/usr/share/glvnd/egl_vendor.d/10_nvidia.json")
 
+from settings import path as configured_path
 import argparse
 import hashlib
 import json
@@ -27,7 +31,7 @@ def render_blender(mesh_path, output, poses_path):
     spec = output / "render_spec.json"
     spec.write_text(json.dumps({"vertices": mesh.vertices.tolist(), "faces": mesh.faces.tolist(),
                                "scale": 1 / (2 * np.linalg.norm(mesh.vertices, axis=1).max()), "poses": poses.tolist()}))
-    binary = Path(__file__).resolve().parents[3] / ".runtime/blender/blender-3.3.1-linux-x64/blender"
+    binary = configured_path("blender")
     if not binary.is_file():
         raise ValueError("Falta Blender 3.3.1 en .runtime/blender; consulta la instalación de la interfaz.")
     env = os.environ.copy()

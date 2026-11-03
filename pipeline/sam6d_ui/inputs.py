@@ -9,10 +9,8 @@ import numpy as np
 from PIL import Image
 import trimesh
 
-DEFAULTS = {"mode": "rgb", "device": "cuda", "backbone": "vit_h", "cad_units": "mm",
-            "segmentor": "sam", "pose": False, "pose_backend": "pem", "fastsam_conf": 0.05, "fastsam_iou": 0.9,
-            "min_score": 0.30, "confidence": 0.50, "stability": 0.97, "pred_iou": 0.88,
-            "points_per_batch": 64, "nms": 0.25, "aggregation": "avg_5"}
+from settings import profile
+DEFAULTS = profile('interface')['inference']
 
 
 def options(value):
@@ -85,7 +83,7 @@ def read_depth(content, suffix, size):
 def read_camera(content, depth, size):
     camera = json.loads(content)
     if "cam_K" not in camera:
-        from prepare import camera_from_metadata
+        from tools.prepare import camera_from_metadata
         return camera_from_metadata(camera, depth, size)
     matrix = np.array(camera["cam_K"], dtype=np.float64).reshape(3, 3)
     scale = float(camera["depth_scale"])
