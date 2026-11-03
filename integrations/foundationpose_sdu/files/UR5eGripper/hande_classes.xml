@@ -1,0 +1,13 @@
+<mujocoinclude>
+	<default class="hande">
+		
+		<default class="hande_right_finger">
+			<joint axis="-1 0 0" type="slide" range="0 0.025" actuatorfrcrange="-100 100" />
+		</default>
+		
+		<default class="hande_left_finger">
+			<joint axis="1 0 0" type="slide" range="0 0.025" actuatorfrcrange="-100 100" />
+		</default>
+
+	</default>
+</mujocoinclude>

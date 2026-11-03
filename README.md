@@ -8,14 +8,13 @@ Detecta una pieza CAD en una imagen o en la Intel RealSense, calcula su pose con
 
 - `models/SAM-6D`: submódulo de [nuestro fork](https://github.com/raucal/SAM-6D),
   basado en [SAM-6D oficial](https://github.com/JiehongLin/SAM-6D), con las adaptaciones de CADTracking.
-- `models/FoundationPose`: submódulo de la [variante SDU](https://gitlab.sdu.dk/robot_learning/vision/foundation_pose),
-  basada en [FoundationPose de NVIDIA](https://github.com/NVlabs/FoundationPose).
+- `models/FoundationPoseOfficial`: submódulo oficial de [FoundationPose de NVIDIA](https://github.com/NVlabs/FoundationPose).
+- `integrations/foundationpose_sdu/`: archivos añadidos por SDU, parche de sus modificaciones y procedencia documentada.
 - `pipeline/`, `config/` y `run.sh`: nuestra integración, interfaz y suites.
 
 Las revisiones exactas, atribuciones y comandos de clonación están en
-[Procedencia y adaptaciones](docs/PROVENANCE.md). El submódulo de SDU requiere acceso
-a su GitLab; sus adaptaciones no se han republicado en GitHub. Los pesos y datos se
-instalan aparte.
+[Procedencia y adaptaciones](docs/PROVENANCE.md). Ambos submódulos se recuperan desde GitHub;
+las adaptaciones SDU están incluidas por separado. Los pesos y datos se instalan aparte.
 
 ## 1. Abrir el programa
 

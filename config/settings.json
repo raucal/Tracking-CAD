@@ -1,7 +1,7 @@
 {
   "paths": {
     "sam6d": "../models/SAM-6D",
-    "foundationpose": "../models/FoundationPose",
+    "foundationpose": "../models/FoundationPoseOfficial",
     "prepared": "../data/prepared",
     "results": "../results",
     "captures": "../captures",

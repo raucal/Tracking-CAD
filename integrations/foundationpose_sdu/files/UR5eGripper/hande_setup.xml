@@ -1,0 +1,19 @@
+
+<mujocoinclude>
+	<contact>
+		<exclude body1="hande" body2="hande_left_finger" />
+		<exclude body1="hande" body2="hande_right_finger" />
+	</contact>
+
+	<tendon>
+		<fixed name="split">
+			<joint joint="hande_left_finger_joint"  coef="0.5"/>
+			<joint joint="hande_right_finger_joint" coef="0.5"/>
+		</fixed>
+	</tendon>
+
+	<equality>
+		<joint joint1="hande_left_finger_joint" joint2="hande_right_finger_joint" />
+		<!-- <joint joint1="hande_left_finger_joint" joint2="hande_right_finger_joint" solimp="0.95 0.99 0.001" solref="0.005 1" /> -->
+	</equality>
+</mujocoinclude>

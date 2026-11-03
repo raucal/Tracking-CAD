@@ -1,0 +1,95 @@
+<mujoco model="robotiq_hande">
+
+	<!-- <compiler angle="radian" meshdir="./assets" autolimits="true" /> -->
+
+	<option cone="elliptic" impratio="10" o_solref="0.0000001 4"/>
+
+	<tendon>
+		<fixed name="split">
+			<joint joint="hande_left_finger_joint" coef="0.5" />
+			<joint joint="hande_right_finger_joint" coef="0.5" />
+		</fixed>
+	</tendon>
+
+	<equality>
+		<joint joint1="hande_left_finger_joint" joint2="hande_right_finger_joint"/>
+		<!-- <joint joint1="hande_left_finger_joint" joint2="hande_right_finger_joint" solimp="0.95
+		0.99 0.001" solref="0.005 1" /> -->
+	</equality>
+
+	<asset>
+		<mesh name="hande" file="assets/hande.stl" />
+		<mesh name="coupler" file="assets/coupler.stl" />
+		<mesh name="right_finger" file="assets/finger_1-v3.0.stl" />
+		<mesh name="left_finger" file="assets/finger_2-v3.0.stl" />
+	</asset>
+
+	<actuator>
+		<!-- Remap original ctrlrange (0, 0.025) to (0, 255): 0.025 * 100 / 255 = 0.009803922 -->
+		<!--
+		https://assets.robotiq.com/website-assets/support_documents/document/online/Hand-E_Aubo_InstructionManual_HTML5_20190501.zip/Hand-E_Aubo_InstructionManual_HTML5/Content/6.%20Specifications.htm -->
+		<!-- https://mujoco.readthedocs.io/en/stable/XMLreference.html#actuator -->
+		<!-- scalar_force = gain_term * (act or ctrl) + bias_term -->
+		<!-- gain_term = gain_prm[0] + gain_prm[1]*length + gain_prm[2]*velocity -->
+		<!-- bias_term = biasprm[0] + biasprm[1]*length + biasprm[2]*velocity -->
+
+		<general
+			name="hande_fingers_actuator"
+			tendon="split"
+			ctrlrange="0 255"
+			forcerange="-100 100"
+			gainprm="0.009803922 0 0"
+			gaintype="affine"
+			biasprm="0 -100 -10"
+			biastype="affine"
+		/>
+
+	</actuator>
+
+	<default>
+		<default class="hande_right_finger">
+			<joint axis="-1 0 0" type="slide" range="0 0.025" actuatorfrcrange="-100 100" />
+		</default>
+
+		<default class="hande_left_finger">
+			<joint axis="1 0 0" type="slide" range="0 0.025" actuatorfrcrange="-100 100" />
+		</default>
+	</default>
+
+	<worldbody>
+		<!-- <light name="spotlight_hande" mode="targetbodycom" target="hande" pos="0 -1 -2"/> -->
+		<body name="hande" pos="1 0.25 0.25" quat = "-1 1 0 0">
+			<joint name="free_joint" type="free" />  
+			<!-- Critical for movement -->
+			<site name="hande_base_site"/>
+			<geom name="hande_coupler" type="mesh" rgba="0.1 0.1 0.1 1" mesh="coupler" />
+			<geom name="hande_base" type="mesh" rgba="0.1 0.1 0.1 1" mesh="hande" />
+			
+			<body name="hande_left_finger" pos="0 0 0.099">
+				<inertial pos="0.02262 -0.00759 0.00738"
+					quat="0.871952 0.0369732 -0.211073 0.440205" mass="0.03804"
+					diaginertia="1.22763e-05 1.22763e-05 1.22763e-05" />
+				<joint name="hande_left_finger_joint" class="hande_left_finger" />
+				<geom type="mesh" rgba="0.4 0.4 0.4 1" mesh="left_finger" />
+			</body>
+
+			<body name="hande_right_finger" pos="0 0 0.099">
+				<inertial pos="-0.02262 0.00759 0.00738"
+					quat="0.871952 -0.0369732 0.211073 0.440205" mass="0.03804"
+					diaginertia="1.22763e-05 1.22763e-05 1.22763e-05" />
+				<joint name="hande_right_finger_joint" class="hande_right_finger" />
+				<geom type="mesh" rgba="0.4 0.4 0.4 1" mesh="right_finger" />
+			</body>
+
+			<site name="tcp" pos="0 0 0.135" />
+
+		</body>
+	</worldbody>
+
+	<contact>
+		<exclude body1="hande" body2="hande_left_finger" />
+		<exclude body1="hande" body2="hande_right_finger" />
+	</contact>
+
+
+</mujoco>

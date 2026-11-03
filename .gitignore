@@ -17,3 +17,6 @@ venv/
 .env
 .env.*
 *.log
+
+# Protected legacy SDU checkout; no longer used.
+/models/FoundationPose/

@@ -3,7 +3,7 @@
 	url = https://github.com/raucal/SAM-6D.git
 	branch = cadtracking
 [submodule "FoundationPose"]
-	path = models/FoundationPose
-	url = https://gitlab.sdu.dk/robot_learning/vision/foundation_pose.git
+	path = models/FoundationPoseOfficial
+	url = https://github.com/NVlabs/FoundationPose.git
 	branch = main
 	ignore = untracked

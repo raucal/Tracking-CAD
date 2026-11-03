@@ -1,0 +1,53 @@
+<mujoco model="hande_gelsight_mini_gripper">
+	<body name="hande_gelsight_mini_gripper">
+		<geom type="mesh" rgba="0.1 0.1 0.1 1" mesh="coupler" mass="0.2"/>
+		<geom type="mesh" rgba="0.1 0.1 0.1 1" mesh="hande"/>
+		
+		<body name="hande_left_finger" pos="-0.027 0 0.1" quat="1 0 0 0">
+			<joint name="hande_left_finger_joint" class="hande_left_finger" />
+
+			<geom type="mesh" rgba="0.4 1.0 0.4 1" mesh="left_finger" quat="1 0 0 -1" mass="0.02"/>
+
+				<body name="gelsight_l" pos="-0.02 0.0126 0.076" quat="0.4777144171082609 0.4777144171082609 0.5213338044735969 -0.5213338044735969">
+						<geom name="gelsight_l" 
+								type="mesh" 
+								mesh="gelsight_simplified" 
+								condim="6" 
+								mass="0.2"
+								solimp="0.09 0.95 0.001 0.5 2"/>
+								<!-- friction="0.99 0.99 0.99" -->
+						
+						<camera name="cam_left" 
+							mode="fixed" 
+							fovy="35" 
+							quat="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476"
+							pos="0.015 0 0.012"/>
+			</body>
+		</body>
+
+		<body name="hande_right_finger" pos="0.027 0 0.1" quat="1 0 0 0">
+			<geom type="mesh" rgba="1.0 0.4 0.4 1" mesh="right_finger" quat="1 0 0 1" mass="0.1"/>
+			<joint name="hande_right_finger_joint" class="hande_right_finger" />
+
+			<!-- we use 0.5 rad i.e. 28.6478898 deg since it is used in https://github.com/danfergo/gelsight_simulation/tree/master -->
+			<body name="gelsight_r" pos="0.02 -0.0126 0.076" quat="0.5213338044735969 -0.5213338044735969 0.4777144171082609 0.4777144171082609" >
+
+				<geom name="gelsight_r" 
+						type="mesh" 
+						mesh="gelsight_simplified" 
+						condim="6" 
+						mass="0.2"
+						solimp="0.09 0.95 0.001 0.5 2"/>
+						<!-- friction="0.99 0.99 0.99" -->
+
+				<camera name="cam_right" 
+					mode="fixed" 
+					fovy="35" 
+					quat="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476"
+					pos="0.015 0 0.012"/>
+
+			</body>
+		</body>
+
+	</body>
+</mujoco>

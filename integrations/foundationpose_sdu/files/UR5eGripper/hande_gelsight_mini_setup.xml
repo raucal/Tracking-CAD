@@ -1,0 +1,18 @@
+
+<mujocoinclude>
+	<contact>
+		<exclude body1="hande_gelsight_mini" body2="gelsight_mini_left_finger" />
+		<exclude body1="hande_gelsight_mini" body2="gelsight_mini_right_finger" />
+	</contact>
+
+	<tendon>
+		<fixed name="split">
+			<joint joint="left_finger" coef="0.5" />
+			<joint joint="right_finger" coef="0.5" />
+		</fixed>
+	</tendon>
+
+	<equality>
+		<joint joint1="left_finger" joint2="right_finger" solimp="0.95 0.99 0.001" solref="0.005 1" />
+	</equality>
+</mujocoinclude>

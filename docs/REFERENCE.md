@@ -80,7 +80,7 @@ La interfaz mantiene SAM/DINOv2 y FoundationPose en sus procesos persistentes cu
 | `data/prepared/sam6d/templates/` | 42 vistas por CAD: RGB, máscaras, poses y coordenadas XYZ métricas para ISM/PEM. |
 | `checkpoints/` | Pesos persistentes de SAM, FastSAM, DINOv2 y PEM. |
 | `models/SAM-6D/` | Fuente SAM-6D y adaptaciones de integración. |
-| `models/FoundationPose/` | Fuente FoundationPose y sus pesos en `weights/`. |
+| `models/FoundationPoseOfficial/` | Fuente FoundationPose y sus pesos en `weights/`. |
 | `pipeline/sam6d_ui/` | Servidor, web, validación de entradas, motores, cámara y tracking. |
 | `pipeline/suites/` | Ejecución de ensayos, poses e informes. |
 | `pipeline/tools/` | Preparación/inspección de datos, descargas, detección y comparación de CAD. |
@@ -511,3 +511,5 @@ en `results/suites/printed_assembly_2/`; las salidas existentes no se mueven.
 `data/dataset.json`: `assembly` y `assembly_registry` seleccionan la geometría e
 inventario canónicos al preparar. `prepare --assembly` sobrescribe la selección
 sin modificar el JSON. Cada versión utiliza sus propias capturas y modelos.
+
+Las adaptaciones de SDU están separadas del submódulo oficial en `integrations/foundationpose_sdu/`; su procedencia y aplicación en memoria se explican en `docs/PROVENANCE.md`.

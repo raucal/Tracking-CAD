@@ -1,0 +1,110 @@
+<mujoco model="hande_gelsight_mini">
+
+	<include file="../assets/hande/hande_gelsight_mini_setup.xml" />
+
+	<asset>
+		<include file="../assets/hande/hande_assets.xml" />
+
+		<include file="../assets/gelsight_mini/gelsight_mini_assets.xml" />
+	</asset>
+
+	<actuator>
+		<include file="../assets/hande/hande_actuators.xml" />
+	</actuator>
+
+	<default>
+		<include file="../assets/hande/hande_classes.xml" />
+	</default>
+
+	<worldbody>
+		<body name="hande_gelsight_mini" >
+
+			<joint name="free" type="free" />
+
+			<body name="hande_coupler" >
+				<geom name="coupler" type="mesh" rgba="0.1 0.1 0.1 1" mesh="coupler" mass="0.2" />
+			</body>
+
+			<body name="hande_base">
+				<geom name="base"    type="mesh" rgba="0.1 0.1 0.1 1" mesh="hande" />
+			</body>
+			
+			<body name="gelsight_mini_left_finger" pos="-0.027 0 0.1" quat="1 0 0 0">
+				<inertial pos="0.02262 -0.00759 0.00738"
+					quat="0.871952 0.0369732 -0.211073 0.440205" mass="0.03804"
+					diaginertia="1.22763e-05 1.22763e-05 1.22763e-05" />
+
+				<joint name="left_finger" class="hande_left_finger" />
+
+				<geom name="gelsight_mini_left_finger" type="mesh" rgba="0.4 1.0 0.4 1" mesh="gelsight_mini_finger" quat="1 0 0 -1" mass="0.02" />
+
+				<body name="gelsight_mini_left" 
+						pos="-0.02 0.0126 0.076" 
+						quat="0.4777144171082609 0.4777144171082609 0.5213338044735969 -0.5213338044735969">
+					
+						<geom 
+							pos="0.016 0.007 0.012" 
+							name="gelsight_mini_left" 
+							type="mesh" 
+							mesh="gelsight_mini" 
+							condim="6" 
+							mass="0.2" 
+							solimp="0.09 0.95 0.001 0.5 2" 
+							friction="0.9 0.9 0.9"
+						/>
+					<!-- solimp="0.09 0.95 0.001 0.5 2" /> -->
+					<!-- <geom pos="0 0 0" name="gelsight_mini_left" type="mesh" mesh="gelsight_mini_simplified" condim="6" mass="0.2" solimp="0.09 0.95 0.001 0.5 2" /> -->
+						
+					<camera name="gelsight_mini_cam_left" 
+						mode="fixed" 
+						fovy="35"
+						quat="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476"
+						pos="0.015 0 0.012" />
+				</body>
+				
+			</body>
+
+			<body name="gelsight_mini_right_finger" pos="0.027 0 0.1" quat="1 0 0 0">
+				<inertial pos="0.02262 -0.00759 0.00738"
+					quat="0.871952 0.0369732 -0.211073 0.440205" mass="0.03804"
+					diaginertia="1.22763e-05 1.22763e-05 1.22763e-05" />
+
+				<joint name="right_finger" class="hande_right_finger" />
+
+				<geom name="gelsight_mini_right_finger" type="mesh" rgba="1.0 0.4 0.4 1" mesh="gelsight_mini_finger" quat="1 0 0 1" mass="0.1" />
+
+				<!-- we use 0.5 rad i.e. 28.6478898 deg since it is used in https://github.com/danfergo/gelsight_simulation/tree/master -->
+				<body name="gelsight_mini_right" 
+						pos="0.02 -0.0126 0.076"
+						quat="0.5213338044735969 -0.5213338044735969 0.4777144171082609 0.4777144171082609">
+					
+						<geom 
+							pos="0.016 0.007 0.012" 
+							name="gelsight_mini_right" 
+							type="mesh" 
+							mesh="gelsight_mini" 
+							condim="6" 
+							mass="0.2" 
+							solimp="0.09 0.95 0.001 0.5 2" 
+							friction="0.9 0.9 0.9"
+							/>
+					<!-- <geom pos="0 0 0" name="gelsight_mini_right" type="mesh" mesh="gelsight_mini_simplified" condim="6" mass="0.2" solimp="0.09 0.95 0.001 0.5 2" /> -->
+					
+					<camera name="gelsight_mini_cam_right" 
+						mode="fixed" 
+						fovy="35"
+						quat="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476"
+						pos="0.015 0 0.012" />
+
+					</body>
+
+				</body>
+
+			<site name="tcp" pos="0 0 0.16" size="0.0001" group="2"/>
+
+		</body>
+
+	</worldbody>
+
+
+</mujoco>

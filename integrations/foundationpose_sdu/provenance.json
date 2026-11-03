@@ -1,0 +1,37 @@
+{
+  "official_repository": "https://github.com/NVlabs/FoundationPose",
+  "official_commit": "a1b694b83e633c2cb6115b9063d940a687759392",
+  "sdu_repository": "https://gitlab.sdu.dk/robot_learning/vision/foundation_pose",
+  "sdu_commit": "f4b04cd30bdae0b72a0a548192965782b5553587",
+  "added_files": [
+    "README.md",
+    "grasp_config_ui.py",
+    "real_sense_interface.py",
+    "run_single_pose_robot_demo.py",
+    "run_video_demo.py"
+  ],
+  "modified_files": [
+    ".gitignore",
+    "Utils.py",
+    "environment.yml",
+    "readme.md"
+  ],
+  "original_utils_sha256": "ab77518df7a6c41bef82cb32579d06ccff5d435ee5ad716a8c1fef0c72f05ad4",
+  "adapted_utils_sha256": "362ad53491eee65a185df56eb95b98db612398a7889d4bd059a148f8717f3d12",
+  "supporting_assets": {
+    "path": "files/UR5eGripper",
+    "provenance": "local untracked assets from the pre-split installation"
+  },
+  "local_unpublished_configs": [
+    "grasp_config.json",
+    "grasp_cfd_base_config.json",
+    "grasp_peg_config.json"
+  ],
+  "added_sha256": {
+    "README.md": "68d087b2e585396fcfff4861c4b67a2846558716b473cd174721f6d1d73574d8",
+    "grasp_config_ui.py": "d46d4c7057b3aa5a6b38bd00806039be8b16aa641b7c8e3ee111e317ce54016b",
+    "real_sense_interface.py": "b101370174c178f5bb5ffb9901fb270b71e929a18aa48425d65c49630fcdd8bc",
+    "run_single_pose_robot_demo.py": "10fd2b72bb6e727d08525f98e62717deff3607cd430172fafc167292c5eb53e8",
+    "run_video_demo.py": "1628ef64adec135c691f6f1a8a25ab23e179b4678e4283e9733200883cb49a3f"
+  }
+}

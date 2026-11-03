@@ -17,36 +17,40 @@ proyecto, suites, compatibilidad de modelos y visualización de poses PEM.
 El algoritmo SAM-6D y sus modelos proceden de los autores originales; nuestra
 aportación es la integración y esas adaptaciones, no el método publicado.
 
-## FoundationPose: NVIDIA y la variante de SDU
+## FoundationPose oficial y adaptación SDU separada
 
-- Proyecto oficial: https://github.com/NVlabs/FoundationPose.
-- Variante SDU utilizada: https://gitlab.sdu.dk/robot_learning/vision/foundation_pose.
-- Revisión SDU fijada: `f4b04cd30bdae0b72a0a548192965782b5553587`.
-- Base oficial identificada en ese historial: `a1b694b83e633c2cb6115b9063d940a687759392`.
+- Submódulo oficial: `models/FoundationPoseOfficial`.
+- Repositorio: https://github.com/NVlabs/FoundationPose.
+- Revisión compatible: `a1b694b83e633c2cb6115b9063d940a687759392`.
+- Adaptaciones: `integrations/foundationpose_sdu/`.
+- Origen de esas adaptaciones: https://gitlab.sdu.dk/robot_learning/vision/foundation_pose.
+- Revisión SDU de referencia: `f4b04cd30bdae0b72a0a548192965782b5553587`.
 
-Esta variante conserva el historial de NVIDIA y añade herramientas presentes
-en el repositorio de SDU:
+Los cinco archivos añadidos por SDU se conservan sin editar en `files/`: su
+`README.md`, `real_sense_interface.py`, `run_video_demo.py`,
+`run_single_pose_robot_demo.py` y `grasp_config_ui.py`. Los cambios sobre archivos
+oficiales están en `sdu.patch` (`Utils.py`, entorno, gitignore y documentación).
+`provenance.json` conserva revisiones, inventario y hashes. El algoritmo
+`estimater.py` coincide con la base oficial.
 
-| Archivo o componente | Función |
-| --- | --- |
-| `real_sense_interface.py` | Captura con Intel RealSense. |
-| `run_video_demo.py` | Demo para vídeo/captura. |
-| `run_single_pose_robot_demo.py` | Integración de pose y demostración robótica. |
-| `grasp_config_ui.py` | Interfaz de configuración de agarres y transformaciones. |
-| `UR5eGripper/` | Recursos del robot y gripper utilizados por las herramientas. |
-| `Utils.py` | Ajuste de dtype y dispositivo al calcular ventanas de proyección. |
-| Archivos de instalación y documentación | Adaptación del entorno y sus instrucciones. |
+Los recursos `files/UR5eGripper/` proceden de la instalación local; no estaban
+versionados en el checkout SDU. Esa diferencia de procedencia queda registrada.
+Los tres JSON personales de agarres permanecen locales y no se publican.
 
-Frente a esa base oficial, `estimater.py` no presenta cambios en esta revisión.
-Las herramientas de SDU no se atribuyen a CADTracking. Las configuraciones locales
-no versionadas de agarre (`grasp_config.json`, `grasp_cfd_base_config.json` y
-`grasp_peg_config.json`) permanecen locales y no forman parte del commit fijado.
+`runtime.py`, `run.py` y el puente `pipeline/foundationpose_sdu.py` son adaptadores
+nuestros. Aplican en memoria el cambio SDU de dtype/dispositivo de `Utils.py`,
+validando el archivo oficial y el resultado del parche por hash. El submódulo
+oficial permanece intacto. La copia derivada es regenerable en `.cache/`.
+Las instrucciones de uso están en [la carpeta SDU](../integrations/foundationpose_sdu/README.md).
 
-**Acceso SDU:** este submódulo requiere las credenciales/permisos correspondientes
-en GitLab. No se ha republicado su código en GitHub. La referencia coincide con
-`origin/main` registrado localmente, pero la comprobación remota desde este equipo
-no se pudo completar por falta de autenticación. Un clon público de CADTracking
-no concede acceso al repositorio de SDU.
+Los pesos no se publican y se conservan en `checkpoints/foundationpose/`. La antigua
+carpeta local `models/FoundationPose/` está protegida por permisos del sistema;
+queda ignorada, sin utilizarse, para no borrar sus archivos. No forma parte de un
+clon nuevo ni es una dependencia del runtime reorganizado.
+
+Ambos submódulos apuntan ahora a GitHub y clonar CADTracking no necesita acceso al
+GitLab de SDU. Las adaptaciones conservan la atribución y la licencia original
+en `LICENSE.upstream`; la separación no cambia sus condiciones.
 
 ## Código propio de CADTracking
 
@@ -62,7 +66,7 @@ la integración no cambia las condiciones de esos proyectos.
 
 ## Clonar y recuperar las revisiones exactas
 
-Con acceso a ambos servicios:
+Los submódulos se descargan desde GitHub:
 
 ```bash
 git clone --recurse-submodules https://github.com/raucal/Tracking-CAD.git
@@ -75,12 +79,6 @@ En un clon existente:
 git submodule sync --recursive
 git submodule update --init --recursive
 git submodule status
-```
-
-Si todavía no se dispone de acceso a SDU, se puede recuperar SAM-6D por separado:
-
-```bash
-git submodule update --init --recursive models/SAM-6D
 ```
 
 No usar `git submodule update --remote` para reproducir la instalación: ese comando

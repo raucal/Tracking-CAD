@@ -41,7 +41,7 @@ class SettingsTests(unittest.TestCase):
             self.assertEqual(result.returncode,0,result.stderr)
             values=json.loads(result.stdout)
             self.assertEqual(values['paths']['sam6d'],str(root/'models/SAM-6D'))
-            self.assertEqual(values['paths']['foundationpose'],str(root/'models/FoundationPose'))
+            self.assertEqual(values['paths']['foundationpose'],str(root/'models/FoundationPoseOfficial'))
             self.assertNotIn('/home/raca',result.stdout)
 
     def test_suite_cli_overrides_profile_without_running_gpu(self):

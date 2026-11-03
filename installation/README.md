@@ -70,7 +70,7 @@ nvidia-smi
 nvcc --version
 ```
 
-`paths.sam6d` debe apuntar a `models/SAM-6D`; `paths.foundationpose`, a `models/FoundationPose`. Los repositorios, checkpoints, extensiones y plantillas se organizan como describe el README principal.
+`paths.sam6d` debe apuntar a `models/SAM-6D`; `paths.foundationpose`, a `models/FoundationPoseOfficial`. Los repositorios, checkpoints, extensiones y plantillas se organizan como describe el README principal.
 
 Instala o conserva Blender 3.3.1 y configura `paths.blender` con su ejecutable real. El valor distribuido apunta a una instalación hermana `../.runtime/blender/`. En otra máquina hay que adaptar esa ruta.
 
@@ -99,7 +99,7 @@ No se descargan aquí los pesos de FoundationPose, ni se prepara el dataset de e
 Coloca los pesos de inferencia oficiales en:
 
 ```text
-models/FoundationPose/weights/
+models/FoundationPoseOfficial/weights/
 ├── 2023-10-28-18-33-37/
 │   ├── model_best.pth
 │   └── config.yml
@@ -188,5 +188,13 @@ Las guías oficiales dentro de `models/` pertenecen a los proyectos originales. 
 
 SAM-6D y FoundationPose están fijados como submódulos. Antes de instalar, ejecutar
 `git submodule sync --recursive` y `git submodule update --init --recursive`.
-FoundationPose utiliza la variante de SDU, que requiere acceso a su GitLab.
+FoundationPose utiliza el submódulo oficial de NVIDIA. Las adaptaciones de SDU se conservan en `integrations/foundationpose_sdu/`; ya no se necesita acceder a GitLab para clonar.
 Consultar [procedencia, revisiones y clonación parcial](../docs/PROVENANCE.md).
+
+La configuración `paths.foundationpose` apunta a `models/FoundationPoseOfficial`.
+El runtime aplica en memoria la compatibilidad de SDU de `Utils.py` y comprueba sus
+hashes; no parchear el submódulo manualmente. Los pesos locales se conservan en
+`checkpoints/foundationpose/`, enlazados desde `models/FoundationPoseOfficial/weights`.
+Una copia antigua protegida puede seguir en `models/FoundationPose/`: está ignorada
+y no la utiliza esta configuración. Se debe reiniciar una interfaz ya abierta para
+que sus nuevos procesos usen la separación.

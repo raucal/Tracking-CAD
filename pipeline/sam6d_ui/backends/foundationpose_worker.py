@@ -12,6 +12,7 @@ import time
 
 
 from settings import path
+from foundationpose_sdu import install as install_sdu_compatibility
 FOUNDATIONPOSE = Path(os.environ.get('FOUNDATIONPOSE_ROOT', path('foundationpose')))
 NATIVE = Path(os.environ.get('FOUNDATIONPOSE_NATIVE', path('native')/'foundationpose'))
 
@@ -48,6 +49,7 @@ def load_models():
         raise RuntimeError('FoundationPose requiere CUDA.')
     sys.path[:0] = [str(NATIVE), str(FOUNDATIONPOSE)]
     import mycpp
+    install_sdu_compatibility(FOUNDATIONPOSE)
     from estimater import ScorePredictor, PoseRefinePredictor
     import nvdiffrast.torch as dr
     torch.set_num_threads(4)
@@ -67,6 +69,7 @@ def estimate(args, runtime=None):
     sys.path[:0] = [str(NATIVE), str(FOUNDATIONPOSE)]
     # Precargar la extensión de esta versión de Python antes de importar Utils.
     import mycpp
+    install_sdu_compatibility(FOUNDATIONPOSE)
     from estimater import FoundationPose, ScorePredictor, PoseRefinePredictor
     import nvdiffrast.torch as dr
     from Utils import draw_posed_3d_box, draw_xyz_axis, set_seed

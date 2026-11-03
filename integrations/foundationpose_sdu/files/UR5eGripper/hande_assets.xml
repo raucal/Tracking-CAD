@@ -1,0 +1,6 @@
+<mujocoinclude>
+	<mesh name="hande"        file="../assets/hande/assets/hande.stl" />
+	<mesh name="coupler"      file="../assets/hande/assets/coupler.stl" />
+	<mesh name="right_finger" file="../assets/hande/assets/finger_1.stl" />
+	<mesh name="left_finger"  file="../assets/hande/assets/finger_2.stl" />
+</mujocoinclude>

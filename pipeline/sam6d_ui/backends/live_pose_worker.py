@@ -8,6 +8,7 @@ import sys
 import time
 
 from foundationpose_worker import FOUNDATIONPOSE, NATIVE, valid_pose
+from foundationpose_sdu import install as install_sdu_compatibility
 
 
 def emit(value):
@@ -25,6 +26,7 @@ def main():
     import trimesh
     sys.path[:0]=[str(NATIVE),str(FOUNDATIONPOSE)]
     import mycpp
+    install_sdu_compatibility(FOUNDATIONPOSE)
     from estimater import FoundationPose, ScorePredictor, PoseRefinePredictor
     import nvdiffrast.torch as dr
     from Utils import draw_posed_3d_box, draw_xyz_axis, set_seed
