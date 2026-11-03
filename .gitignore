@@ -6,8 +6,8 @@
 /pipeline/native/
 /checkpoints/
 /.cache/
-# Independent upstream checkout; its own Git history remains intact.
-/models/FoundationPose/
+# Model sources are pinned submodules; generated assembly inputs remain local.
+/data/assemblies/*/prepared/
 __pycache__/
 *.py[cod]
 *.so

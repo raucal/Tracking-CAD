@@ -1,3 +1,9 @@
 [submodule "SAM-6D"]
 	path = models/SAM-6D
-	url = https://github.com/JiehongLin/SAM-6D
+	url = https://github.com/raucal/SAM-6D.git
+	branch = cadtracking
+[submodule "FoundationPose"]
+	path = models/FoundationPose
+	url = https://gitlab.sdu.dk/robot_learning/vision/foundation_pose.git
+	branch = main
+	ignore = untracked

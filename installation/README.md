@@ -182,3 +182,11 @@ Si cambiaste las rutas de los entornos, adapta los dos primeros comandos a las r
 Se necesitan dos listas de versiones porque son dos entornos con paquetes y algunas versiones diferentes. Conservarlas evita que una instalación cambie bibliotecas sin querer. Modificarlas requiere validar los backends; no se deben combinar los entornos eliminando uno de esos archivos.
 
 Las guías oficiales dentro de `models/` pertenecen a los proyectos originales. El arranque habitual está en el README principal; los detalles operativos y parámetros están en la referencia, y esta guía cubre la instalación.
+
+
+## Recuperar los repositorios de modelos
+
+SAM-6D y FoundationPose están fijados como submódulos. Antes de instalar, ejecutar
+`git submodule sync --recursive` y `git submodule update --init --recursive`.
+FoundationPose utiliza la variante de SDU, que requiere acceso a su GitLab.
+Consultar [procedencia, revisiones y clonación parcial](../docs/PROVENANCE.md).
