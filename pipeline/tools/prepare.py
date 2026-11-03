@@ -88,11 +88,12 @@ def repair_topology(mesh):
     return repaired
 
 
-def prepare(config_path, output, repair=False):
+def prepare(config_path, output, repair=False, assembly=None):
     import trimesh
 
     config_path, output = Path(config_path).resolve(), Path(output).resolve()
-    cfg = json.loads(config_path.read_text())
+    from assembly_config import select_assembly
+    cfg, selected_assembly = select_assembly(config_path, json.loads(config_path.read_text()), assembly)
     def resolve(key):
         return (config_path.parent / cfg[key]).resolve()
     cad_dir, photos = resolve("cad_dir"), resolve("photos_dir")
@@ -105,6 +106,8 @@ def prepare(config_path, output, repair=False):
               for name, p in catalog["parts"].items()}
     by_key.update({p["cad_stem"]: dict(p, name=name, fixed=True, optional=False)
                    for name, p in catalog["fixed_parts"].items()})
+    if selected_assembly is not None:
+        by_key = {key: dict(info, cad_stem=key) for key, info in selected_assembly['parts'].items()}
     stls = {p.stem: p for p in cad_dir.glob("*.stl")}
     if set(stls) != set(by_key):
         raise ValueError("El inventario CAD y catálogo no coincide.")
@@ -117,9 +120,12 @@ def prepare(config_path, output, repair=False):
     def rel(p):
         return os.path.relpath(Path(p).resolve(), output)
     manifest = {"schema_version": 1, "assembly_id": cfg["assembly_id"],
-                "status": "data_prepared_not_inferred", "parts": [], "frames": [],
+                "assembly_name": cfg.get("assembly"), "status": "data_prepared_not_inferred", "parts": [], "frames": [],
                 "warnings": [], "provenance": {key: sha256(resolve(key)) for key in
                 ("catalog",)}}
+    if selected_assembly is not None:
+        manifest['assembly_name'] = cfg['assembly']
+        manifest['provenance']['assembly_registry'] = sha256(resolve('assembly_registry'))
     for category_id, key in enumerate(sorted(stls), 1):
         mesh = trimesh.load_mesh(stls[key], process=True)
         if not isinstance(mesh, trimesh.Trimesh) or len(mesh.faces) == 0:
@@ -207,8 +213,15 @@ def main():
     parser.add_argument("--config", type=Path, default=dataset_path())
     parser.add_argument("--output", type=Path, default=PREPARED)
     parser.add_argument("--repair-topology", action="store_true", help="Repair singular topology without changing triangles; requires manifold3d.")
+    parser.add_argument("--assembly", help="Assembly key from the shared CAD registry")
     args = parser.parse_args()
-    prepare(args.config, args.output, repair=args.repair_topology)
+    selected = args.assembly or json.loads(args.config.read_text()).get("assembly", "printed_assembly")
+    if selected != "printed_assembly" and args.output == PREPARED:
+        args.output = PREPARED.parent / 'assemblies' / selected / 'prepared'
+    try:
+        prepare(args.config, args.output, repair=args.repair_topology, assembly=selected)
+    except (ValueError, OSError) as error:
+        parser.error(str(error))
 
 
 if __name__ == "__main__":

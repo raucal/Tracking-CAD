@@ -119,3 +119,15 @@ Para empezar puedes usar los valores actuales. Un argumento de terminal prevalec
 | Un análisis falla | Lee el mensaje de la interfaz y el enlace a `error.log`. |
 
 Para continuar: [referencia de archivos, parámetros y funcionamiento](docs/REFERENCE.md) · [instalación y reconstrucción de datos](installation/README.md).
+
+## Elegir ensamblaje
+
+El registro compartido es `PDDL/Assembly CAD/assemblies.json`. Los CAD originales
+están separados en `Assembly parts/printed_assembly/` y
+`Assembly parts/printed_assembly_2/`. Consulta la [guía de los ensamblajes](../PDDL/Assembly%20CAD/README.md).
+
+La suite admite `assembly` en `config/suite.json` y `--assembly printed_assembly`
+en terminal. La preparación admite `--assembly printed_assembly_2`, que usa un
+directorio de salida independiente. La interfaz incluye un selector de ensamblaje
+y pieza para usar sus STL originales. La segunda versión aún necesita sus capturas
+y plantillas antes de ejecutar una suite; no reutiliza las de la primera.

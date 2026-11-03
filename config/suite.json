@@ -11,5 +11,6 @@
   "threads": 16,
   "reference_cache": "../.cache/reference_features",
   "pose": true,
-  "frame": []
+  "frame": [],
+  "assembly": "printed_assembly"
 }

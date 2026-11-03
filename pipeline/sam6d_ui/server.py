@@ -77,6 +77,29 @@ class App:
             message=current['message'] if current else startup['message']
         return {'startup':startup,'job':job,'message':message,'tracking':self.tracker.status(),'camera':self.camera.status()}
 
+    def assembly_catalogs(self):
+        from settings import dataset_path
+        dataset = dataset_path()
+        config = json.loads(dataset.read_text())
+        if not config.get('assembly_registry'):
+            return []
+        registry_path = (dataset.parent / config['assembly_registry']).resolve()
+        registry = json.loads(registry_path.read_text())
+        entries = []
+        for key, spec in registry['assemblies'].items():
+            folder = (registry_path.parent / spec['cad_dir']).resolve()
+            parts = []
+            for part_key, part in spec['parts'].items():
+                source = folder / (part_key + '.stl')
+                try:
+                    relative = source.relative_to(self.files.root)
+                except ValueError:
+                    continue
+                if source.is_file():
+                    parts.append({'key': part_key, 'name': part['name'], 'path': str(relative)})
+            entries.append({'key':key, 'label':spec['label'], 'parts':parts})
+        return entries
+
     def status(self):
         from .engine import environment
         from .backends.foundationpose import availability
@@ -84,7 +107,7 @@ class App:
             self.foundationpose_status = availability()
         env = environment()
         names = display_names()
-        return {"environment": env, "foundationpose": self.foundationpose_status,
+        return {"assemblies": self.assembly_catalogs(), "environment": env, "foundationpose": self.foundationpose_status,
                 "startup":dict(self.startup), "mode": "local_gpu_service", "pose_available": env["pose_available"],
                 "examples": [{"name": f["name"], "label": f["name"]} for f in self.manifest["frames"]],
                 "catalog": [{"key": p["key"], "name": names.get(p["key"], p["name"])} for p in self.manifest["parts"]],

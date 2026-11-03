@@ -498,3 +498,16 @@ Fuentes oficiales: [SAM-6D de JiehongLin](https://github.com/JiehongLin/SAM-6D) 
 La web, RealSense, perfiles, lanzador, suites, informes, control de recuperación y scripts de integración de `pipeline/` son desarrollo del proyecto. En los repositorios de los modelos también hay adaptaciones locales, como `pddl_pipeline.py`, `run_*pddl.py` y la visualización del triedro PEM. No son una copia oficial intacta: conserva esas adaptaciones al trasladar la instalación.
 
 Los repositorios originales mantienen sus licencias, historia Git y documentación propia. Los archivos de `pipeline/setup/` son entradas del instalador; la entrada al proyecto es el [README principal](../README.md), esta referencia concentra los detalles y [la guía de instalación](../installation/README.md) cubre entornos y dependencias.
+
+## Selección de ensamblaje
+
+`config/suite.json`: `assembly` selecciona el ensamblaje (`printed_assembly` por
+defecto). `--assembly` lo sobrescribe. Si se selecciona otro ensamblaje y no se
+especifica un manifest distinto, se usa
+`data/assemblies/<assembly>/prepared/manifest.json`. El manifest debe corresponder
+al ensamblaje seleccionado. Las suites nuevas de la segunda versión se guardan
+en `results/suites/printed_assembly_2/`; las salidas existentes no se mueven.
+
+`data/dataset.json`: `assembly` y `assembly_registry` seleccionan la geometría e
+inventario canónicos al preparar. `prepare --assembly` sobrescribe la selección
+sin modificar el JSON. Cada versión utiliza sus propias capturas y modelos.

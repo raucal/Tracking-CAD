@@ -63,7 +63,14 @@ document.querySelectorAll('.browse-server').forEach(button=>button.onclick=()=>{
 $('browser-close').onclick=()=>$('server-browser').close();$('browser-go').onclick=()=>browse($('browser-path').value);$('browser-up').onclick=()=>{if(browseParent)browse(browseParent);};$('browser-path').onkeydown=event=>{if(event.key==='Enter'){event.preventDefault();browse($('browser-path').value);}};
 document.querySelectorAll('[data-location]').forEach(button=>button.onclick=()=>browse(serverRoot+(button.dataset.location?'/'+button.dataset.location:'')));
 $('run-example').onclick=()=>submit({example:$('example-frame').value,example_cad:$('example-cad').value,options:config()});
-fetch('/api/status').then(r=>r.json()).then(data=>{const env=data.environment;if(data.startup?.segmentor){$('segmentor').value=data.startup.segmentor;$('backbone').value=data.startup.backbone||'vit_h';$('segmentor').onchange();}window.visionEnvironment=data;const ids={pose_backend:'pose-backend',device:'device-select'};
+fetch('/api/status').then(r=>r.json()).then(data=>{const env=data.environment;if(data.startup?.segmentor){$('segmentor').value=data.startup.segmentor;$('backbone').value=data.startup.backbone||'vit_h';$('segmentor').onchange();}window.visionEnvironment=data;
+const assemblies=data.assemblies||[];
+$('assembly-select').replaceChildren(...assemblies.map(a=>new Option(a.label,a.key)));
+function chooseAssemblyPart(){const a=assemblies.find(a=>a.key===$('assembly-select').value);const p=a?.parts.find(p=>p.key===$('assembly-part').value);if(p)$('server-cad').value=p.path;}
+function chooseAssembly(){const a=assemblies.find(a=>a.key===$('assembly-select').value);$('assembly-part').replaceChildren(...(a?.parts||[]).map(p=>new Option(p.name,p.key)));chooseAssemblyPart();}
+$('assembly-select').onchange=chooseAssembly;$('assembly-part').onchange=chooseAssemblyPart;
+chooseAssembly();
+const ids={pose_backend:'pose-backend',device:'device-select'};
 for(const [key,value] of Object.entries(data.defaults||{})){const el=$(ids[key]||key);if(el){if(el.type==='checkbox')el.checked=value;else el.value=value;}}
 if($('pose-backend').value==='foundationpose'&&!data.foundationpose?.available)$('pose-backend').value='pem';
 const cam=data.camera_defaults||{};if(cam.width)$('camera-resolution').value=cam.width+'x'+cam.height;if(cam.fps)$('camera-fps').value=cam.fps;

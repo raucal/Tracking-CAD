@@ -114,7 +114,9 @@ def display_names():
 def run_dataset(run, source):
     """Historical manifest bytes stay with the run; shared assets stay in prepared/."""
     snapshot = Path(source) / 'dataset_manifest.json'
-    if snapshot.is_file(): return snapshot, PREPARED
+    if snapshot.is_file():
+        recorded = Path(run['manifest'])
+        return snapshot, recorded.parent if recorded.is_file() else PREPARED
     recorded = Path(run['manifest'])
     if recorded.is_file(): return recorded, recorded.parent
     return PREPARED / 'manifest.json', PREPARED
