@@ -32,3 +32,26 @@ Los scripts se han conservado tal cual; sus opciones y dependencias específicas
 son las de SDU. No se han ejecutado demos ni comandos del robot durante esta separación.
 Los pesos permanecen fuera de Git, en `checkpoints/foundationpose/`, enlazados desde
 el submódulo. Clonar el repositorio ya no requiere acceso a GitLab SDU.
+
+
+## Comprobación de arranque
+
+`--check` debe ir antes del nombre del script. Carga sus importaciones sin ejecutar
+el bloque principal: no abre la cámara ni conecta al robot.
+
+```bash
+../.venvs/foundationpose/bin/python integrations/foundationpose_sdu/run.py --check run_video_demo.py
+../.venvs/foundationpose/bin/python integrations/foundationpose_sdu/run.py --check --teleop-root ../PDDL/DINOBOT/alignment_and_replay-main run_single_pose_robot_demo.py
+```
+
+La demo robótica depende del paquete externo `teleop_setup`. `--teleop-root`
+selecciona la carpeta que lo contiene; también puede configurarse mediante
+`SDU_TELEOP_ROOT`. Este paquete no se modifica ni se copia a CADTracking.
+Sin `--check`, la demo original conecta y envía un movimiento al robot al arrancar.
+Los argumentos posteriores al nombre del script, incluido `--help`, se pasan al
+programa SDU. Para la demo de vídeo hay que indicar `--mesh_file` y `--mesh_scale`
+si no están presentes sus datos originales de ejemplo.
+
+Se comprobó el arranque con el CAD control_panel: ventana de agarres en pantalla
+virtual, carga de modelos de vídeo y recepción RGB-D RealSense a 640×480. La demo
+robótica se verificó únicamente con `--check`, sin conexión ni movimientos.
