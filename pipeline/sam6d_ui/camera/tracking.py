@@ -175,6 +175,13 @@ class LivePoseTracker:
             session_dir.mkdir(parents=True, exist_ok=True)
             worker = self.resident_factory()
             worker.start_tracking(folder)
+            seed_result = folder / 'result.json'
+            initial = json.loads(seed_result.read_text()) if seed_result.is_file() else {}
+            current_cad = initial.get('cad_key')
+            with self.lock:
+                self.details.update(cad_key=current_cad, display_name=initial.get('display_name'),
+                                    identification=initial.get('identification') is not None,
+                                    component_changes=0)
             calibration = json.loads((folder/'camera.json').read_text())
             K = np.asarray(calibration['cam_K']).reshape(3, 3)
             previous = published = smoothed = None
@@ -272,8 +279,11 @@ class LivePoseTracker:
                         else:
                             misses = 0
                             agreement = bbox_agreement(job['predicted'], detection.get('bbox_xyxy'))
+                            component_changed = detection.get('cad_key') is not None and detection['cad_key'] != current_cad
                             needs_registration = lost
-                            if not lost:
+                            if component_changed:
+                                needs_registration = True
+                            elif not lost:
                                 if agreement is None: entry.update(status='unverified')
                                 elif agreement['consistent']:
                                     disagreements = 0; entry.update(status='consistent', **agreement)
@@ -286,7 +296,8 @@ class LivePoseTracker:
                             if needs_registration and not lost:
                                 # A backup result can confirm drift, but registration must use
                                 # a new snapshot captured after declaring tracking lost.
-                                mark_lost('SAM confirma un desvío. Buscando una detección nueva…', frame['number'])
+                                mark_lost('SAM identifica otra pieza. Confirmando el CAD con una imagen nueva…' if component_changed else
+                                          'SAM confirma un desvío. Buscando una detección nueva…', frame['number'])
                                 needs_registration = False
                                 entry.update(status='tracking_loss_confirmed')
                             if needs_registration:
@@ -297,6 +308,11 @@ class LivePoseTracker:
                                     if self.stop_event.is_set(): break
                                     registered = worker.relocalize(sam_scratch)
                                     if self.stop_event.is_set(): break
+                                    if detection.get('cad_key') is not None:
+                                        current_cad = detection['cad_key']
+                                        with self.lock:
+                                            self.details.update(cad_key=current_cad, display_name=detection['display_name'])
+                                            if component_changed: self.details['component_changes'] += 1
                                     lost = False
                                     force_fresh = False
                                     previous = published = smoothed = None

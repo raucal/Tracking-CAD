@@ -79,6 +79,7 @@ def profile(kind, filename=None):
         import math
         if isinstance(interval,bool) or not isinstance(interval,(int,float)) or not math.isfinite(interval) or interval!=0 and not 1<=interval<=3600: raise ValueError(f'{source}: invalid redetection interval')
         tracking = defaults['tracking']; quality = tracking['quality']
+        if type(tracking['identify_assembly']) is not bool: raise ValueError(f'{source}: invalid identify_assembly')
         for key in ('recovery_retry_s','max_detection_age_s'):
             value=tracking[key]
             if isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value) or value<=0: raise ValueError(f'{source}: invalid {key}')

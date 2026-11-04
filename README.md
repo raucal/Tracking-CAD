@@ -134,12 +134,36 @@ Para continuar: [referencia de archivos, parámetros y funcionamiento](docs/REFE
 
 ## Elegir ensamblaje
 
-El registro compartido es `PDDL/Assembly CAD/assemblies.json`. Los CAD originales
-están separados en `Assembly parts/printed_assembly/` y
-`Assembly parts/printed_assembly_2/`. Consulta la [guía de los ensamblajes](../PDDL/Assembly%20CAD/README.md).
+Los inventarios compartidos son los archivos `assembly.json` junto a los CAD en
+`PDDL/Assembly CAD/Assembly parts/<ensamblaje>/`. La configuración `assembly_registry`
+apunta a `PDDL/Assembly CAD`; también admite el antiguo registro JSON. La interfaz
+descubre los tres ensamblajes disponibles. Consulta la [guía de los ensamblajes](../PDDL/Assembly%20CAD/README.md).
 
 La suite admite `assembly` en `config/suite.json` y `--assembly printed_assembly`
 en terminal. La preparación admite `--assembly printed_assembly_2`, que usa un
 directorio de salida independiente. La interfaz incluye un selector de ensamblaje
 y pieza para usar sus STL originales. La segunda versión aún necesita sus capturas
 y plantillas antes de ejecutar una suite; no reutiliza las de la primera.
+
+### Identificar automáticamente la pieza en cámara
+
+En «Intel RealSense en directo», cambia «Origen del CAD» a «Identificar pieza del
+ensamblaje» y elige el ensamblaje. No necesitas seleccionar su pieza: SAM6D compara
+las propuestas de la imagen con todos sus CAD preparados y elige la detección con
+mayor score que supere el umbral de aceptación. Requiere RGB-D, milímetros y las
+plantillas completas de ese ensamblaje. Si no supera el umbral, no declara una pieza.
+
+«Analizar fotograma actual» identifica una vez. «Iniciar detección en directo»
+repite el análisis tras el intervalo SAM indicado. Con FoundationPose, «Localizar
+e iniciar seguimiento rápido» mantiene la pose entre comprobaciones y vuelve a
+identificar cada 10 segundos por defecto. Si SAM encuentra otra pieza, confirma
+con un fotograma nuevo y registra el nuevo CAD antes de publicar su pose. El estado
+muestra la pieza actual, su score y el número de cambios. Solo se ejecuta una
+comprobación SAM a la vez; no se acumulan intervalos si el análisis tarda más.
+El intervalo 0 desactiva la comprobación periódica; en seguimiento rápido conserva
+la recuperación automática cuando se pierde la pose.
+
+Para seleccionar este modo por defecto, usa `"identify_assembly": true` dentro de
+`tracking` en `config/interface.json`. La frecuencia sigue controlada por
+`tracking.redetect_interval_s`. Si hay varias piezas visibles se sigue una sola,
+la de mayor score; no es seguimiento simultáneo de todas las piezas.

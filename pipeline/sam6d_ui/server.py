@@ -57,7 +57,7 @@ class App:
         try:
             update('Cargando FoundationPose en GPU…')
             worker=self.pose_worker();worker.warmup();timing['foundationpose_load_s']=worker.status()['load_s']
-            self.foundationpose_status={'available':True,'cuda':True,'python':str(worker.python)}
+            self.foundationpose_status={'available':True,'verified':True,'cuda':True,'python':str(worker.python)}
         except Exception as error:errors.append('FoundationPose: '+str(error))
         try:
             from .engine import Engine
@@ -78,16 +78,17 @@ class App:
         return {'startup':startup,'job':job,'message':message,'tracking':self.tracker.status(),'camera':self.camera.status()}
 
     def assembly_catalogs(self):
+        from assembly_config import load_registry, registry_root
         from settings import dataset_path
         dataset = dataset_path()
         config = json.loads(dataset.read_text())
         if not config.get('assembly_registry'):
             return []
         registry_path = (dataset.parent / config['assembly_registry']).resolve()
-        registry = json.loads(registry_path.read_text())
+        registry = load_registry(registry_path)
         entries = []
         for key, spec in registry['assemblies'].items():
-            folder = (registry_path.parent / spec['cad_dir']).resolve()
+            folder = (registry_root(registry_path) / spec['cad_dir']).resolve()
             parts = []
             for part_key, part in spec['parts'].items():
                 source = folder / (part_key + '.stl')
@@ -102,9 +103,9 @@ class App:
 
     def status(self):
         from .engine import environment
-        from .backends.foundationpose import availability
+        from .backends.foundationpose import configured
         if self.foundationpose_status is None:
-            self.foundationpose_status = availability()
+            self.foundationpose_status = configured()
         env = environment()
         names = display_names()
         return {"assemblies": self.assembly_catalogs(), "environment": env, "foundationpose": self.foundationpose_status,
@@ -161,15 +162,25 @@ class App:
         if request.get('continuous') and min(shutil.disk_usage(folder).free for folder in (self.data_root, self.camera.root)) < 256 * 1024**2:
             raise ValueError('Detección en directo detenida: se necesitan al menos 256 MiB libres para otro análisis.')
         manual_bbox=request.get('manual_bbox')
+        auto_assembly = request.get('auto_assembly')
+        assembly_manifest = None
+        if auto_assembly is not None:
+            if not isinstance(auto_assembly, str) or not request.get('live_camera') or manual_bbox is not None or request.get('recording_id'):
+                raise ValueError('La identificación de ensamblaje requiere RealSense en directo e inicialización automática.')
+            from .assembly_identification import assembly_catalog
+            assembly_manifest, parts = assembly_catalog(auto_assembly)
+            request = {**request, 'server_files': {'cad': str(assembly_manifest.parent / parts[0]['source_stl'])}}
         if manual_bbox is not None and request.get('continuous'):
             raise ValueError('La caja manual usa una imagen congelada. Utiliza el seguimiento rápido para continuar en directo.')
         config = options(request.get('options', {}))
+        if auto_assembly is not None and (config['mode'] != 'rgbd' or config['cad_units'] != 'mm'):
+            raise ValueError('La identificación del ensamblaje requiere RGB-D y unidades CAD en milímetros.')
         if manual_bbox is not None and config['pose_backend']!='foundationpose':
             raise ValueError('La caja manual está disponible con FoundationPose.')
         request = {**request, 'options': config}
         if config['pose_backend'] == 'foundationpose':
             from .backends.foundationpose import availability
-            if self.foundationpose_status is None:
+            if self.foundationpose_status is None or not self.foundationpose_status.get('verified', False):
                 self.foundationpose_status = availability()
             if not self.foundationpose_status['available']:
                 raise ValueError(self.foundationpose_status.get('reason') or 'FoundationPose no está preparado.')
@@ -234,6 +245,8 @@ class App:
         parent.mkdir(parents=True, exist_ok=True)
         folder = parent / job_id
         inputs = prepare_upload(request, folder)
+        if auto_assembly is not None:
+            inputs.update(auto_assembly=auto_assembly, assembly_manifest=str(assembly_manifest))
         if manual_bbox is not None:
             from .backends.manual_pose import validate_box
             inputs['manual_bbox']=validate_box(manual_bbox,inputs['rgb_size'])
@@ -466,7 +479,7 @@ def handler(app):
                 except (ValueError, KeyError, IndexError):
                     self.send_error(404)
                     return
-            elif path in ("/", "/index.html", "/viewer", "/viewer.html", "/app.js", "/video.js", "/camera.js", "/manual.js", "/style.css"):
+            elif path in ("/", "/index.html", "/viewer", "/viewer.html", "/app.js", "/video.js", "/camera.js", "/manual.js", "/identification.js", "/style.css"):
                 target = HERE / "static" / ("index.html" if path == "/" else "viewer.html" if path == "/viewer" else path[1:])
             else:
                 self.send_error(404)

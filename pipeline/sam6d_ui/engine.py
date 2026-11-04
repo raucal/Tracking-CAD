@@ -184,21 +184,30 @@ class Engine:
         model.post_processing_config.nms_thresh = config["nms"]
         model.matching_config.aggregation_function = config["aggregation"]
         with measured(timing, "cad_prepare_s", device):
-            part, base, renderer = self.prepare_cad(folder, inputs, update)
+            if inputs.get('auto_assembly'):
+                from .assembly_identification import assembly_catalog
+                manifest, parts = assembly_catalog(inputs['auto_assembly'])
+                base = manifest.parent
+                parts = [dict(p, name=self.names.get(p['key'], p['name'])) for p in parts]
+                part = parts[0]
+                renderer = 'existing_blender_templates'
+            else:
+                part, base, renderer = self.prepare_cad(folder, inputs, update)
+                parts = [part]
         with measured(timing, "reference_features_s", device):
             update("Preparando las referencias DINOv2 del CAD")
-            reference_token=self.reference_key(part,base)
+            reference_token=tuple(self.reference_key(p,base) for p in parts)
             if reference_token==self.reference_token and self.reference_record is not None:
                 references={**self.reference_record,'parts':[{**record,'cache_hit':True,'memory_hit':True} for record in self.reference_record['parts']]}
             else:
-                references = load_references(model, [part], base, device, self.reference_cache)
+                references = load_references(model, parts, base, device, self.reference_cache)
                 self.reference_token=reference_token;self.reference_record=references
         update("Detectando y segmentando el objeto en la imagen")
         with Image.open(folder / "input_rgb.png") as source:
             rgb = source.convert("RGB")
         if config["mode"] == "rgbd":
             frame = {"name": "input", "frame_id": 0, "rgb": "input_rgb.png", "depth": "depth.png", "camera": "camera.json"}
-            case, rgb, detections, masks, accepted = process_frame(model, frame, [part], folder, device, config["min_score"], config["confidence"])
+            case, rgb, detections, masks, accepted = process_frame(model, frame, parts, folder, device, config["min_score"], config["confidence"])
             inference_timing = case["timing"]
             proposals = case["proposal_counts"]["valid_depth_and_size"]
             formula = "(semantic + appearance + geometry * visible_ratio) / (2 + visible_ratio)"
@@ -206,6 +215,19 @@ class Engine:
             detections, masks, inference_timing, proposals = rgb_inference(model, rgb, part, device, config["min_score"])
             accepted = [i for i, d in enumerate(detections) if d["score"] >= config["confidence"]]
             formula = "(semantic + appearance) / 2; sin geometría ni profundidad"
+        identification = None
+        if inputs.get('auto_assembly'):
+            # process_frame sorts by score. Keep one CAD for registration and retain
+            # the complete set of candidates for inspection in result.json.
+            candidates = [{k: v for k, v in d.items() if k != 'segmentation'} for d in detections]
+            winner = detections[accepted[0]]['part_key'] if accepted else None
+            identification = {'assembly': inputs['auto_assembly'], 'part_key': winner,
+                              'candidates': candidates, 'comparisons': case['comparisons']}
+            if winner is not None:
+                part = next(p for p in parts if p['key'] == winner)
+                keep = [i for i, d in enumerate(detections) if d['part_key'] == winner]
+                detections, masks = [detections[i] for i in keep], [masks[i] for i in keep]
+                accepted = [i for i, d in enumerate(detections) if d['score'] >= config['confidence']]
         if save_outputs:
             update("Exportando máscaras y resultados")
             visualize(rgb, [detections[i] for i in accepted], [masks[i] for i in accepted], folder / "overlay.png")
@@ -218,6 +240,8 @@ class Engine:
             model_from_input = np.linalg.inv(np.array(part["T_local_from_sam_mm"]))
         else:
             model_from_input[:3, 3] = -np.array(inputs["input_center_mm"])
+        if inputs.get('auto_assembly') and 'T_local_from_sam_mm' not in part:
+            raise ValueError('El CAD preparado necesita T_local_from_sam_mm para identificar su pose automáticamente.')
         if config["pose"]:
             if device.type != "cuda":
                 raise ValueError('La pose 6D requiere CUDA.')
@@ -255,7 +279,7 @@ class Engine:
             else:
                 pose_result = {"status": "no_accepted_detection", "poses": []}
         result = {"status": "complete", "mode": config["mode"], "backend": config['pose_backend'] if config['pose'] else 'sam6d', "device": str(device), "gpu": torch.cuda.get_device_name(device) if device.type == "cuda" else None,
-                  "cad_name": inputs["cad_name"], "cad_key": part["key"], "display_name": part["name"],
+                  "cad_name": part['name'] if identification else inputs["cad_name"], "cad_key": part["key"] if not identification or identification['part_key'] else None, "display_name": part["name"] if not identification or identification['part_key'] else 'Sin identificación fiable',
                   "recognized": bool(accepted), "accepted_detections": len(accepted), "valid_proposals": proposals,
                   "best_score": detections[0]["score"] if detections else None,
                   "formula": formula, "score_is_probability": False, "pose_6d_estimated": bool(pose_result and pose_result.get("poses")), "pose": pose_result,
@@ -263,6 +287,10 @@ class Engine:
                   "inference_stages": inference_timing, "model_reused": reused_model,
                   "reference_cache_hit": references["parts"][0]["cache_hit"], "renderer": renderer,
                   "options": config, "detections": [{k: v for k, v in d.items() if k != "segmentation"} for d in detections]}
+        if identification is not None:
+            result['identification'] = identification
+            result['tracking_model'] = {'mesh': str((base / part['sam_ply']).resolve()),
+                                        'model_from_input': model_from_input.tolist()}
         if save_outputs:(folder / "result.json").write_text(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False))
         else:result["_masks"]=masks
         return result

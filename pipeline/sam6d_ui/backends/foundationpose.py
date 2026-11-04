@@ -13,18 +13,40 @@ def python_path():
     return Path(os.environ.get('FOUNDATIONPOSE_PYTHON', path('foundationpose_python')))
 
 
+def configured():
+    """Cheap, non-blocking check suitable for the HTTP UI startup.
+
+    Importing torch in a separate FoundationPose process can initialize CUDA and
+    take a long time while another process owns the GPU. The browser must not
+    wait for that probe merely to draw its controls. A full probe is still run
+    before the first FoundationPose job.
+    """
+    python = python_path()
+    root = Path(os.environ.get('FOUNDATIONPOSE_ROOT', path('foundationpose')))
+    weights = all((root / 'weights' / stamp / name).is_file()
+                  for stamp in ('2024-01-11-20-02-45', '2023-10-28-18-33-37')
+                  for name in ('model_best.pth', 'config.yml'))
+    available = python.is_file() and root.is_dir() and weights
+    return {
+        'available': available,
+        'verified': False,
+        'python': str(python),
+        'reason': None if available else 'Falta el entorno, el código o los pesos de FoundationPose.',
+    }
+
+
 def availability():
     python = python_path()
     if not python.is_file():
-        return {'available': False, 'reason': 'Falta instalar el entorno de FoundationPose.', 'python': str(python)}
+        return {'available': False, 'verified': True, 'reason': 'Falta instalar el entorno de FoundationPose.', 'python': str(python)}
     try:
         result = subprocess.run([str(python), '-B', str(Path(__file__).with_name('foundationpose_worker.py')), '--probe'],
                                 capture_output=True, text=True, timeout=25)
         if result.returncode:
-            return {'available': False, 'reason': result.stderr[-1500:] or 'No se pudo comprobar FoundationPose.'}
-        return json.loads(result.stdout.strip().splitlines()[-1])
+            return {'available': False, 'verified': True, 'reason': result.stderr[-1500:] or 'No se pudo comprobar FoundationPose.'}
+        return {**json.loads(result.stdout.strip().splitlines()[-1]), 'verified': True}
     except (OSError, ValueError, subprocess.TimeoutExpired) as error:
-        return {'available': False, 'reason': str(error)}
+        return {'available': False, 'verified': True, 'reason': str(error)}
 
 
 _resident=None

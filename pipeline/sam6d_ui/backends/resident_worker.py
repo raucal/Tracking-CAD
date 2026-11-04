@@ -17,6 +17,37 @@ def reply(request_id,**value):
     print('@POSE@'+json.dumps(dict(request_id=request_id,**value),allow_nan=False),flush=True)
 
 
+def configure_tracking(runtime):
+    import numpy as np
+    import trimesh
+    origin, extents = trimesh.bounds.oriented_bounds(runtime['mesh'])
+    runtime.update(inv_origin=np.linalg.inv(origin), bounds=np.stack([-extents/2, extents/2]),
+                   health=PoseHealth(runtime['mesh'], profile('interface')['tracking']['quality']))
+
+
+def select_tracking_model(runtime, metadata, scratch):
+    """Replace geometry when SAM identifies another CAD, reusing loaded networks."""
+    import hashlib
+    import numpy as np
+    import trimesh
+    from estimater import FoundationPose
+    mesh_path = Path(metadata['mesh'])
+    key = hashlib.sha256(mesh_path.read_bytes()).hexdigest()
+    if runtime.get('mesh_key') != key:
+        mesh = trimesh.load(mesh_path, force='mesh')
+        mesh.apply_scale(.001)
+        scorer, refiner, context = runtime['models']
+        old = runtime.pop('estimator', None)
+        if old is not None and old.mesh_path:
+            Path(old.mesh_path).unlink(missing_ok=True)
+        runtime['estimator'] = FoundationPose(model_pts=mesh.vertices, model_normals=mesh.vertex_normals,
+                                             mesh=mesh, scorer=scorer, refiner=refiner, glctx=context,
+                                             debug=0, debug_dir=str(scratch / 'foundationpose_debug'))
+        runtime.update(mesh=mesh, mesh_key=key)
+        configure_tracking(runtime)
+    runtime['model_from_input'] = np.asarray(metadata['model_from_input'])
+
+
 def main():
     runtime={}
     import atexit
@@ -38,11 +69,7 @@ def main():
                 elif command=='start_tracking':
                     if str(Path(request['folder']).resolve())!=runtime.get('last_folder') or runtime['estimator'].pose_last is None:
                         raise ValueError('Vuelve a estimar la pose inicial antes del seguimiento.')
-                    import numpy as np
-                    import trimesh
-                    origin,extents=trimesh.bounds.oriented_bounds(runtime['mesh'])
-                    runtime.update(inv_origin=np.linalg.inv(origin),bounds=np.stack([-extents/2,extents/2]),
-                                   health=PoseHealth(runtime['mesh'],profile('interface')['tracking']['quality']))
+                    configure_tracking(runtime)
                     result={'ready':True}
                 elif command=='relocalize':
                     import numpy as np
@@ -53,6 +80,9 @@ def main():
                     mask=np.load(scratch/'mask.npy',allow_pickle=False).astype(bool)
                     if mask.shape!=depth.shape or np.count_nonzero(mask & (depth>.001))<30:
                         raise ValueError('La nueva detección no tiene suficiente profundidad válida.')
+                    metadata = scratch / 'tracking_model.json'
+                    if metadata.is_file():
+                        select_tracking_model(runtime, json.loads(metadata.read_text()), scratch)
                     estimator=runtime['estimator'];estimator.pose_last=None
                     with torch.inference_mode():pose=backend.valid_pose(estimator.register(K=K,rgb=rgb,depth=depth,ob_mask=mask,iteration=5))
                     if estimator.pose_last is None:raise ValueError('No se pudo registrar la nueva detección.')

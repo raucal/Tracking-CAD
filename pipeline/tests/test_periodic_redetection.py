@@ -52,6 +52,37 @@ class PeriodicTests(unittest.TestCase):
         for value in (True,'3',None,-1,.5,float('nan'),float('inf'),3601):
             with self.assertRaises(ValueError):validate_interval(value)
         self.assertEqual(validate_interval(3),3);self.assertEqual(validate_interval(0),0)
+
+    def test_changed_cad_requires_fresh_detection_even_with_matching_bbox(self):
+        (self.seed/'result.json').write_text(json.dumps({'cad_key':'old','display_name':'Old',
+                                                       'identification':{'assembly':'demo'}}))
+        def detector(frame,scratch,cancelled):
+            return {**self.detector(frame,scratch,cancelled), 'cad_key':'new', 'display_name':'New'}
+        self.tracker.start(self.seed,1,detector)
+        self.until(lambda:self.tracker.status().get('component_changes')==1)
+        self.until(lambda:self.tracker.status()['state']=='tracking')
+        self.assertEqual(self.worker.registrations,1)
+        self.assertGreaterEqual(len(self.detected),2)
+        self.assertGreater(self.detected[1],self.detected[0])
+        self.assertEqual(self.tracker.status()['cad_key'],'new')
+        self.assertEqual(self.tracker.status()['display_name'],'New')
+        self.until(lambda:self.tracker.status()['sam_checks']>=3)
+        self.assertEqual(self.worker.registrations,1)
+
+    def test_failed_cad_registration_does_not_publish_new_identity(self):
+        (self.seed/'result.json').write_text(json.dumps({'cad_key':'old','display_name':'Old'}))
+        def detector(frame,scratch,cancelled):
+            return {**self.detector(frame,scratch,cancelled), 'cad_key':'new', 'display_name':'New'}
+        def register(scratch):
+            self.worker.registrations+=1
+            raise ValueError('No se pudo registrar el nuevo CAD')
+        self.worker.relocalize=register
+        self.tracker.start(self.seed,1,detector)
+        self.until(lambda:self.worker.registrations>=1)
+        self.until(lambda:self.tracker.status()['state']=='recovering')
+        self.assertEqual(self.tracker.status()['cad_key'],'old')
+        self.assertEqual(self.tracker.status()['component_changes'],0)
+        self.assertIsNone(self.tracker.latest_preview())
     def test_healthy_tracking_advances_while_sam_runs_without_reinitializing(self):
         entered=threading.Event();release=threading.Event()
         def detector(frame,scratch,cancelled):
@@ -227,6 +258,27 @@ class PeriodicTests(unittest.TestCase):
 
 
 class DetectorTests(unittest.TestCase):
+    def test_assembly_detection_passes_winning_model_and_clears_it_on_miss(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);seed=root/'seed';seed.mkdir();scratch=root/'scratch';scratch.mkdir()
+            for name in ('input_cad.stl','object_mm.obj'):(seed/name).write_text('fixture')
+            (seed/'inputs.json').write_text(json.dumps({'cad_filename':'input_cad.stl','auto_assembly':'demo',
+                'options':{'segmentor':'sam','confidence':.5,'pose':True}}))
+            model={'mesh':'winner.ply','model_from_input':np.eye(4).tolist()}
+            class Engine:
+                found=True
+                def run(self,folder,inputs,update,save_outputs=True):
+                    assert inputs['auto_assembly']=='demo'
+                    return {'detections':[{'score':.8}] if self.found else [],'_masks':[np.ones((10,10),bool)],
+                            'tracking_model':model,'cad_key':'winner','display_name':'Winning part'}
+            engine=Engine();detector=Redetector(lambda:engine,seed)
+            result=detector(Camera().frame(),scratch,threading.Event())
+            self.assertEqual(result['cad_key'],'winner')
+            self.assertEqual(json.loads((scratch/'tracking_model.json').read_text()),model)
+            engine.found=False
+            self.assertIsNone(detector(Camera().frame(),scratch,threading.Event()))
+            self.assertFalse((scratch/'tracking_model.json').exists())
+
     def test_current_mask_is_returned_without_exports_and_never_reused_on_miss(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp);seed=root/'seed';seed.mkdir();scratch=root/'scratch';scratch.mkdir()

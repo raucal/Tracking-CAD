@@ -113,6 +113,10 @@ class CameraService:
 
     def frame(self, timeout=3):
         with self.condition:
+            if self.error:
+                raise RuntimeError(self.error)
+            if not self.thread or not self.thread.is_alive() or self.stop_event.is_set():
+                raise RuntimeError('La cámara no está activa. Pulsa «Abrir cámara» antes de analizar un fotograma.')
             if not self.condition.wait_for(lambda: self.latest is not None or self.error or self.stop_event.is_set(), timeout):
                 raise RuntimeError('No ha llegado un fotograma de la RealSense.')
             if self.error or not self.thread or not self.thread.is_alive() or self.stop_event.is_set():

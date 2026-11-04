@@ -9,12 +9,13 @@ function busy(value){running=value;$('run').disabled=$('run-example').disabled=v
 async function submit(request){
   if(running)return false;
   busy(true);if(!liveDetection)$('output').hidden=true;
+  if(request.auto_assembly)window.AssemblyIdentification?.pending();
   message('Validando archivos y enviando el trabajo…');
   try{
     const response=await fetch('/api/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(request)});
     const data=await response.json();if(!response.ok)throw new Error(data.error);
     await poll(data.id);lastJobId=data.id;return true;
-  }catch(error){message(error.message,true);return false;}
+  }catch(error){message(error.message,true);if(request.auto_assembly)window.AssemblyIdentification?.error(error.message);return false;}
   finally{busy(false);}
 }
 async function poll(id){
@@ -22,7 +23,14 @@ async function poll(id){
     const response=await fetch('/api/jobs/'+encodeURIComponent(id));const job=await response.json();
     if(!response.ok)throw new Error(job.error);
     message(job.message);
-    if(job.status==='complete'){show(id,job.result);return;}
+    if(job.status==='complete'){
+      window.AssemblyIdentification?.result(job.result);
+      if(job.result.identification?.part_key&&$('assembly-select').value===job.result.identification.assembly){
+        $('assembly-part').value=job.result.identification.part_key;
+        $('assembly-part').onchange?.();
+      }
+      show(id,job.result);return;
+    }
     if(job.status==='error')throw new Error(job.message+' · Detalle disponible en /files/'+id+'/error.log');
     await new Promise(resolve=>setTimeout(resolve,200));
   }
@@ -34,6 +42,7 @@ function stopLiveDetection(reason='Detección en directo detenida.'){
 }
 async function liveCycle(generation){
   if(!liveDetection||generation!==liveGeneration)return;
+  const cycleStarted=performance.now();
   try{
     if($('file-source').value!=='realsense')throw new Error('Selecciona Intel RealSense en directo.');
     liveNote('Analizando un fotograma actual. El directo de la cámara continúa.');
@@ -44,11 +53,19 @@ async function liveCycle(generation){
     if(!ok){stopLiveDetection('Detección detenida por un error. Consulta el mensaje del resultado.');return;}
     liveCompleted++;
     liveNote(liveCompleted+' análisis completados · último resultado a las '+new Date().toLocaleTimeString()+'.');
-    liveTimer=setTimeout(()=>liveCycle(generation),250);
+    const interval=$('camera-cad-source').value==='assembly'?Number($('sam-refresh').value)*1000:250;
+    if($('camera-cad-source').value==='assembly'&&interval===0){stopLiveDetection('Identificación completada. Intervalo 0: repetición desactivada.');return;}
+    if($('camera-cad-source').value==='assembly'&&(!Number.isFinite(interval)||interval<0||(interval>0&&interval<1000)||interval>3600000))throw new Error('El intervalo SAM debe ser 0 o entre 1 y 3600 segundos.');
+    const delay=$('camera-cad-source').value==='assembly'?interval-((performance.now()-cycleStarted)%interval):interval;
+    liveTimer=setTimeout(()=>liveCycle(generation),delay);
   }catch(error){message(error.message,true);stopLiveDetection('Detección detenida: '+error.message);}
 }
 function startLiveDetection(){
   if(window.VisionManual?.active()){message('La caja manual usa un fotograma congelado. Inicia el seguimiento rápido para continuar en directo.',true);return;}
+  if($('camera-cad-source').value==='assembly'){
+    const interval=Number($('sam-refresh').value);
+    if(!Number.isFinite(interval)||(interval!==0&&(interval<1||interval>3600))){message('El intervalo debe ser 0 o estar entre 1 y 3600 segundos.',true);return;}
+  }
   if(running||liveDetection)return;
   liveDetection=true;liveCompleted=0;const generation=++liveGeneration;busy(false);liveCycle(generation);
 }
@@ -67,13 +84,14 @@ fetch('/api/status').then(r=>r.json()).then(data=>{const env=data.environment;if
 const assemblies=data.assemblies||[];
 $('assembly-select').replaceChildren(...assemblies.map(a=>new Option(a.label,a.key)));
 function chooseAssemblyPart(){const a=assemblies.find(a=>a.key===$('assembly-select').value);const p=a?.parts.find(p=>p.key===$('assembly-part').value);if(p)$('server-cad').value=p.path;}
-function chooseAssembly(){const a=assemblies.find(a=>a.key===$('assembly-select').value);$('assembly-part').replaceChildren(...(a?.parts||[]).map(p=>new Option(p.name,p.key)));chooseAssemblyPart();}
+function chooseAssembly(){const a=assemblies.find(a=>a.key===$('assembly-select').value);$('assembly-part').replaceChildren(...(a?.parts||[]).map(p=>new Option(p.name,p.key)));chooseAssemblyPart();window.AssemblyIdentification?.sync();}
 $('assembly-select').onchange=chooseAssembly;$('assembly-part').onchange=chooseAssemblyPart;
 chooseAssembly();
 const ids={pose_backend:'pose-backend',device:'device-select'};
 for(const [key,value] of Object.entries(data.defaults||{})){const el=$(ids[key]||key);if(el){if(el.type==='checkbox')el.checked=value;else el.value=value;}}
 if($('pose-backend').value==='foundationpose'&&!data.foundationpose?.available)$('pose-backend').value='pem';
 const cam=data.camera_defaults||{};if(cam.width)$('camera-resolution').value=cam.width+'x'+cam.height;if(cam.fps)$('camera-fps').value=cam.fps;
+if(data.tracking_defaults?.identify_assembly)$('camera-cad-source').value='assembly';
 if(data.tracking_defaults)$('sam-refresh').value=data.tracking_defaults.redetect_interval_s;$('foundationpose-state').textContent=data.foundationpose?.available?'FoundationPose preparado · CUDA':(data.foundationpose?.reason||'FoundationPose no disponible');$('foundationpose-state').classList.toggle('error',!data.foundationpose?.available);$('pose-backend').querySelector('option[value=foundationpose]').disabled=!data.foundationpose?.available;serverRoot=data.file_root||serverRoot;document.querySelectorAll('[data-location]').forEach(button=>{if(button.dataset.location)button.hidden=true;else button.textContent='Carpeta raíz';});$('segmentor').querySelector('option[value=fastsam]').disabled=!env.fastsam_weights;$('pose').disabled=!env.pose_available||!env.cuda_available;$('device').textContent=env.cuda_available?env.gpu+' · CUDA disponible':'CPU · CUDA no disponible';if(!env.cuda_available)$('device-select').value='cpu';for(const option of $('backbone').options){option.disabled=!env.sam_weights[option.value];option.textContent=option.value.toUpperCase()+(env.sam_weights[option.value]?' · disponible':' · faltan pesos');}$('example-frame').innerHTML=data.examples.map(f=>`<option value="${escape(f.name)}">${escape(f.label)}</option>`).join('');$('example-frame').value=data.example_defaults?.frame||'';$('example-cad').innerHTML=data.catalog.map(p=>`<option value="${escape(p.key)}">${escape(p.key)} · ${escape(p.name)}</option>`).join('');$('example-cad').value=data.example_defaults?.cad||'';updateBackend();if(!env.dino_weights||!env.sam_weights.vit_h)message('Faltan pesos. Consulta la guía de instalación antes de ejecutar.',true);}).catch(error=>message('No se pudo consultar el servidor: '+error.message,true));
 
 let compactWindow=null,compactTimer=null;
@@ -93,7 +111,18 @@ function updateSource(){
   const source=$('file-source').value,live=source==='realsense';
   if(!live&&liveDetection)stopLiveDetection('Detección detenida al cambiar el origen de imagen.');
   const cadSource=live?$('camera-cad-source').value:source;
-  document.querySelectorAll('.source-server').forEach(el=>el.hidden=!(source==='server'||live&&cadSource==='server'&&el.querySelector('#server-cad')));
+  const identify=live&&cadSource==='assembly';
+  $('assembly-identification-note').hidden=!identify;
+  window.AssemblyIdentification?.sync();
+  document.querySelectorAll('.source-server').forEach(el=>el.hidden=!(source==='server'||live&&['server','assembly'].includes(cadSource)&&el.querySelector('#server-cad')));
+  $('assembly-part').disabled=identify;
+  $('server-cad').disabled=identify;
+  document.querySelector('.browse-server[data-kind="cad"]').disabled=identify;
+  if(identify){$('mode').value='rgbd';$('cad_units').value='mm';$('pose-initialization').value='automatic';}
+  $('cad_units').disabled=identify;
+  $('pose-initialization').disabled=identify;
+  if(identify)$('mode').disabled=true;
+  else $('mode').disabled=$('pose-backend').value==='foundationpose';
   document.querySelectorAll('.source-upload').forEach(el=>el.hidden=!(source==='upload'||live&&cadSource==='upload'&&el.querySelector('#cad')));
   $('depth-files').hidden=live||$('mode').value!=='rgbd';
   $('live-camera').hidden=!live;
@@ -119,13 +148,17 @@ function updateBackend(){
 }
 $('pose-backend').onchange=updateBackend;
 $('file-source').onchange=updateSource;
-$('camera-cad-source').onchange=updateSource;
+$('camera-cad-source').onchange=()=>{updateSource();window.VisionManual?.sync();};
 async function buildRequest(recordingId=null){
   const request={options:config()};
   if($('file-source').value==='realsense'){
     request.live_camera=true;
     if(recordingId)request.recording_id=recordingId;
-    if($('camera-cad-source').value==='server'){
+    if($('camera-cad-source').value==='assembly'){
+      if(recordingId)throw new Error('Selecciona un CAD fijo para analizar una grabación.');
+      if(!$('assembly-select').value)throw new Error('Selecciona un ensamblaje.');
+      request.auto_assembly=$('assembly-select').value;
+    }else if($('camera-cad-source').value==='server'){
       const path=$('server-cad').value.trim();if(!path)throw new Error('Falta seleccionar el CAD del servidor.');
       request.server_files={cad:path};
     }else request.cad=await file('cad');

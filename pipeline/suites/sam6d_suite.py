@@ -50,7 +50,8 @@ def main():
     dataset_config = dataset_path()
     data_config = json.loads(dataset_config.read_text())
     if data_config.get('assembly_registry'):
-        registry = json.loads((dataset_config.parent / data_config['assembly_registry']).read_text())
+        from assembly_config import load_registry
+        registry = load_registry(dataset_config.parent / data_config['assembly_registry'])
         if args.assembly not in registry['assemblies']:
             parser.error(f'Ensamblaje desconocido: {args.assembly}')
     if args.frame is None: args.frame = config["frame"]

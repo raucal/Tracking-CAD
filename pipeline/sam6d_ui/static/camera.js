@@ -121,6 +121,7 @@ async function stopFast(){
   if(wasActive){try{await trackingApi('stop',{});}catch(error){$('fast-status').textContent=error.message;return;}}
   window.VisionVideo.stop($('fast-preview'));$('fast-preview').hidden=true;
   $('fast-status').textContent='Seguimiento detenido. Puedes volver a localizar la pieza.';
+  window.AssemblyIdentification?.error('Seguimiento detenido. La pieza mostrada corresponde a la última identificación.');
 }
 $('fast-stop').onclick=stopFast;
 $('fast-start').onclick=async()=>{
@@ -143,6 +144,7 @@ async function trackingStatus(){
   try{
     const data=await trackingApi('status');
     if(!fastActive)return;
+    window.AssemblyIdentification?.tracking(data);
     if(!data.running){fastActive=false;controls();window.VisionVideo.stop($('fast-preview'));$('fast-status').textContent=data.error||'Seguimiento detenido.';return;}
     const interval=data.redetect_interval_s||0;
     const refresh=interval?' · respaldo SAM cada '+interval+' s · '+(data.redetections||0)+' recuperaciones · '+(data.sam_checks||0)+' comprobaciones'+(data.sam_running?' · SAM en segundo plano':''):(data.automatic_recovery?' · SAM al perder seguimiento; respaldo desactivado':' · inicialización manual; sin recuperación SAM');
@@ -156,6 +158,12 @@ async function trackingStatus(){
     }else if(data.state==='recovering'){
       source='/api/camera/stream';$('fast-status').textContent=(data.redetect_error||'Pose perdida.')+refresh;
     }else{$('fast-status').textContent='Preparando seguimiento…';return;}
+    if(data.identification){
+      $('fast-status').textContent+=' · Pieza: '+(data.display_name||'sin identificar')+' · cambios de CAD: '+(data.component_changes||0);
+      if(data.cad_key&&$('camera-cad-source').value==='assembly'){
+        $('assembly-part').value=data.cad_key;$('assembly-part').onchange?.();
+      }
+    }
     if(!window.visionCompact)window.VisionVideo.play($('fast-preview'),source.includes('/tracking/')?'tracking':'camera');
 
   }catch(error){$('fast-status').textContent=error.message;}finally{fastPolling=false;}

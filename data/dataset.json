@@ -12,5 +12,5 @@
     "03b_vertical_option_b": "communications_module"
   },
   "assembly": "printed_assembly",
-  "assembly_registry": "../../PDDL/Assembly CAD/assemblies.json"
+  "assembly_registry": "../../PDDL/Assembly CAD"
 }

@@ -53,6 +53,17 @@ class CameraTests(unittest.TestCase):
     def start(self):
         return self.camera.start({'width': 640, 'height': 480, 'fps': 15})
 
+    def test_capture_before_camera_start_reports_required_action_without_waiting(self):
+        with patch.object(self.camera.condition, 'wait_for') as wait:
+            with self.assertRaisesRegex(RuntimeError, 'Abrir cámara'):
+                self.camera.capture()
+            wait.assert_not_called()
+
+    def test_camera_failure_is_preserved_when_capture_is_requested(self):
+        self.camera.error = 'Dispositivo ocupado'
+        with self.assertRaisesRegex(RuntimeError, 'Dispositivo ocupado'):
+            self.camera.capture()
+
     def test_one_source_shared_by_preview_and_lossless_capture(self):
         before = Source.opened
         self.start()

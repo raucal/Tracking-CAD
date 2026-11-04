@@ -20,6 +20,7 @@ class Redetector:
     def __call__(self, frame, scratch, cancelled):
         folder = scratch / 'detection'
         folder.mkdir(exist_ok=True)
+        (scratch / 'tracking_model.json').unlink(missing_ok=True)
         mask_path = scratch / 'mask.npy'
         mask_path.unlink(missing_ok=True)
         for name in (self.inputs['cad_filename'], 'object_mm.obj'):
@@ -42,5 +43,11 @@ class Redetector:
         if mask.shape != frame['depth'].shape or not mask.any():
             raise ValueError('La máscara de refresco no corresponde al RGB-D actual.')
         np.save(mask_path, mask, allow_pickle=False)
+        if self.inputs.get('auto_assembly'):
+            (scratch / 'tracking_model.json').write_text(json.dumps(result['tracking_model']))
         y,x=np.nonzero(mask)
-        return {'score':float(detection['score']),'segmentor':self.inputs['options']['segmentor'],'bbox_xyxy':[int(x.min()),int(y.min()),int(x.max())+1,int(y.max())+1]}
+        value = {'score':float(detection['score']),'segmentor':self.inputs['options']['segmentor'],'bbox_xyxy':[int(x.min()),int(y.min()),int(x.max())+1,int(y.max())+1]}
+        if self.inputs.get('auto_assembly'):
+            value.update(cad_key=result['cad_key'], display_name=result['display_name'],
+                         assembly=self.inputs['auto_assembly'])
+        return value

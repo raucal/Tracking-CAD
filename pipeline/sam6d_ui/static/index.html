@@ -1,5 +1,5 @@
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CAD Tracking · Visión 6D · SAM6D y FoundationPose</title><link rel="stylesheet" href="style.css"></head><body>
+<title>CAD Tracking · Visión 6D · SAM6D y FoundationPose</title><link rel="stylesheet" href="style.css"><script src="identification.js"></script></head><body>
 <header><div class="brand">V<span>Visión 6D <small>SAM6D · FoundationPose · RealSense</small></span></div><span id="device">Comprobando entorno…</span></header>
 <main><p id="startup-state" class="note" role="status">Consultando precarga de modelos…</p><button type="button" class="secondary" id="open-viewer">Abrir visor compacto</button><div class="heading"><div><span class="eyebrow">PRUEBA INTERACTIVA LOCAL</span><h1>Imagen, vídeo y pose 6D.</h1><p>Localiza tu CAD, estima su pose y captura RGB-D desde la RealSense.</p></div><span class="badge">SAM / FastSAM · PEM / FoundationPose</span></div>
 <div class="layout"><section class="panel"><h2>1. Introduce los archivos</h2>
@@ -10,7 +10,14 @@
   <div class="row"><label>Cámara<select id="camera-device"><option value="">Buscar cámaras…</option></select></label>
     <label>Resolución<select id="camera-resolution"><option value="640x480">640 × 480</option><option value="1280x720">1280 × 720</option></select></label></div>
   <div class="row"><label>Fotogramas por segundo<select id="camera-fps"><option value="15">15 FPS</option><option value="30">30 FPS</option></select></label>
-    <label>Origen del CAD<select id="camera-cad-source"><option value="server">Archivo del servidor</option><option value="upload">Subir desde el navegador</option></select></label></div>
+    <label>Origen del CAD<select id="camera-cad-source"><option value="server">Archivo del servidor</option><option value="upload">Subir desde el navegador</option><option value="assembly">Identificar pieza del ensamblaje</option></select></label></div>
+  <p id="assembly-identification-note" class="note" hidden>Selecciona el ensamblaje. SAM6D compara sus piezas y acepta la mejor coincidencia que supere el umbral. En seguimiento rápido vuelve a identificar en cada intervalo SAM y cambia de CAD al confirmar otra pieza. Requiere plantillas preparadas, RGB-D y milímetros.</p>
+  <section id="identified-component" hidden role="status" aria-live="polite" aria-atomic="true">
+    <small id="identified-component-title">Identificación del ensamblaje</small>
+    <strong id="identified-component-name">Pendiente de identificar</strong>
+    <div id="identified-component-meta"></div>
+    <p id="identified-component-detail" class="note">Abre la cámara e inicia la identificación.</p>
+  </section>
   <div class="camera-actions"><button type="button" class="secondary" id="camera-start">Abrir cámara</button>
     <button type="button" class="secondary" id="camera-stop" disabled>Cerrar cámara</button>
     <button type="button" class="secondary" id="camera-capture" disabled>Guardar captura RGB-D</button>
@@ -22,7 +29,7 @@
   <div class="camera-actions"><button type="button" class="primary" id="live-detection-start" disabled>Iniciar detección en directo</button>
     <button type="button" class="secondary" id="live-detection-stop" disabled>Detener detección</button></div>
   <p id="live-detection-status" class="note" role="status">Analiza imágenes actuales de la cámara, una cada vez. La frecuencia depende del modelo.</p>
-  <p class="note">Elige el CAD antes de iniciar. El último resultado permanece visible durante el siguiente análisis.
+  <p class="note">Elige un CAD o activa la identificación de pieza del ensamblaje antes de iniciar. El último resultado permanece visible durante el siguiente análisis.
     Si activas pose 6D, se estima también en cada ciclo. Cada análisis guarda un trabajo en resultados.</p>
   <h3>Seguimiento rápido de pose · FoundationPose</h3>
   <label>Comprobación SAM de respaldo (segundos; 0 desactiva el respaldo)<input id="sam-refresh" type="number" min="0" max="3600" step="0.5" value="10"></label>
@@ -30,7 +37,7 @@
   <div class="camera-actions"><button type="button" class="primary" id="fast-start" disabled>Localizar e iniciar seguimiento rápido</button><button type="button" class="secondary" id="fast-stop" disabled>Detener seguimiento</button></div>
   <p id="fast-status" class="note" role="status">Selecciona FoundationPose. Se localiza la pieza una vez y después se sigue su pose con modelos persistentes en GPU.</p>
   <img id="fast-preview" hidden alt="Pose seguida sobre el fotograma actual de la RealSense" style="width:100%;border-radius:8px">
-  <p id="fast-video-status" class="note" role="status"></p><p class="note">Los FPS y la latencia del seguimiento se miden en el servidor; debajo del vídeo se indica la frecuencia recibida y su antigüedad estimada. La primera localización tarda más. Si se pierde la pieza o cambia el CAD, detén y vuelve a localizar. El score del resultado inferior corresponde a la detección inicial; el estado del seguimiento muestra el último refresco.</p>
+  <p id="fast-video-status" class="note" role="status"></p><p class="note">Los FPS y la latencia del seguimiento se miden en el servidor; debajo del vídeo se indica la frecuencia recibida y su antigüedad estimada. La primera localización tarda más. En identificación de ensamblaje el CAD se actualiza automáticamente; con un CAD fijo, detén y vuelve a localizar para cambiar de pieza. El score del resultado inferior corresponde a la detección inicial; el estado del seguimiento muestra la pieza y el último refresco.</p>
   <div id="camera-downloads" class="camera-actions"></div>
   <label>Grabaciones guardadas<select id="camera-recording"><option value="">Selecciona una grabación</option></select></label>
   <button type="button" class="secondary" id="track-recording" disabled>Seguir grabación con FoundationPose</button>
