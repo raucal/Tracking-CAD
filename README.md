@@ -167,3 +167,17 @@ Para seleccionar este modo por defecto, usa `"identify_assembly": true` dentro d
 `tracking` en `config/interface.json`. La frecuencia sigue controlada por
 `tracking.redetect_interval_s`. Si hay varias piezas visibles se sigue una sola,
 la de mayor score; no es seguimiento simultáneo de todas las piezas.
+
+### Ver el CAD y su triedro sobre fondo negro
+
+Al iniciar el seguimiento rápido con FoundationPose aparece una segunda vista
+«CAD y triedro sobre fondo negro». Renderiza el modelo con la pose actual, sin
+mostrar la imagen de cámara, y dibuja el mismo triedro centrado que la vista de
+cámara, con idéntico origen y longitud: X rojo, Y verde y Z azul.
+La traslación y orientación corresponden a la cámara;
+la vista no recentra artificialmente el objeto. Si se pierde la pose, se oculta
+hasta recuperarla. El render usa la GPU ya inicializada y muestra su tiempo en ms.
+
+También puedes pulsar «Abrir visor compacto» y elegir «CAD + triedro · fondo negro»
+para verlo en una ventana independiente. La vista se actualiza con los fotogramas
+del seguimiento; no vuelve a ejecutar SAM para dibujar el modelo.

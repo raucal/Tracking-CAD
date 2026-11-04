@@ -53,6 +53,24 @@ class PeriodicTests(unittest.TestCase):
             with self.assertRaises(ValueError):validate_interval(value)
         self.assertEqual(validate_interval(3),3);self.assertEqual(validate_interval(0),0)
 
+    def test_cad_preview_matches_pose_sequence_and_is_hidden_on_loss(self):
+        original=self.worker.track
+        def track(scratch):
+            result=original(scratch)
+            (scratch/'cad_preview.jpg').write_bytes(b'CAD on black')
+            return result
+        self.worker.track=track
+        self.tracker.start(self.seed,0,None)
+        self.until(lambda:self.tracker.latest_preview('cad') is not None)
+        with self.tracker.lock:
+            camera=self.tracker.latest_preview()
+            cad=self.tracker.latest_preview('cad')
+            self.assertEqual(cad['sequence'],camera['sequence'])
+            self.assertEqual(cad['timestamp'],camera['timestamp'])
+            self.assertEqual(cad['jpeg'],b'CAD on black')
+            self.tracker.details['state']='recovering'
+            self.assertIsNone(self.tracker.latest_preview('cad'))
+
     def test_changed_cad_requires_fresh_detection_even_with_matching_bbox(self):
         (self.seed/'result.json').write_text(json.dumps({'cad_key':'old','display_name':'Old',
                                                        'identification':{'assembly':'demo'}}))

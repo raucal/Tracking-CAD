@@ -30,6 +30,7 @@ function controls(){
   $('record-start').classList.toggle('recording',recording);
   for(const id of ['camera-device','camera-resolution','camera-fps'])$(id).disabled=active||pending;
   selectionChanged();stream();
+  if(!fastActive||window.visionCompact){window.VisionVideo.stop($('cad-preview'));$('cad-preview').hidden=true;$('cad-view').hidden=true;}
   if(window.visionCompact){window.VisionVideo.stop($('fast-preview'));$('fast-preview').hidden=true;}
 }
 function stream(){
@@ -145,6 +146,14 @@ async function trackingStatus(){
     const data=await trackingApi('status');
     if(!fastActive)return;
     window.AssemblyIdentification?.tracking(data);
+    $('cad-view').hidden=!!window.visionCompact||!data.running;
+    if(data.running&&data.state==='tracking'&&!data.cad_view_error&&!window.visionCompact){
+      window.VisionVideo.play($('cad-preview'),'cad');
+      $('cad-view-status').textContent='Pose actual del CAD · X rojo · Y verde · Z azul'+(Number.isFinite(data.cad_render_s)?' · render '+Math.round(data.cad_render_s*1000)+' ms':'');
+    }else{
+      window.VisionVideo.stop($('cad-preview'));$('cad-preview').hidden=true;
+      $('cad-view-status').textContent=data.cad_view_error?'No se pudo renderizar el CAD: '+data.cad_view_error:'Esperando una pose válida; la vista se actualiza al recuperar el seguimiento.';
+    }
     if(!data.running){fastActive=false;controls();window.VisionVideo.stop($('fast-preview'));$('fast-status').textContent=data.error||'Seguimiento detenido.';return;}
     const interval=data.redetect_interval_s||0;
     const refresh=interval?' · respaldo SAM cada '+interval+' s · '+(data.redetections||0)+' recuperaciones · '+(data.sam_checks||0)+' comprobaciones'+(data.sam_running?' · SAM en segundo plano':''):(data.automatic_recovery?' · SAM al perder seguimiento; respaldo desactivado':' · inicialización manual; sin recuperación SAM');

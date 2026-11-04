@@ -31,7 +31,7 @@ class LivePoseTracker:
         self.lock=threading.RLock();self.condition=threading.Condition(self.lock)
         self.stop_event=threading.Event();self.thread=None;self.process=None
         self.redetect=None;self.redetect_interval_s=0;self.config_revision=0;self.detector_cancel=None
-        self.jpeg=None;self.sequence=0;self.details={'running':False,'state':'idle','frames':0,'fps':0}
+        self.jpeg=None;self.cad_jpeg=None;self.sequence=0;self.details={'running':False,'state':'idle','frames':0,'fps':0}
 
     def status(self):
         with self.lock:return dict(self.details,running=bool(self.thread and self.thread.is_alive() and not self.stop_event.is_set()))
@@ -55,7 +55,7 @@ class LivePoseTracker:
         with self.lock:
             if self.busy():raise ValueError('El seguimiento ya está activo o cerrándose.')
             self.camera.frame()
-            self.stop_event.clear();self.jpeg=None;self.sequence=0
+            self.stop_event.clear();self.jpeg=None;self.cad_jpeg=None;self.sequence=0
             self.redetect=redetect;self.redetect_interval_s=interval;self.config_revision+=1
             session=uuid.uuid4().hex
             self.details={'running':True,'state':'loading','frames':0,'fps':0,'session':session,'seed_job':Path(folder).name,'error':None,'redetect_interval_s':interval,'redetect_attempts':0,'redetections':0,'redetect_error':None,'sam_running':False,'sam_checks':0,'sam_discarded':0,'sam_misses':0,'sam_disagreements':0,'automatic_recovery':redetect is not None,'losses':0,'recovery_attempts':0,'backup_attempts':0,'consecutive_quality_failures':0,'sam_reason':None}
@@ -74,12 +74,13 @@ class LivePoseTracker:
         with self.condition:self.condition.notify_all()
         return self.status()
 
-    def latest_preview(self):
+    def latest_preview(self, view='camera'):
         with self.lock:
-            if not self.jpeg or self.stop_event.is_set() or not self.busy() or self.details.get('state')!='tracking':return None
+            jpeg = self.cad_jpeg if view == 'cad' else self.jpeg
+            if not jpeg or self.stop_event.is_set() or not self.busy() or self.details.get('state')!='tracking':return None
             age=max(0,time.time()-self.details['timestamp'])
             if age>1:return None
-            return {'sequence':self.sequence,'jpeg':self.jpeg,'age_s':age,'timestamp':self.details['timestamp']}
+            return {'sequence':self.sequence,'jpeg':jpeg,'age_s':age,'timestamp':self.details['timestamp']}
 
     def preview(self,previous,timeout=3):
         with self.condition:
@@ -372,8 +373,11 @@ class LivePoseTracker:
                 published = finished
                 smoothed = seconds if smoothed is None else .8*smoothed+.2*seconds
                 jpeg = (scratch/'preview.jpg').read_bytes()
+                cad_path = scratch/'cad_preview.jpg'
+                cad_jpeg = cad_path.read_bytes() if cad_path.is_file() else None
                 with self.condition:
-                    self.jpeg = jpeg; self.sequence += 1
+                    self.jpeg = jpeg; self.cad_jpeg = cad_jpeg; self.sequence += 1
+                    self.details.update(cad_view_error=result.get('cad_view_error'), cad_render_s=result.get('cad_render_s'))
                     self.details.update(state='tracking', frames=self.details['frames']+1, fps=1/smoothed, frame_number=frame['number'], timestamp=frame['timestamp'], latency_s=time.time()-frame['timestamp'], pose=result['T_camera_from_input_cad_mm'], worker_pid=worker.status()['pid'], pose_quality=quality, consecutive_quality_failures=0)
                     if was_checking: self.details['redetect_error'] = None
                     self.condition.notify_all()

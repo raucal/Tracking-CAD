@@ -37,6 +37,12 @@
   <div class="camera-actions"><button type="button" class="primary" id="fast-start" disabled>Localizar e iniciar seguimiento rápido</button><button type="button" class="secondary" id="fast-stop" disabled>Detener seguimiento</button></div>
   <p id="fast-status" class="note" role="status">Selecciona FoundationPose. Se localiza la pieza una vez y después se sigue su pose con modelos persistentes en GPU.</p>
   <img id="fast-preview" hidden alt="Pose seguida sobre el fotograma actual de la RealSense" style="width:100%;border-radius:8px">
+  <section id="cad-view" hidden aria-labelledby="cad-view-title">
+    <h3 id="cad-view-title">CAD y triedro sobre fondo negro</h3>
+    <img id="cad-preview" hidden alt="CAD con su pose actual y triedro de referencia sobre fondo negro">
+    <p id="cad-view-status" class="note" role="status">Esperando una pose válida.</p>
+    <p class="note">Triedro centrado en el CAD, igual que en la cámara: X rojo · Y verde · Z azul. Ambas vistas usan el mismo origen y longitud de ejes.</p>
+  </section>
   <p id="fast-video-status" class="note" role="status"></p><p class="note">Los FPS y la latencia del seguimiento se miden en el servidor; debajo del vídeo se indica la frecuencia recibida y su antigüedad estimada. La primera localización tarda más. En identificación de ensamblaje el CAD se actualiza automáticamente; con un CAD fijo, detén y vuelve a localizar para cambiar de pieza. El score del resultado inferior corresponde a la detección inicial; el estado del seguimiento muestra la pieza y el último refresco.</p>
   <div id="camera-downloads" class="camera-actions"></div>
   <label>Grabaciones guardadas<select id="camera-recording"><option value="">Selecciona una grabación</option></select></label>

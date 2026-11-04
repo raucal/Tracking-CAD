@@ -312,7 +312,7 @@ def handler(app):
             except (BrokenPipeError,ConnectionResetError,TimeoutError):pass
 
         def log_request(self,code='-',size='-'):
-            if urlparse(getattr(self,'path','')).path in ('/api/camera/frame.jpg','/api/tracking/frame.jpg') and code in (200,204):return
+            if urlparse(getattr(self,'path','')).path in ('/api/camera/frame.jpg','/api/tracking/frame.jpg','/api/cad/frame.jpg') and code in (200,204):return
             super().log_request(code,size)
 
         def send_file(self, target):
@@ -363,7 +363,7 @@ def handler(app):
             self.end_headers()
             self.wfile.write(payload)
 
-        def send_preview(self, stream):
+        def send_preview(self, stream, cad=False):
             # Finite responses + one browser request at a time avoid a MJPEG TCP backlog.
             import socket
             self.connection.setsockopt(socket.IPPROTO_TCP,socket.TCP_NODELAY,1)
@@ -373,7 +373,7 @@ def handler(app):
                 after=int(parse_qs(urlparse(self.path).query).get('after',['-1'])[0])
             except ValueError:
                 self.json({'error':'Número de imagen no válido.'},400);return
-            frame=stream.latest_preview()
+            frame=stream.latest_preview('cad') if cad else stream.latest_preview()
             unchanged=frame is not None and after==frame['sequence']
             self.send_response(204 if frame is None or unchanged else 200)
             self.send_header('Cache-Control','no-store, max-age=0')
@@ -392,6 +392,9 @@ def handler(app):
 
         def do_GET(self):
             path = unquote(urlparse(self.path).path)
+            if path == '/api/cad/frame.jpg':
+                self.send_preview(app.tracker, cad=True)
+                return
             if path in ('/api/camera/frame.jpg','/api/tracking/frame.jpg'):
                 self.send_preview(app.camera if path.startswith('/api/camera/') else app.tracker)
                 return

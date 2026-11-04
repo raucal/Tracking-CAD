@@ -23,6 +23,9 @@ def configure_tracking(runtime):
     origin, extents = trimesh.bounds.oriented_bounds(runtime['mesh'])
     runtime.update(inv_origin=np.linalg.inv(origin), bounds=np.stack([-extents/2, extents/2]),
                    health=PoseHealth(runtime['mesh'], profile('interface')['tracking']['quality']))
+    # Use the original mesh coordinates: estimator.mesh_tensors are internally centered.
+    from Utils import make_mesh_tensors
+    runtime['cad_view_tensors'] = make_mesh_tensors(runtime['mesh'])
 
 
 def select_tracking_model(runtime, metadata, scratch):
@@ -100,7 +103,8 @@ def main():
                     import numpy as np
                     import torch
                     import trimesh
-                    from Utils import draw_posed_3d_box, draw_xyz_axis
+                    from Utils import draw_posed_3d_box
+                    from cad_view import draw_reference_axes, render_cad_view
                     started=time.perf_counter();scratch=Path(request['scratch'])
                     with np.load(scratch/'frame.npz',allow_pickle=False) as frame:
                         rgb=frame['rgb'];depth=frame['depth'].astype(np.float32)*float(frame['scale'])*.001;K=frame['K']
@@ -114,13 +118,24 @@ def main():
                     torch.cuda.synchronize()
                     mesh=runtime['mesh']
                     image=draw_posed_3d_box(K,img=rgb.copy(),ob_in_cam=pose@runtime['inv_origin'],bbox=runtime['bounds'])
-                    image=draw_xyz_axis(image,ob_in_cam=pose,scale=min(float(mesh.extents.max())/2,.1),K=K,thickness=2,is_input_rgb=True)
+                    image=draw_reference_axes(image,pose,K,min(float(mesh.extents.max())/2,.1))
                     if image.shape[1]>640:image=cv2.resize(image,(640,round(image.shape[0]*640/image.shape[1])),interpolation=cv2.INTER_AREA)
                     ok,jpeg=cv2.imencode('.jpg',cv2.cvtColor(image,cv2.COLOR_RGB2BGR),[cv2.IMWRITE_JPEG_QUALITY,70])
                     if not ok:raise RuntimeError('Error al codificar el visor.')
                     (scratch/'preview.jpg').write_bytes(jpeg.tobytes())
+                    cad_path = scratch/'cad_preview.jpg'
+                    cad_path.unlink(missing_ok=True)
+                    cad_error = None
+                    cad_started = time.perf_counter()
+                    if quality['ok']:
+                        try:
+                            cad_path.write_bytes(render_cad_view(mesh, pose, K, rgb.shape,
+                                                               runtime['cad_view_tensors'], runtime['models'][2]))
+                        except Exception as error:
+                            cad_error = str(error)
                     transform=pose.copy();transform[:3,3]*=1000
-                    result={'seconds':time.perf_counter()-started,'quality':quality,'bbox_xyxy':projected_bbox(mesh.bounds,pose,K,rgb.shape),'T_camera_from_input_cad_mm':(transform@runtime['model_from_input']).tolist()}
+                    result={'seconds':time.perf_counter()-started,'quality':quality,'bbox_xyxy':projected_bbox(mesh.bounds,pose,K,rgb.shape),'T_camera_from_input_cad_mm':(transform@runtime['model_from_input']).tolist(),
+                            'cad_view_error':cad_error, 'cad_render_s':time.perf_counter()-cad_started}
                 else:raise ValueError('Operación de pose no válida.')
             reply(rid,status='ok',result=result)
         except Exception as error:
