@@ -1,0 +1,246 @@
+{
+  "status": "complete",
+  "mode": "rgbd",
+  "backend": "foundationpose",
+  "device": "cuda",
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "cad_name": "02_control_panel.stl",
+  "cad_key": "02_control_panel",
+  "display_name": "hmi_panel",
+  "recognized": false,
+  "accepted_detections": 0,
+  "valid_proposals": 40,
+  "best_score": 0.47397205233573914,
+  "formula": "(semantic + appearance + geometry * visible_ratio) / (2 + visible_ratio)",
+  "score_is_probability": false,
+  "pose_6d_estimated": false,
+  "pose": {
+    "status": "no_accepted_detection",
+    "backend": "foundationpose",
+    "poses": []
+  },
+  "timing": {
+    "model_load_s": 8.026996511034667e-06,
+    "cad_prepare_s": 0.00014365700189955533,
+    "reference_features_s": 0.0004462770011741668,
+    "inference_s": 1.6086942690017167,
+    "total_s": 1.7155627759930212
+  },
+  "inference_stages": {
+    "input_s": 0.007941272997413762,
+    "sam_s": 0.012067485993611626,
+    "proposal_filter_s": 0.0008483249985147268,
+    "dino_s": 0.24120496500108857,
+    "semantic_s": 0.00041764100024010986,
+    "assignment_s": 0.00031795300310477614,
+    "appearance_s": 0.0003910870000254363,
+    "projection_s": 0.002170726002077572,
+    "geometry_s": 0.0003946939978050068,
+    "postprocess_s": 1.3426390090025961,
+    "comparison_export_s": 0.00010796099377330393,
+    "processing_s": 1.6086942690017167
+  },
+  "model_reused": true,
+  "reference_cache_hit": true,
+  "renderer": "existing_blender_templates",
+  "options": {
+    "mode": "rgbd",
+    "device": "cuda",
+    "backbone": "vit_h",
+    "cad_units": "mm",
+    "segmentor": "fastsam",
+    "pose": true,
+    "pose_backend": "foundationpose",
+    "fastsam_conf": 0.05,
+    "fastsam_iou": 0.9,
+    "min_score": 0.3,
+    "confidence": 0.5,
+    "stability": 0.97,
+    "pred_iou": 0.88,
+    "points_per_batch": 64,
+    "nms": 0.25,
+    "aggregation": "avg_5"
+  },
+  "detections": [
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 2,
+      "score": 0.47397205233573914,
+      "semantic_score": 0.34533435106277466,
+      "appearance_score": 0.4888575077056885,
+      "geometry_score": 0.6892887949943542,
+      "visible_ratio": 0.5283018946647644,
+      "bbox": [
+        0,
+        0,
+        506,
+        377
+      ],
+      "time": 1.6086942690017167
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 0,
+      "score": 0.3776609003543854,
+      "semantic_score": 0.2580452263355255,
+      "appearance_score": 0.4992118775844574,
+      "geometry_score": 0.3725001811981201,
+      "visible_ratio": 0.375,
+      "bbox": [
+        77,
+        0,
+        261,
+        161
+      ],
+      "time": 1.6086942690017167
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 7,
+      "score": 0.3453356921672821,
+      "semantic_score": 0.2890217900276184,
+      "appearance_score": 0.4105108678340912,
+      "geometry_score": 0.2035563886165619,
+      "visible_ratio": 0.0625,
+      "bbox": [
+        389,
+        2,
+        208,
+        20
+      ],
+      "time": 1.6086942690017167
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 35,
+      "score": 0.322716623544693,
+      "semantic_score": 0.3071136176586151,
+      "appearance_score": 0.3383196294307709,
+      "geometry_score": 0.3648054003715515,
+      "visible_ratio": 0.0,
+      "bbox": [
+        265,
+        413,
+        374,
+        66
+      ],
+      "time": 1.6086942690017167
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 32,
+      "score": 0.3139546513557434,
+      "semantic_score": 0.2635439336299896,
+      "appearance_score": 0.36115872859954834,
+      "geometry_score": 0.376883864402771,
+      "visible_ratio": 0.05095541477203369,
+      "bbox": [
+        0,
+        232,
+        95,
+        179
+      ],
+      "time": 1.6086942690017167
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 24,
+      "score": 0.31367218494415283,
+      "semantic_score": 0.27295953035354614,
+      "appearance_score": 0.3543848395347595,
+      "geometry_score": 0.37272006273269653,
+      "visible_ratio": 0.0,
+      "bbox": [
+        482,
+        399,
+        94,
+        70
+      ],
+      "time": 1.6086942690017167
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 31,
+      "score": 0.3131527304649353,
+      "semantic_score": 0.25714540481567383,
+      "appearance_score": 0.3738984763622284,
+      "geometry_score": 0.25483328104019165,
+      "visible_ratio": 0.08124999701976776,
+      "bbox": [
+        0,
+        130,
+        85,
+        107
+      ],
+      "time": 1.6086942690017167
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 34,
+      "score": 0.3077140152454376,
+      "semantic_score": 0.30211493372917175,
+      "appearance_score": 0.3133130967617035,
+      "geometry_score": 0.020829739049077034,
+      "visible_ratio": 0.0,
+      "bbox": [
+        459,
+        271,
+        14,
+        69
+      ],
+      "time": 1.6086942690017167
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 13,
+      "score": 0.30722764134407043,
+      "semantic_score": 0.32588696479797363,
+      "appearance_score": 0.28856831789016724,
+      "geometry_score": 0.4240322709083557,
+      "visible_ratio": 0.0,
+      "bbox": [
+        536,
+        0,
+        103,
+        462
+      ],
+      "time": 1.6086942690017167
+    }
+  ]
+}

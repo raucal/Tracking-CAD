@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "verified_utc": "2026-10-27T13:53:12.770383+00:00",
+  "frames": 22,
+  "catalog_candidates_per_frame": 10,
+  "comparison_rows": 220,
+  "masks_rle_verified_bitwise": 170,
+  "rgb_depth_calibration_verified": 22,
+  "device": "cuda",
+  "zip_crc": "passed",
+  "offline_links": "passed",
+  "algorithm_equivalence_tests": 4,
+  "tensor_shape_tests": 2
+}

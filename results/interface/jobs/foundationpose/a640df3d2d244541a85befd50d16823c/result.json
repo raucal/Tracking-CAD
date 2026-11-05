@@ -1,0 +1,146 @@
+{
+  "status": "complete",
+  "mode": "rgbd",
+  "backend": "foundationpose",
+  "device": "cuda",
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "cad_name": "01_front_housing.stl",
+  "cad_key": "01_front_housing",
+  "display_name": "front_housing",
+  "recognized": false,
+  "accepted_detections": 0,
+  "valid_proposals": 13,
+  "best_score": 0.48360079526901245,
+  "formula": "(semantic + appearance + geometry * visible_ratio) / (2 + visible_ratio)",
+  "score_is_probability": false,
+  "pose_6d_estimated": false,
+  "pose": {
+    "status": "no_accepted_detection",
+    "backend": "foundationpose",
+    "poses": []
+  },
+  "timing": {
+    "model_load_s": 7.587000027342583e-06,
+    "cad_prepare_s": 7.226699995044328e-05,
+    "reference_features_s": 0.00042511400010880607,
+    "inference_s": 1.8626463139999032,
+    "total_s": 1.9267387669999607
+  },
+  "inference_stages": {
+    "input_s": 0.007929554999918764,
+    "sam_s": 1.1771720310000546,
+    "proposal_filter_s": 0.0014758929999061365,
+    "dino_s": 0.07843311400006314,
+    "semantic_s": 0.00035087400010525016,
+    "assignment_s": 0.0001631340001040371,
+    "appearance_s": 0.0002162040000257548,
+    "projection_s": 0.0011011869999038026,
+    "geometry_s": 0.0002544339999985823,
+    "postprocess_s": 0.5952802150000025,
+    "comparison_export_s": 0.00010015799989560037,
+    "processing_s": 1.8626463139999032
+  },
+  "model_reused": true,
+  "reference_cache_hit": true,
+  "renderer": "existing_blender_templates",
+  "options": {
+    "mode": "rgbd",
+    "device": "cuda",
+    "backbone": "vit_h",
+    "cad_units": "mm",
+    "segmentor": "sam",
+    "pose": true,
+    "pose_backend": "foundationpose",
+    "fastsam_conf": 0.05,
+    "fastsam_iou": 0.9,
+    "min_score": 0.3,
+    "confidence": 0.5,
+    "stability": 0.97,
+    "pred_iou": 0.88,
+    "points_per_batch": 64,
+    "nms": 0.25,
+    "aggregation": "avg_5"
+  },
+  "detections": [
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 2,
+      "part_key": "01_front_housing",
+      "part_name": "front_housing",
+      "proposal_id": 3,
+      "score": 0.48360079526901245,
+      "semantic_score": 0.34130391478538513,
+      "appearance_score": 0.48721593618392944,
+      "geometry_score": 0.6963513493537903,
+      "visible_ratio": 0.6518518328666687,
+      "bbox": [
+        0,
+        11,
+        383,
+        443
+      ],
+      "time": 1.8626463139999032
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 2,
+      "part_key": "01_front_housing",
+      "part_name": "front_housing",
+      "proposal_id": 12,
+      "score": 0.36271175742149353,
+      "semantic_score": 0.355320543050766,
+      "appearance_score": 0.37010297179222107,
+      "geometry_score": 0.18247409164905548,
+      "visible_ratio": 0.0,
+      "bbox": [
+        0,
+        0,
+        360,
+        26
+      ],
+      "time": 1.8626463139999032
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 2,
+      "part_key": "01_front_housing",
+      "part_name": "front_housing",
+      "proposal_id": 11,
+      "score": 0.348999559879303,
+      "semantic_score": 0.3542326092720032,
+      "appearance_score": 0.3437665104866028,
+      "geometry_score": 0.669651210308075,
+      "visible_ratio": 0.0,
+      "bbox": [
+        402,
+        396,
+        237,
+        83
+      ],
+      "time": 1.8626463139999032
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 2,
+      "part_key": "01_front_housing",
+      "part_name": "front_housing",
+      "proposal_id": 9,
+      "score": 0.3191779553890228,
+      "semantic_score": 0.27901551127433777,
+      "appearance_score": 0.36299610137939453,
+      "geometry_score": 0.09252500534057617,
+      "visible_ratio": 0.016129031777381897,
+      "bbox": [
+        444,
+        65,
+        74,
+        74
+      ],
+      "time": 1.8626463139999032
+    }
+  ]
+}

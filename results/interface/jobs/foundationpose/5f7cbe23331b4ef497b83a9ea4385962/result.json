@@ -1,0 +1,419 @@
+{
+  "status": "complete",
+  "mode": "rgbd",
+  "backend": "foundationpose",
+  "device": "cuda",
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "cad_name": "07_thermal_core.stl",
+  "cad_key": "07_thermal_core",
+  "display_name": "thermal_core",
+  "recognized": true,
+  "accepted_detections": 1,
+  "valid_proposals": 45,
+  "best_score": 0.6612005233764648,
+  "formula": "(semantic + appearance + geometry * visible_ratio) / (2 + visible_ratio)",
+  "score_is_probability": false,
+  "pose_6d_estimated": true,
+  "pose": {
+    "status": "estimated",
+    "backend": "foundationpose",
+    "poses": [
+      {
+        "R": [
+          [
+            -0.9991072416305542,
+            -0.009585746563971043,
+            -0.04114063084125519
+          ],
+          [
+            0.016238989308476448,
+            0.8119196891784668,
+            -0.5835433006286621
+          ],
+          [
+            0.03899654746055603,
+            -0.5836906433105469,
+            -0.8110392093658447
+          ]
+        ],
+        "t_mm": [
+          18.819881603121758,
+          -30.622756108641624,
+          292.2673523426056
+        ],
+        "T_camera_from_model_mm": [
+          [
+            -0.9991072416305542,
+            -0.009585746563971043,
+            -0.04114063084125519,
+            18.819881603121758
+          ],
+          [
+            0.016238989308476448,
+            0.8119196891784668,
+            -0.5835433006286621,
+            -30.622756108641624
+          ],
+          [
+            0.03899654746055603,
+            -0.5836906433105469,
+            -0.8110392093658447,
+            292.2673523426056
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "T_camera_from_input_cad_mm": [
+          [
+            -0.9991072416305542,
+            -0.009585746563971043,
+            -0.04114063084125519,
+            24.115832403302193
+          ],
+          [
+            0.016238989308476448,
+            0.8119196891784668,
+            -0.5835433006286621,
+            29.32944144308567
+          ],
+          [
+            0.03899654746055603,
+            -0.5836906433105469,
+            -0.8110392093658447,
+            402.98630380630493
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "translation_unit": "mm",
+        "frame": "OpenCV camera: X right, Y down, Z forward",
+        "pose_score": 109.8203125
+      }
+    ],
+    "best_index": 0,
+    "pose_score_is_probability": false,
+    "device": "cuda",
+    "accuracy_validated": false,
+    "models_reused": true,
+    "worker_pid": 209094,
+    "timing": {
+      "model_load_s": 0.011318176999338903,
+      "pose_inference_s": 0.7704076160007389,
+      "total_s": 0.9084038650034927
+    },
+    "rpc_seconds": 0.9089006260037422
+  },
+  "timing": {
+    "model_load_s": 8.069997420534492e-06,
+    "cad_prepare_s": 0.0002282960049342364,
+    "reference_features_s": 0.00044075500045437366,
+    "pose_pipeline_s": 0.9091874729929259,
+    "inference_s": 2.263280276005389,
+    "total_s": 3.292086905988981
+  },
+  "inference_stages": {
+    "input_s": 0.008476036004140042,
+    "sam_s": 0.01391912400140427,
+    "proposal_filter_s": 0.0009553379932185635,
+    "dino_s": 0.25173448398709297,
+    "semantic_s": 0.0004879019979853183,
+    "assignment_s": 0.00031796700204722583,
+    "appearance_s": 0.00039493400254286826,
+    "projection_s": 0.0021195370063651353,
+    "geometry_s": 0.0004044099914608523,
+    "postprocess_s": 1.9841775770037202,
+    "comparison_export_s": 0.0001054599997587502,
+    "processing_s": 2.263280276005389
+  },
+  "model_reused": true,
+  "reference_cache_hit": true,
+  "renderer": "existing_blender_templates",
+  "options": {
+    "mode": "rgbd",
+    "device": "cuda",
+    "backbone": "vit_h",
+    "cad_units": "mm",
+    "segmentor": "fastsam",
+    "pose": true,
+    "pose_backend": "foundationpose",
+    "fastsam_conf": 0.05,
+    "fastsam_iou": 0.9,
+    "min_score": 0.3,
+    "confidence": 0.5,
+    "stability": 0.97,
+    "pred_iou": 0.88,
+    "points_per_batch": 64,
+    "nms": 0.25,
+    "aggregation": "avg_5"
+  },
+  "detections": [
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 10,
+      "part_key": "07_thermal_core",
+      "part_name": "thermal_core",
+      "proposal_id": 1,
+      "score": 0.6612005233764648,
+      "semantic_score": 0.6673493385314941,
+      "appearance_score": 0.6609397530555725,
+      "geometry_score": 0.6545608639717102,
+      "visible_ratio": 0.8867924809455872,
+      "bbox": [
+        147,
+        0,
+        435,
+        298
+      ],
+      "time": 2.263280276005389
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 10,
+      "part_key": "07_thermal_core",
+      "part_name": "thermal_core",
+      "proposal_id": 0,
+      "score": 0.48714062571525574,
+      "semantic_score": 0.45995408296585083,
+      "appearance_score": 0.5699276328086853,
+      "geometry_score": 0.19658327102661133,
+      "visible_ratio": 0.1913580298423767,
+      "bbox": [
+        232,
+        0,
+        219,
+        126
+      ],
+      "time": 2.263280276005389
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 10,
+      "part_key": "07_thermal_core",
+      "part_name": "thermal_core",
+      "proposal_id": 8,
+      "score": 0.3837098479270935,
+      "semantic_score": 0.3829498291015625,
+      "appearance_score": 0.44156578183174133,
+      "geometry_score": 0.041134752333164215,
+      "visible_ratio": 0.166666641831398,
+      "bbox": [
+        372,
+        149,
+        19,
+        116
+      ],
+      "time": 2.263280276005389
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 10,
+      "part_key": "07_thermal_core",
+      "part_name": "thermal_core",
+      "proposal_id": 16,
+      "score": 0.37641894817352295,
+      "semantic_score": 0.3597264587879181,
+      "appearance_score": 0.3931114375591278,
+      "geometry_score": 0.04248768463730812,
+      "visible_ratio": 0.0,
+      "bbox": [
+        327,
+        128,
+        13,
+        138
+      ],
+      "time": 2.263280276005389
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 10,
+      "part_key": "07_thermal_core",
+      "part_name": "thermal_core",
+      "proposal_id": 13,
+      "score": 0.37373051047325134,
+      "semantic_score": 0.3726087510585785,
+      "appearance_score": 0.4089512825012207,
+      "geometry_score": 0.06683947145938873,
+      "visible_ratio": 0.1111110970377922,
+      "bbox": [
+        410,
+        130,
+        34,
+        135
+      ],
+      "time": 2.263280276005389
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 10,
+      "part_key": "07_thermal_core",
+      "part_name": "thermal_core",
+      "proposal_id": 18,
+      "score": 0.37049737572669983,
+      "semantic_score": 0.3605824410915375,
+      "appearance_score": 0.39803582429885864,
+      "geometry_score": 0.05327519774436951,
+      "visible_ratio": 0.0555555485188961,
+      "bbox": [
+        434,
+        147,
+        35,
+        118
+      ],
+      "time": 2.263280276005389
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 10,
+      "part_key": "07_thermal_core",
+      "part_name": "thermal_core",
+      "proposal_id": 4,
+      "score": 0.3638761341571808,
+      "semantic_score": 0.3749135434627533,
+      "appearance_score": 0.3436596393585205,
+      "geometry_score": 0.5254281759262085,
+      "visible_ratio": 0.05681818351149559,
+      "bbox": [
+        1,
+        1,
+        237,
+        478
+      ],
+      "time": 2.263280276005389
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 10,
+      "part_key": "07_thermal_core",
+      "part_name": "thermal_core",
+      "proposal_id": 14,
+      "score": 0.3584793508052826,
+      "semantic_score": 0.3429339826107025,
+      "appearance_score": 0.40642717480659485,
+      "geometry_score": 0.06685714423656464,
+      "visible_ratio": 0.1111110970377922,
+      "bbox": [
+        301,
+        149,
+        18,
+        117
+      ],
+      "time": 2.263280276005389
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 10,
+      "part_key": "07_thermal_core",
+      "part_name": "thermal_core",
+      "proposal_id": 38,
+      "score": 0.33644700050354004,
+      "semantic_score": 0.31791871786117554,
+      "appearance_score": 0.3661835491657257,
+      "geometry_score": 0.25686803460121155,
+      "visible_ratio": 0.14084507524967194,
+      "bbox": [
+        3,
+        331,
+        160,
+        75
+      ],
+      "time": 2.263280276005389
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 10,
+      "part_key": "07_thermal_core",
+      "part_name": "thermal_core",
+      "proposal_id": 7,
+      "score": 0.3270777463912964,
+      "semantic_score": 0.3493826389312744,
+      "appearance_score": 0.30477288365364075,
+      "geometry_score": 0.06312102824449539,
+      "visible_ratio": 0.0,
+      "bbox": [
+        348,
+        130,
+        22,
+        136
+      ],
+      "time": 2.263280276005389
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 10,
+      "part_key": "07_thermal_core",
+      "part_name": "thermal_core",
+      "proposal_id": 44,
+      "score": 0.32058390974998474,
+      "semantic_score": 0.2984503209590912,
+      "appearance_score": 0.3583478331565857,
+      "geometry_score": 0.13181817531585693,
+      "visible_ratio": 0.08280254900455475,
+      "bbox": [
+        19,
+        414,
+        78,
+        58
+      ],
+      "time": 2.263280276005389
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 10,
+      "part_key": "07_thermal_core",
+      "part_name": "thermal_core",
+      "proposal_id": 23,
+      "score": 0.30297911167144775,
+      "semantic_score": 0.28815048933029175,
+      "appearance_score": 0.31780770421028137,
+      "geometry_score": 0.6714215278625488,
+      "visible_ratio": 0.0,
+      "bbox": [
+        569,
+        1,
+        70,
+        468
+      ],
+      "time": 2.263280276005389
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 10,
+      "part_key": "07_thermal_core",
+      "part_name": "thermal_core",
+      "proposal_id": 11,
+      "score": 0.30212539434432983,
+      "semantic_score": 0.2849436402320862,
+      "appearance_score": 0.3193071782588959,
+      "geometry_score": 0.11309979856014252,
+      "visible_ratio": 0.0,
+      "bbox": [
+        246,
+        129,
+        31,
+        138
+      ],
+      "time": 2.263280276005389
+    }
+  ]
+}

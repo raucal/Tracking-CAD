@@ -1,0 +1,79 @@
+{
+  "running": false,
+  "state": "stopped",
+  "frames": 1981,
+  "fps": 15.653375553021768,
+  "session": "cc39ec1ffa7b4238852e2ed720d58121",
+  "seed_job": "ba899ba6c11344fc978da4248efa8784",
+  "error": null,
+  "redetect_interval_s": 10.0,
+  "redetect_attempts": 32,
+  "redetections": 11,
+  "redetect_error": null,
+  "sam_running": false,
+  "sam_checks": 21,
+  "sam_discarded": 11,
+  "sam_misses": 0,
+  "sam_disagreements": 0,
+  "automatic_recovery": true,
+  "losses": 11,
+  "recovery_attempts": 22,
+  "backup_attempts": 10,
+  "consecutive_quality_failures": 0,
+  "sam_reason": null,
+  "cad_key": "06_power_unit",
+  "display_name": "power_unit",
+  "identification": true,
+  "component_changes": 7,
+  "frame_number": 3515,
+  "timestamp": 1793805817.3485596,
+  "latency_s": 0.03899264335632324,
+  "pose": [
+    [
+      -0.9995778203010559,
+      0.01491592451930046,
+      0.024924272671341896,
+      -163.55126684904099
+    ],
+    [
+      -0.019569098949432373,
+      0.28829634189605713,
+      -0.9573411345481873,
+      218.6597792506218
+    ],
+    [
+      -0.021465204656124115,
+      -0.9574251770973206,
+      -0.2878829836845398,
+      643.1061544418335
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "worker_pid": 26939,
+  "pose_quality": {
+    "ok": true,
+    "enabled": true,
+    "reasons": [],
+    "motion_checked": true,
+    "visible_fraction": 1.0,
+    "depth_samples": 380,
+    "depth_support": 1.0,
+    "valid_depth_fraction": 0.9028436018957346,
+    "occlusion_fraction": 0.0026246719160104987,
+    "median_depth_error_mm": 4.682374453445104,
+    "translation_jump_mm": 0.3031391468029172,
+    "rotation_jump_deg": 0.15730720220883906,
+    "elapsed_s": 0.06415891647338867
+  },
+  "last_loss_reason": "Recuperando pose con una detecci\u00f3n SAM reciente\u2026",
+  "last_redetect_s": 4.108549212000071,
+  "last_redetect_at": 1793805815.228517,
+  "last_detection_score": 0.6373856663703918,
+  "last_sam_agreement": null,
+  "last_registration_s": 0.7735897339998701
+}

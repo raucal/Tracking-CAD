@@ -1,0 +1,18 @@
+[
+  {
+    "name": "sam_vit_h_4b8939.pth",
+    "url": "https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth",
+    "cache": "/home/raca/projects/SAM6D/checkpoints/sam_vit_h_4b8939.pth",
+    "bytes": 2564550879,
+    "sha256": "a7bf3b02f3ebf1267aba913ff637d9a2d5c33d3173bb679e46d9f338c26f262e",
+    "storage": "persistent"
+  },
+  {
+    "name": "dinov2_vitl14_pretrain.pth",
+    "url": "https://dl.fbaipublicfiles.com/dinov2/dinov2_vitl14/dinov2_vitl14_pretrain.pth",
+    "cache": "/home/raca/projects/SAM6D/checkpoints/dinov2_vitl14_pretrain.pth",
+    "bytes": 1217586395,
+    "sha256": "d5383ea8f4877b2472eb973e0fd72d557c7da5d3611bd527ceeb1d7162cbf428",
+    "storage": "persistent"
+  }
+]

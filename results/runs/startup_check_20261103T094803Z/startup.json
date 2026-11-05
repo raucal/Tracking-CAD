@@ -1,0 +1,22 @@
+{
+  "web_startup": "ready",
+  "job_id": "a6bb3955b6f141b8916d835ca67fc88e",
+  "device": "cuda",
+  "recognized": true,
+  "best_score": 0.6856676340103149,
+  "pose_6d_estimated": true,
+  "timing": {
+    "model_load_s": 1.2293999134271871e-05,
+    "cad_prepare_s": 0.0005504219998329063,
+    "reference_features_s": 1.524302284999976,
+    "pose_pipeline_s": 1.9750911040000574,
+    "inference_s": 2.5455131489998166,
+    "total_s": 6.22219073999986
+  },
+  "sdu": {
+    "grasp_ui": "opened CAD and closed on virtual display",
+    "video": "models loaded, RealSense RGB-D received at 640x480, window opened and camera released",
+    "robot_demo": "imports only; no main block, robot connection or motion",
+    "robot_dependency": "teleop_setup provided via --teleop-root"
+  }
+}

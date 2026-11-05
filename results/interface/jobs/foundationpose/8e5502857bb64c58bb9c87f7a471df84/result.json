@@ -1,0 +1,236 @@
+{
+  "status": "complete",
+  "mode": "rgbd",
+  "backend": "foundationpose",
+  "device": "cuda",
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "cad_name": "02_control_panel.stl",
+  "cad_key": "02_control_panel",
+  "display_name": "hmi_panel",
+  "recognized": true,
+  "accepted_detections": 1,
+  "valid_proposals": 12,
+  "best_score": 0.5819538235664368,
+  "formula": "(semantic + appearance + geometry * visible_ratio) / (2 + visible_ratio)",
+  "score_is_probability": false,
+  "pose_6d_estimated": true,
+  "pose": {
+    "status": "estimated",
+    "backend": "foundationpose",
+    "poses": [
+      {
+        "R": [
+          [
+            0.9983762502670288,
+            0.016573935747146606,
+            0.05449768155813217
+          ],
+          [
+            -0.0566442646086216,
+            0.38981688022613525,
+            0.9191486239433289
+          ],
+          [
+            -0.006010184995830059,
+            -0.9207432866096497,
+            0.3901226818561554
+          ]
+        ],
+        "t_mm": [
+          42.323220521211624,
+          -22.567396983504295,
+          448.92483949661255
+        ],
+        "T_camera_from_model_mm": [
+          [
+            0.9983762502670288,
+            0.016573935747146606,
+            0.05449768155813217,
+            42.323220521211624
+          ],
+          [
+            -0.0566442646086216,
+            0.38981688022613525,
+            0.9191486239433289,
+            -22.567396983504295
+          ],
+          [
+            -0.006010184995830059,
+            -0.9207432866096497,
+            0.3901226818561554,
+            448.92483949661255
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "T_camera_from_input_cad_mm": [
+          [
+            0.9983762502670288,
+            0.016573935747146606,
+            0.05449768155813217,
+            35.05803498439491
+          ],
+          [
+            -0.0566442646086216,
+            0.38981688022613525,
+            0.9191486239433289,
+            -146.75503551959991
+          ],
+          [
+            -0.006010184995830059,
+            -0.9207432866096497,
+            0.3901226818561554,
+            412.5076935067773
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "translation_unit": "mm",
+        "frame": "OpenCV camera: X right, Y down, Z forward",
+        "pose_score": 75.96875
+      }
+    ],
+    "best_index": 0,
+    "pose_score_is_probability": false,
+    "device": "cuda",
+    "accuracy_validated": false,
+    "timing": {
+      "model_load_s": 0.7230161350016715,
+      "pose_inference_s": 1.2800670169963269,
+      "total_s": 2.2388496789935743
+    }
+  },
+  "timing": {
+    "model_load_s": 9.133000276051462e-06,
+    "cad_prepare_s": 0.0001563520054332912,
+    "reference_features_s": 1.2764823109901045,
+    "pose_pipeline_s": 7.863438475993462,
+    "inference_s": 3.2232368490076624,
+    "total_s": 12.604436729001463
+  },
+  "inference_stages": {
+    "input_s": 0.020565403989166953,
+    "sam_s": 1.216076091004652,
+    "proposal_filter_s": 0.0006123290077084675,
+    "dino_s": 0.07135424799344037,
+    "semantic_s": 0.0015363980055553839,
+    "assignment_s": 0.0005451860051834956,
+    "appearance_s": 0.00047774398990441114,
+    "projection_s": 0.039802072002203204,
+    "geometry_s": 0.0010476060124346986,
+    "postprocess_s": 1.8704660669900477,
+    "comparison_export_s": 0.00019554900063667446,
+    "processing_s": 3.2232368490076624
+  },
+  "model_reused": true,
+  "reference_cache_hit": true,
+  "renderer": "existing_blender_templates",
+  "options": {
+    "mode": "rgbd",
+    "device": "cuda",
+    "backbone": "vit_h",
+    "cad_units": "mm",
+    "segmentor": "sam",
+    "pose": true,
+    "pose_backend": "foundationpose",
+    "fastsam_conf": 0.05,
+    "fastsam_iou": 0.9,
+    "min_score": 0.3,
+    "confidence": 0.5,
+    "stability": 0.97,
+    "pred_iou": 0.88,
+    "points_per_batch": 64,
+    "nms": 0.25,
+    "aggregation": "avg_5"
+  },
+  "detections": [
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 0,
+      "score": 0.5819538235664368,
+      "semantic_score": 0.46425604820251465,
+      "appearance_score": 0.5557578802108765,
+      "geometry_score": 0.7746250033378601,
+      "visible_ratio": 0.746835470199585,
+      "bbox": [
+        267,
+        60,
+        212,
+        276
+      ],
+      "time": 3.2232368490076624
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 1,
+      "score": 0.35829588770866394,
+      "semantic_score": 0.27975723147392273,
+      "appearance_score": 0.47973644733428955,
+      "geometry_score": 0.19866085052490234,
+      "visible_ratio": 0.26875001192092896,
+      "bbox": [
+        316,
+        223,
+        126,
+        77
+      ],
+      "time": 3.2232368490076624
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 10,
+      "score": 0.31523483991622925,
+      "semantic_score": 0.2928787171840668,
+      "appearance_score": 0.33759093284606934,
+      "geometry_score": 0.47277215123176575,
+      "visible_ratio": 0.0,
+      "bbox": [
+        407,
+        397,
+        232,
+        81
+      ],
+      "time": 3.2232368490076624
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 8,
+      "score": 0.30205634236335754,
+      "semantic_score": 0.2717900574207306,
+      "appearance_score": 0.35102081298828125,
+      "geometry_score": 0.0719246044754982,
+      "visible_ratio": 0.08124999701976776,
+      "bbox": [
+        0,
+        215,
+        29,
+        50
+      ],
+      "time": 3.2232368490076624
+    }
+  ]
+}

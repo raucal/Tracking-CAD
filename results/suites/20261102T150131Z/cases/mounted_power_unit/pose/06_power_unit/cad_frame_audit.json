@@ -1,0 +1,85 @@
+{
+  "status": "passed",
+  "model_unit": "mm",
+  "template_xyz_unit": "mm",
+  "views_checked": 42,
+  "cad_sha256": "b64e4e77edbc98bce840247ce97f5dd57bc5ebe549570d42652f71dee8370347",
+  "model_bounds_mm": [
+    [
+      -72.0,
+      -16.0,
+      -102.0
+    ],
+    [
+      72.0,
+      16.0,
+      102.0
+    ]
+  ],
+  "input_cad_bounds_mm": [
+    [
+      -72.0,
+      0.0,
+      26.0
+    ],
+    [
+      72.0,
+      32.0,
+      230.0
+    ]
+  ],
+  "T_input_cad_from_model_mm": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0,
+      16.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      128.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "T_model_from_input_cad_mm": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0,
+      -16.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      -128.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "xyz_extent_ratio": 1.0000035155053233,
+  "camera_convention": "OpenCV: X right, Y down, Z forward"
+}

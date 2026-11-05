@@ -1,0 +1,119 @@
+{
+  "nombre_captura": "Nombre del archivo RGB original; solo identifica la captura.",
+  "cad_predicho": "category_id y part_key elegidos por SAM-6D al comparar las máscaras con las referencias CAD.",
+  "nombre_prediccion": "ID CAD elegido por el modelo; nombre del catálogo con correcciones explícitas del usuario en correccion_nombres_cad.json.",
+  "origen_inicial_nombres": "PDDL/DINOPDDL/catalogs/printed_assembly_catalog.yaml, leído durante la preparación del inventario.",
+  "nombre_archivo_usado_para_clasificar": false,
+  "etiquetas_reales_verificadas": false,
+  "score_mostrado": "detection_ism.json:score (puntuación final ISM de SAM-6D, no semantic_score)",
+  "catalogo_utilizado_en_inferencia": [
+    {
+      "key": "00_rear_mounting_plate",
+      "name": "rear_mounting",
+      "category_id": 1
+    },
+    {
+      "key": "01_front_housing",
+      "name": "front_housing",
+      "category_id": 2
+    },
+    {
+      "key": "02_control_panel",
+      "name": "hmi_panel",
+      "category_id": 3
+    },
+    {
+      "key": "03_option_cassette",
+      "name": "option_cassette",
+      "category_id": 4
+    },
+    {
+      "key": "03a_vertical_option_a",
+      "name": "communications_module",
+      "category_id": 5
+    },
+    {
+      "key": "03b_vertical_option_b",
+      "name": "sensor_module",
+      "category_id": 6
+    },
+    {
+      "key": "04_io_terminals",
+      "name": "io_terminals",
+      "category_id": 7
+    },
+    {
+      "key": "05_control_board",
+      "name": "control_board",
+      "category_id": 8
+    },
+    {
+      "key": "06_power_unit",
+      "name": "power_unit",
+      "category_id": 9
+    },
+    {
+      "key": "07_thermal_core",
+      "name": "thermal_core",
+      "category_id": 10
+    }
+  ],
+  "catalogo_mostrado": [
+    {
+      "key": "00_rear_mounting_plate",
+      "name": "rear_mounting",
+      "category_id": 1
+    },
+    {
+      "key": "01_front_housing",
+      "name": "front_housing",
+      "category_id": 2
+    },
+    {
+      "key": "02_control_panel",
+      "name": "hmi_panel",
+      "category_id": 3
+    },
+    {
+      "key": "03_option_cassette",
+      "name": "option_cassette",
+      "category_id": 4
+    },
+    {
+      "key": "03a_vertical_option_a",
+      "name": "sensor_module",
+      "category_id": 5
+    },
+    {
+      "key": "03b_vertical_option_b",
+      "name": "communications_module",
+      "category_id": 6
+    },
+    {
+      "key": "04_io_terminals",
+      "name": "io_terminals",
+      "category_id": 7
+    },
+    {
+      "key": "05_control_board",
+      "name": "control_board",
+      "category_id": 8
+    },
+    {
+      "key": "06_power_unit",
+      "name": "power_unit",
+      "category_id": 9
+    },
+    {
+      "key": "07_thermal_core",
+      "name": "thermal_core",
+      "category_id": 10
+    }
+  ],
+  "correcciones_usuario": {
+    "names": {
+      "03a_vertical_option_a": "sensor_module",
+      "03b_vertical_option_b": "communications_module"
+    }
+  }
+}

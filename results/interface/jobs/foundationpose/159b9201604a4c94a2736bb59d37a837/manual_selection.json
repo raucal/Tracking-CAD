@@ -1,0 +1,11 @@
+{
+  "type": "rectangle_mask",
+  "bbox": [
+    85,
+    2,
+    355,
+    422
+  ],
+  "automatic_detection": false,
+  "background_excluded": false
+}

@@ -1,0 +1,236 @@
+{
+  "status": "complete",
+  "mode": "rgbd",
+  "backend": "foundationpose",
+  "device": "cuda",
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "cad_name": "02_control_panel.stl",
+  "cad_key": "02_control_panel",
+  "display_name": "hmi_panel",
+  "recognized": true,
+  "accepted_detections": 1,
+  "valid_proposals": 12,
+  "best_score": 0.5867186188697815,
+  "formula": "(semantic + appearance + geometry * visible_ratio) / (2 + visible_ratio)",
+  "score_is_probability": false,
+  "pose_6d_estimated": true,
+  "pose": {
+    "status": "estimated",
+    "backend": "foundationpose",
+    "poses": [
+      {
+        "R": [
+          [
+            0.9983844757080078,
+            0.027439719066023827,
+            0.049755144864320755
+          ],
+          [
+            -0.056505486369132996,
+            0.38747087121009827,
+            0.9201485514640808
+          ],
+          [
+            0.005969948135316372,
+            -0.9214735627174377,
+            0.38839536905288696
+          ]
+        ],
+        "t_mm": [
+          42.146917432546616,
+          -23.07763695716858,
+          448.8094449043274
+        ],
+        "T_camera_from_model_mm": [
+          [
+            0.9983844757080078,
+            0.027439719066023827,
+            0.049755144864320755,
+            42.146917432546616
+          ],
+          [
+            -0.056505486369132996,
+            0.38747087121009827,
+            0.9201485514640808,
+            -23.07763695716858
+          ],
+          [
+            0.005969948135316372,
+            -0.9214735627174377,
+            0.38839536905288696,
+            448.8094449043274
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "T_camera_from_input_cad_mm": [
+          [
+            0.9983844757080078,
+            0.027439719066023827,
+            0.049755144864320755,
+            35.32934674527496
+          ],
+          [
+            -0.056505486369132996,
+            0.38747087121009827,
+            0.9201485514640808,
+            -147.35882602632046
+          ],
+          [
+            0.005969948135316372,
+            -0.9214735627174377,
+            0.38839536905288696,
+            412.62564457952976
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "translation_unit": "mm",
+        "frame": "OpenCV camera: X right, Y down, Z forward",
+        "pose_score": 75.515625
+      }
+    ],
+    "best_index": 0,
+    "pose_score_is_probability": false,
+    "device": "cuda",
+    "accuracy_validated": false,
+    "timing": {
+      "model_load_s": 0.39409091298875865,
+      "pose_inference_s": 1.0551411449996522,
+      "total_s": 1.584998911988805
+    }
+  },
+  "timing": {
+    "model_load_s": 7.969996659085155e-06,
+    "cad_prepare_s": 0.000139764990308322,
+    "reference_features_s": 0.6338548609928694,
+    "pose_pipeline_s": 4.913873340003192,
+    "inference_s": 1.72015295199526,
+    "total_s": 7.372035977998166
+  },
+  "inference_stages": {
+    "input_s": 0.013420691000646912,
+    "sam_s": 1.0565402609936427,
+    "proposal_filter_s": 0.0005142040026839823,
+    "dino_s": 0.07173983599932399,
+    "semantic_s": 0.0006062580068828538,
+    "assignment_s": 0.00016410301032010466,
+    "appearance_s": 0.0001962280075531453,
+    "projection_s": 0.0034717469970928505,
+    "geometry_s": 0.004544773997622542,
+    "postprocess_s": 0.5686379179969663,
+    "comparison_export_s": 0.00010662400745786726,
+    "processing_s": 1.72015295199526
+  },
+  "model_reused": true,
+  "reference_cache_hit": true,
+  "renderer": "existing_blender_templates",
+  "options": {
+    "mode": "rgbd",
+    "device": "cuda",
+    "backbone": "vit_h",
+    "cad_units": "mm",
+    "segmentor": "sam",
+    "pose": true,
+    "pose_backend": "foundationpose",
+    "fastsam_conf": 0.05,
+    "fastsam_iou": 0.9,
+    "min_score": 0.3,
+    "confidence": 0.5,
+    "stability": 0.97,
+    "pred_iou": 0.88,
+    "points_per_batch": 64,
+    "nms": 0.25,
+    "aggregation": "avg_5"
+  },
+  "detections": [
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 3,
+      "score": 0.5867186188697815,
+      "semantic_score": 0.4658234119415283,
+      "appearance_score": 0.5585508346557617,
+      "geometry_score": 0.7766537666320801,
+      "visible_ratio": 0.7848101258277893,
+      "bbox": [
+        266,
+        60,
+        213,
+        276
+      ],
+      "time": 1.72015295199526
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 0,
+      "score": 0.36011192202568054,
+      "semantic_score": 0.28927668929100037,
+      "appearance_score": 0.47635525465011597,
+      "geometry_score": 0.19866085052490234,
+      "visible_ratio": 0.28125,
+      "bbox": [
+        316,
+        223,
+        126,
+        77
+      ],
+      "time": 1.72015295199526
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 9,
+      "score": 0.3366091251373291,
+      "semantic_score": 0.30354857444763184,
+      "appearance_score": 0.42707735300064087,
+      "geometry_score": 0.11257900297641754,
+      "visible_ratio": 0.2562499940395355,
+      "bbox": [
+        0,
+        310,
+        57,
+        45
+      ],
+      "time": 1.72015295199526
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 7,
+      "score": 0.32010573148727417,
+      "semantic_score": 0.2788996398448944,
+      "appearance_score": 0.4424535632133484,
+      "geometry_score": 0.0882720798254013,
+      "visible_ratio": 0.3499999940395355,
+      "bbox": [
+        129,
+        199,
+        57,
+        52
+      ],
+      "time": 1.72015295199526
+    }
+  ]
+}

@@ -1,0 +1,1310 @@
+{
+  "schema_version": 1,
+  "assembly_id": "converter_demo_v1",
+  "status": "data_prepared_not_inferred",
+  "parts": [
+    {
+      "category_id": 1,
+      "key": "00_rear_mounting_plate",
+      "name": "rear_mounting",
+      "fixed": true,
+      "optional": false,
+      "source_stl": "../../Assembly CAD/Assembly parts/00_rear_mounting_plate.stl",
+      "source_sha256": "50ac6086b2fb03112c89bb82587782de3092d162b55cfe2e2d5341746dad5885",
+      "sam_ply": "sam6d/models/obj_000001.ply",
+      "sam_obj": "sam6d/models/obj_000001.obj",
+      "sam_template_dir": "sam6d/templates/00_rear_mounting_plate/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          74.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          125.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "T_assembly_from_local_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          -110.0,
+          0.0,
+          0.0
+        ],
+        [
+          110.0,
+          148.0,
+          250.0
+        ]
+      ],
+      "topology_repair": "split_coincident_vertices_same_triangles",
+      "source_watertight": false,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 3116,
+        "volume_mm3": 1163249.1428800796
+      }
+    },
+    {
+      "category_id": 2,
+      "key": "01_front_housing",
+      "name": "front_housing",
+      "fixed": false,
+      "optional": false,
+      "source_stl": "../../Assembly CAD/Assembly parts/01_front_housing.stl",
+      "source_sha256": "d2e14fbc643e2739183604af7741eb0665c8c8878881924aceb9d9a5fb5dff8e",
+      "sam_ply": "sam6d/models/obj_000002.ply",
+      "sam_obj": "sam6d/models/obj_000002.obj",
+      "sam_template_dir": "sam6d/templates/01_front_housing/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          14.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          125.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "T_assembly_from_local_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          120.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          -85.5,
+          0.0,
+          15.0
+        ],
+        [
+          85.5,
+          28.0,
+          235.0
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": true,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 1160,
+        "volume_mm3": 379501.2510347565
+      }
+    },
+    {
+      "category_id": 3,
+      "key": "02_control_panel",
+      "name": "hmi_panel",
+      "fixed": false,
+      "optional": false,
+      "source_stl": "../../Assembly CAD/Assembly parts/02_control_panel.stl",
+      "source_sha256": "d27c7fa16cd41aaee32e8e5a4d557a1133f803669cdf06712ae1e5b0e04ab7e5",
+      "sam_ply": "sam6d/models/obj_000003.ply",
+      "sam_obj": "sam6d/models/obj_000003.obj",
+      "sam_template_dir": "sam6d/templates/02_control_panel/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          15.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          128.75
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "T_assembly_from_local_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          102.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          -72.19999694824219,
+          0.0,
+          26.0
+        ],
+        [
+          72.19999694824219,
+          30.0,
+          231.5
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": true,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 3548,
+        "volume_mm3": 258007.86973106978
+      }
+    },
+    {
+      "category_id": 4,
+      "key": "03_option_cassette",
+      "name": "option_cassette",
+      "fixed": false,
+      "optional": false,
+      "source_stl": "../../Assembly CAD/Assembly parts/03_option_cassette.stl",
+      "source_sha256": "dcde1a948fe4144220af2e195fe45235d418f1cb11afca99538833faefd26259",
+      "sam_ply": "sam6d/models/obj_000004.ply",
+      "sam_obj": "sam6d/models/obj_000004.obj",
+      "sam_template_dir": "sam6d/templates/03_option_cassette/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          15.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          134.75
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "T_assembly_from_local_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          84.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          -52.20000076293945,
+          0.0,
+          54.0
+        ],
+        [
+          52.20000076293945,
+          30.0,
+          215.5
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": true,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 4108,
+        "volume_mm3": 123314.30574424344
+      }
+    },
+    {
+      "category_id": 5,
+      "key": "03a_vertical_option_a",
+      "name": "communications_module",
+      "fixed": false,
+      "optional": true,
+      "source_stl": "../../Assembly CAD/Assembly parts/03a_vertical_option_a.stl",
+      "source_sha256": "ab226ac853658c4762df5988b2e7b0975afe7027c5176ce7c34088dac3a0ac7c",
+      "sam_ply": "sam6d/models/obj_000005.ply",
+      "sam_obj": "sam6d/models/obj_000005.obj",
+      "sam_template_dir": "sam6d/templates/03a_vertical_option_a/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -24.999999046325684
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          9.5
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          161.9000015258789
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "T_assembly_from_local_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          84.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          -38.599998474121094,
+          3.5,
+          70.80000305175781
+        ],
+        [
+          -11.399999618530273,
+          15.5,
+          253.0
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": true,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 156,
+        "volume_mm3": 31267.7789921951
+      }
+    },
+    {
+      "category_id": 6,
+      "key": "03b_vertical_option_b",
+      "name": "sensor_module",
+      "fixed": false,
+      "optional": true,
+      "source_stl": "../../Assembly CAD/Assembly parts/03b_vertical_option_b.stl",
+      "source_sha256": "5e29de8a511b0e924051debfcc6cf3f0388feba570ccff724e00a0a76a9b4cdd",
+      "sam_ply": "sam6d/models/obj_000006.ply",
+      "sam_obj": "sam6d/models/obj_000006.obj",
+      "sam_template_dir": "sam6d/templates/03b_vertical_option_b/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          24.999999046325684
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          10.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          161.9000015258789
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "T_assembly_from_local_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          84.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          9.399999618530273,
+          4.0,
+          70.80000305175781
+        ],
+        [
+          40.599998474121094,
+          16.0,
+          253.0
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": true,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 164,
+        "volume_mm3": 36358.65892776486
+      }
+    },
+    {
+      "category_id": 7,
+      "key": "04_io_terminals",
+      "name": "io_terminals",
+      "fixed": false,
+      "optional": false,
+      "source_stl": "../../Assembly CAD/Assembly parts/04_io_terminals.stl",
+      "source_sha256": "1393fd2295ab2b3abcd25fd5eca28ac01c88c99215ba5f06261ac728f8dc4ae4",
+      "sam_ply": "sam6d/models/obj_000007.ply",
+      "sam_obj": "sam6d/models/obj_000007.obj",
+      "sam_template_dir": "sam6d/templates/04_io_terminals/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          15.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          130.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "T_assembly_from_local_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          66.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          -56.0,
+          0.0,
+          44.0
+        ],
+        [
+          56.0,
+          30.0,
+          216.0
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": true,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 8056,
+        "volume_mm3": 182760.2740328672
+      }
+    },
+    {
+      "category_id": 8,
+      "key": "05_control_board",
+      "name": "control_board",
+      "fixed": false,
+      "optional": false,
+      "source_stl": "../../Assembly CAD/Assembly parts/05_control_board.stl",
+      "source_sha256": "4cbacb216dbd69065c8434f696292e196060d018e1d7780a554e5720ea598deb",
+      "sam_ply": "sam6d/models/obj_000008.ply",
+      "sam_obj": "sam6d/models/obj_000008.obj",
+      "sam_template_dir": "sam6d/templates/05_control_board/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          15.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          129.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "T_assembly_from_local_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          48.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          -65.0,
+          0.0,
+          34.0
+        ],
+        [
+          65.0,
+          30.0,
+          224.0
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": true,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 4634,
+        "volume_mm3": 175799.39390779182
+      }
+    },
+    {
+      "category_id": 9,
+      "key": "06_power_unit",
+      "name": "power_unit",
+      "fixed": false,
+      "optional": false,
+      "source_stl": "../../Assembly CAD/Assembly parts/06_power_unit.stl",
+      "source_sha256": "383daaa8b57b9df13cff313f089e96e63c7302048def77f040ce8076fb0b0244",
+      "sam_ply": "sam6d/models/obj_000009.ply",
+      "sam_obj": "sam6d/models/obj_000009.obj",
+      "sam_template_dir": "sam6d/templates/06_power_unit/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          16.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          128.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "T_assembly_from_local_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          28.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          -72.0,
+          0.0,
+          26.0
+        ],
+        [
+          72.0,
+          32.0,
+          230.0
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": true,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 6584,
+        "volume_mm3": 278776.06189950416
+      }
+    },
+    {
+      "category_id": 10,
+      "key": "07_thermal_core",
+      "name": "thermal_core",
+      "fixed": false,
+      "optional": false,
+      "source_stl": "../../Assembly CAD/Assembly parts/07_thermal_core.stl",
+      "source_sha256": "a736437d5791ecc49d77d6c26146fbb536fb4321d08a1d6315653ab0d63d8345",
+      "sam_ply": "sam6d/models/obj_000010.ply",
+      "sam_obj": "sam6d/models/obj_000010.obj",
+      "sam_template_dir": "sam6d/templates/07_thermal_core/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          16.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          125.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "T_assembly_from_local_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          8.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          -76.0,
+          0.0,
+          18.0
+        ],
+        [
+          76.0,
+          32.0,
+          232.0
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": true,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 5646,
+        "volume_mm3": 344172.9959546989
+      }
+    }
+  ],
+  "frames": [
+    {
+      "frame_id": 0,
+      "name": "both_optional_modules",
+      "rgb": "sam6d/frames/both_optional_modules/rgb.png",
+      "depth": "sam6d/frames/both_optional_modules/depth.png",
+      "camera": "sam6d/frames/both_optional_modules/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/both_optional_modules.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/both_optional_modules_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/both_optional_modules_depth.json",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.8626171875,
+      "depth_percentiles_mm": [
+        517.0000245561823,
+        566.0000268835574,
+        623.0000295909122
+      ]
+    },
+    {
+      "frame_id": 1,
+      "name": "communications_module",
+      "rgb": "sam6d/frames/communications_module/rgb.png",
+      "depth": "sam6d/frames/communications_module/depth.png",
+      "camera": "sam6d/frames/communications_module/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/communications_module.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/communications_module_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/communications_module_depth.json",
+      "filename_hint_only": "communications_module",
+      "valid_depth_fraction": 0.860791015625,
+      "depth_percentiles_mm": [
+        517.0000245561823,
+        567.0000269310549,
+        623.0000295909122
+      ]
+    },
+    {
+      "frame_id": 2,
+      "name": "control_board",
+      "rgb": "sam6d/frames/control_board/rgb.png",
+      "depth": "sam6d/frames/control_board/depth.png",
+      "camera": "sam6d/frames/control_board/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/control_board.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/control_board_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/control_board_depth.json",
+      "filename_hint_only": "control_board",
+      "valid_depth_fraction": 0.8617220052083333,
+      "depth_percentiles_mm": [
+        518.0000246036798,
+        565.00002683606,
+        624.0000296384096
+      ]
+    },
+    {
+      "frame_id": 3,
+      "name": "front_housing_2",
+      "rgb": "sam6d/frames/front_housing_2/rgb.png",
+      "depth": "sam6d/frames/front_housing_2/depth.png",
+      "camera": "sam6d/frames/front_housing_2/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/front_housing_2.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/front_housing_2_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/front_housing_2_depth.json",
+      "filename_hint_only": "front_housing",
+      "valid_depth_fraction": 0.8645865885416667,
+      "depth_percentiles_mm": [
+        514.00002441369,
+        563.0000267410651,
+        624.0000296384096
+      ]
+    },
+    {
+      "frame_id": 4,
+      "name": "hmi_panel",
+      "rgb": "sam6d/frames/hmi_panel/rgb.png",
+      "depth": "sam6d/frames/hmi_panel/depth.png",
+      "camera": "sam6d/frames/hmi_panel/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/hmi_panel.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/hmi_panel_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/hmi_panel_depth.json",
+      "filename_hint_only": "hmi_panel",
+      "valid_depth_fraction": 0.8592024739583334,
+      "depth_percentiles_mm": [
+        510.00002422370017,
+        564.0000267885625,
+        624.0000296384096
+      ]
+    },
+    {
+      "frame_id": 5,
+      "name": "io_terminals",
+      "rgb": "sam6d/frames/io_terminals/rgb.png",
+      "depth": "sam6d/frames/io_terminals/depth.png",
+      "camera": "sam6d/frames/io_terminals/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/io_terminals.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/io_terminals_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/io_terminals_depth.json",
+      "filename_hint_only": "io_terminals",
+      "valid_depth_fraction": 0.860009765625,
+      "depth_percentiles_mm": [
+        518.0000246036798,
+        565.00002683606,
+        624.0000296384096
+      ]
+    },
+    {
+      "frame_id": 6,
+      "name": "mounted_both_optional_components",
+      "rgb": "sam6d/frames/mounted_both_optional_components/rgb.png",
+      "depth": "sam6d/frames/mounted_both_optional_components/depth.png",
+      "camera": "sam6d/frames/mounted_both_optional_components/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/mounted_both_optional_components.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/mounted_both_optional_components_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/mounted_both_optional_components_depth.json",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.697099609375,
+      "depth_percentiles_mm": [
+        437.0000207563862,
+        559.0000265510753,
+        624.0000296384096
+      ]
+    },
+    {
+      "frame_id": 7,
+      "name": "mounted_communications_module",
+      "rgb": "sam6d/frames/mounted_communications_module/rgb.png",
+      "depth": "sam6d/frames/mounted_communications_module/depth.png",
+      "camera": "sam6d/frames/mounted_communications_module/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/mounted_communications_module.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/mounted_communications_module_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/mounted_communications_module_depth.json",
+      "filename_hint_only": "communications_module",
+      "valid_depth_fraction": 0.6984375,
+      "depth_percentiles_mm": [
+        438.0000208038837,
+        559.0000265510753,
+        624.0000296384096
+      ]
+    },
+    {
+      "frame_id": 8,
+      "name": "mounted_control_board",
+      "rgb": "sam6d/frames/mounted_control_board/rgb.png",
+      "depth": "sam6d/frames/mounted_control_board/depth.png",
+      "camera": "sam6d/frames/mounted_control_board/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/mounted_control_board.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/mounted_control_board_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/mounted_control_board_depth.json",
+      "filename_hint_only": "control_board",
+      "valid_depth_fraction": 0.725556640625,
+      "depth_percentiles_mm": [
+        452.000021468848,
+        555.0000263610855,
+        624.0000296384096
+      ]
+    },
+    {
+      "frame_id": 9,
+      "name": "mounted_front_housing",
+      "rgb": "sam6d/frames/mounted_front_housing/rgb.png",
+      "depth": "sam6d/frames/mounted_front_housing/depth.png",
+      "camera": "sam6d/frames/mounted_front_housing/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/mounted_front_housing.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/mounted_front_housing_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/mounted_front_housing_depth.json",
+      "filename_hint_only": "front_housing",
+      "valid_depth_fraction": 0.7885416666666667,
+      "depth_percentiles_mm": [
+        389.00001847650856,
+        547.0000259811059,
+        624.0000296384096
+      ]
+    },
+    {
+      "frame_id": 10,
+      "name": "mounted_hmi",
+      "rgb": "sam6d/frames/mounted_hmi/rgb.png",
+      "depth": "sam6d/frames/mounted_hmi/depth.png",
+      "camera": "sam6d/frames/mounted_hmi/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/mounted_hmi.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/mounted_hmi_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/mounted_hmi_depth.json",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7177311197916667,
+      "depth_percentiles_mm": [
+        414.00001966394484,
+        555.0000263610855,
+        624.0000296384096
+      ]
+    },
+    {
+      "frame_id": 11,
+      "name": "mounted_io_terminals",
+      "rgb": "sam6d/frames/mounted_io_terminals/rgb.png",
+      "depth": "sam6d/frames/mounted_io_terminals/depth.png",
+      "camera": "sam6d/frames/mounted_io_terminals/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/mounted_io_terminals.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/mounted_io_terminals_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/mounted_io_terminals_depth.json",
+      "filename_hint_only": "io_terminals",
+      "valid_depth_fraction": 0.7095865885416667,
+      "depth_percentiles_mm": [
+        448.0000212788582,
+        558.0000265035778,
+        624.0000296384096
+      ]
+    },
+    {
+      "frame_id": 12,
+      "name": "mounted_option_cassette",
+      "rgb": "sam6d/frames/mounted_option_cassette/rgb.png",
+      "depth": "sam6d/frames/mounted_option_cassette/depth.png",
+      "camera": "sam6d/frames/mounted_option_cassette/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/mounted_option_cassette.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/mounted_option_cassette_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/mounted_option_cassette_depth.json",
+      "filename_hint_only": "option_cassette",
+      "valid_depth_fraction": 0.7022135416666667,
+      "depth_percentiles_mm": [
+        440.0000208988786,
+        558.0000265035778,
+        624.0000296384096
+      ]
+    },
+    {
+      "frame_id": 13,
+      "name": "mounted_power_unit",
+      "rgb": "sam6d/frames/mounted_power_unit/rgb.png",
+      "depth": "sam6d/frames/mounted_power_unit/depth.png",
+      "camera": "sam6d/frames/mounted_power_unit/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/mounted_power_unit.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/mounted_power_unit_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/mounted_power_unit_depth.json",
+      "filename_hint_only": "power_unit",
+      "valid_depth_fraction": 0.7300846354166667,
+      "depth_percentiles_mm": [
+        447.00002123136073,
+        555.0000263610855,
+        624.0000296384096
+      ]
+    },
+    {
+      "frame_id": 14,
+      "name": "mounted_sensor_module",
+      "rgb": "sam6d/frames/mounted_sensor_module/rgb.png",
+      "depth": "sam6d/frames/mounted_sensor_module/depth.png",
+      "camera": "sam6d/frames/mounted_sensor_module/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/mounted_sensor_module.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/mounted_sensor_module_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/mounted_sensor_module_depth.json",
+      "filename_hint_only": "sensor_module",
+      "valid_depth_fraction": 0.6954231770833333,
+      "depth_percentiles_mm": [
+        438.0000208038837,
+        559.0000265510753,
+        624.0000296384096
+      ]
+    },
+    {
+      "frame_id": 15,
+      "name": "mounted_termal_fan",
+      "rgb": "sam6d/frames/mounted_termal_fan/rgb.png",
+      "depth": "sam6d/frames/mounted_termal_fan/depth.png",
+      "camera": "sam6d/frames/mounted_termal_fan/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/mounted_termal_fan.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/mounted_termal_fan_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/mounted_termal_fan_depth.json",
+      "filename_hint_only": "thermal_core",
+      "valid_depth_fraction": 0.7420638020833333,
+      "depth_percentiles_mm": [
+        450.0000213738531,
+        556.0000264085829,
+        624.0000296384096
+      ]
+    },
+    {
+      "frame_id": 16,
+      "name": "option_cassette",
+      "rgb": "sam6d/frames/option_cassette/rgb.png",
+      "depth": "sam6d/frames/option_cassette/depth.png",
+      "camera": "sam6d/frames/option_cassette/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/option_cassette.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/option_cassette_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/option_cassette_depth.json",
+      "filename_hint_only": "option_cassette",
+      "valid_depth_fraction": 0.86408203125,
+      "depth_percentiles_mm": [
+        517.0000245561823,
+        566.0000268835574,
+        624.0000296384096
+      ]
+    },
+    {
+      "frame_id": 17,
+      "name": "power_unit",
+      "rgb": "sam6d/frames/power_unit/rgb.png",
+      "depth": "sam6d/frames/power_unit/depth.png",
+      "camera": "sam6d/frames/power_unit/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/power_unit.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/power_unit_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/power_unit_depth.json",
+      "filename_hint_only": "power_unit",
+      "valid_depth_fraction": 0.86287109375,
+      "depth_percentiles_mm": [
+        517.0000245561823,
+        564.0000267885625,
+        624.0000296384096
+      ]
+    },
+    {
+      "frame_id": 18,
+      "name": "prueba 1",
+      "rgb": "sam6d/frames/prueba 1/rgb.png",
+      "depth": "sam6d/frames/prueba 1/depth.png",
+      "camera": "sam6d/frames/prueba 1/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/prueba 1.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/prueba 1_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/prueba 1_depth.json",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.5873795572916667,
+      "depth_percentiles_mm": [
+        238.0000113043934,
+        285.0000135367736,
+        338.00001605413854
+      ]
+    },
+    {
+      "frame_id": 19,
+      "name": "rear_mounting",
+      "rgb": "sam6d/frames/rear_mounting/rgb.png",
+      "depth": "sam6d/frames/rear_mounting/depth.png",
+      "camera": "sam6d/frames/rear_mounting/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/rear_mounting.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/rear_mounting_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/rear_mounting_depth.json",
+      "filename_hint_only": "rear_mounting",
+      "valid_depth_fraction": 0.7206477864583334,
+      "depth_percentiles_mm": [
+        450.0000213738531,
+        563.0000267410651,
+        624.0000296384096
+      ]
+    },
+    {
+      "frame_id": 20,
+      "name": "sensor_module",
+      "rgb": "sam6d/frames/sensor_module/rgb.png",
+      "depth": "sam6d/frames/sensor_module/depth.png",
+      "camera": "sam6d/frames/sensor_module/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/sensor_module.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/sensor_module_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/sensor_module_depth.json",
+      "filename_hint_only": "sensor_module",
+      "valid_depth_fraction": 0.864326171875,
+      "depth_percentiles_mm": [
+        518.0000246036798,
+        567.0000269310549,
+        624.0000296384096
+      ]
+    },
+    {
+      "frame_id": 21,
+      "name": "termal_fan",
+      "rgb": "sam6d/frames/termal_fan/rgb.png",
+      "depth": "sam6d/frames/termal_fan/depth.png",
+      "camera": "sam6d/frames/termal_fan/camera.json",
+      "source_rgb": "../../DINOPDDL/realsense_photos/termal_fan.jpg",
+      "source_depth": "../../DINOPDDL/realsense_photos/termal_fan_depth.npy",
+      "source_metadata": "../../DINOPDDL/realsense_photos/termal_fan_depth.json",
+      "filename_hint_only": "thermal_core",
+      "valid_depth_fraction": 0.8605078125,
+      "depth_percentiles_mm": [
+        517.0000245561823,
+        564.0000267885625,
+        624.0000296384096
+      ]
+    }
+  ],
+  "warnings": [
+    "RGB sin profundidad/calibración: front_housing.jpg"
+  ],
+  "provenance": {
+    "catalog": "0f54144bd5c3eb6dc9d1bf2620bd1aa67c6685f5a8cc3eb54b69b53f39805f06",
+    "placement_source": "21694fe220aa57b75f262264339734b69a77527129a2c1e2f407ee77880c1844"
+  },
+  "T_asap_from_assembly_mm": [
+    [
+      0.039525691699604744,
+      0.0,
+      0.0,
+      -0.0
+    ],
+    [
+      0.0,
+      0.039525691699604744,
+      0.0,
+      -2.924901185770751
+    ],
+    [
+      0.0,
+      0.0,
+      0.039525691699604744,
+      -0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "T_assembly_mm_from_asap": [
+    [
+      25.3,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      25.3,
+      0.0,
+      74.0
+    ],
+    [
+      0.0,
+      0.0,
+      25.3,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "asap_assemblies": {
+    "with_options": "asap/with_options",
+    "without_options": "asap/without_options"
+  },
+  "unpaired_rgb": [
+    "front_housing.jpg"
+  ],
+  "asap_meshes_ready": true
+}

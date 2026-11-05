@@ -1,0 +1,79 @@
+{
+  "running": false,
+  "state": "stopped",
+  "frames": 726,
+  "fps": 15.043373236866696,
+  "session": "a07d7922ae774854933d2ddd05202a76",
+  "seed_job": "17a94772650b4e60a3fd9c011a8a6aac",
+  "error": null,
+  "redetect_interval_s": 10.0,
+  "redetect_attempts": 14,
+  "redetections": 6,
+  "redetect_error": null,
+  "sam_running": false,
+  "sam_checks": 8,
+  "sam_discarded": 6,
+  "sam_misses": 0,
+  "sam_disagreements": 0,
+  "automatic_recovery": true,
+  "losses": 6,
+  "recovery_attempts": 12,
+  "backup_attempts": 2,
+  "consecutive_quality_failures": 0,
+  "sam_reason": null,
+  "cad_key": "01_front_housing",
+  "display_name": "front_housing",
+  "identification": false,
+  "component_changes": 0,
+  "frame_number": 1134,
+  "timestamp": 1793805368.3896148,
+  "latency_s": 0.03710365295410156,
+  "pose": [
+    [
+      -0.9967004656791687,
+      0.039380043745040894,
+      0.07096440345048904,
+      40.00256862491369
+    ],
+    [
+      -0.05023657903075218,
+      0.3873862326145172,
+      -0.9205485582351685,
+      89.21762071549892
+    ],
+    [
+      -0.06374173611402512,
+      -0.9210764169692993,
+      -0.3841295540332794,
+      507.6307317316532
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "worker_pid": 26939,
+  "pose_quality": {
+    "ok": true,
+    "enabled": true,
+    "reasons": [],
+    "motion_checked": true,
+    "visible_fraction": 1.0,
+    "depth_samples": 331,
+    "depth_support": 0.9123867069486404,
+    "valid_depth_fraction": 0.7620137299771167,
+    "occlusion_fraction": 0.006006006006006006,
+    "median_depth_error_mm": 4.815686825629328,
+    "translation_jump_mm": 4.925215620606417,
+    "rotation_jump_deg": 0.6183695584222499,
+    "elapsed_s": 0.06650781631469727
+  },
+  "last_redetect_s": 0.9048908969998593,
+  "last_redetect_at": 1793805358.3583972,
+  "last_detection_score": 0.4389478266239166,
+  "last_sam_agreement": null,
+  "last_loss_reason": "Recuperando pose con una detecci\u00f3n SAM reciente\u2026",
+  "last_registration_s": 0.7661043899997821
+}

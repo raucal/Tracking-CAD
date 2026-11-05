@@ -1,0 +1,2 @@
+{"timestamp": 1793813194.0719993, "frame_number": 232, "elapsed_s": 2.0930775399992854, "reason": "recovery", "status": "discarded", "reason_discarded": "before_tracking_loss"}
+{"timestamp": 1793813196.6670527, "frame_number": 277, "elapsed_s": 1.5923125839999557, "reason": "recovery", "score": 0.5080052018165588, "segmentor": "fastsam", "bbox_xyxy": [143, 2, 610, 404], "status": "relocalized", "registration_s": 0.7776496370006498}

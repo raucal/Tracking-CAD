@@ -1,0 +1,15 @@
+{
+  "processed": 22,
+  "selected": 22,
+  "device": "cuda",
+  "recognized": 21,
+  "mean_processing_s": 2.4978049326772718,
+  "median_processing_s": 2.445686051476514,
+  "min_processing_s": 1.9926717040361837,
+  "max_processing_s": 3.020149271993432,
+  "setup_timing": {
+    "model_load_s": 5.372621080023237,
+    "references_s": 0.6549678870360367
+  },
+  "wall_s": 169.72096246300498
+}

@@ -1,0 +1,166 @@
+{
+  "status": "complete",
+  "mode": "rgbd",
+  "backend": "foundationpose",
+  "device": "cuda",
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "cad_name": "02_control_panel.stl",
+  "cad_key": "02_control_panel",
+  "display_name": "hmi_panel",
+  "recognized": false,
+  "accepted_detections": 0,
+  "valid_proposals": 29,
+  "best_score": 0.46298909187316895,
+  "formula": "(semantic + appearance + geometry * visible_ratio) / (2 + visible_ratio)",
+  "score_is_probability": false,
+  "pose_6d_estimated": false,
+  "pose": {
+    "status": "no_accepted_detection",
+    "backend": "foundationpose",
+    "poses": []
+  },
+  "timing": {
+    "model_load_s": 8.030998287722468e-06,
+    "cad_prepare_s": 0.00014517499948851764,
+    "reference_features_s": 0.00043732400808949023,
+    "inference_s": 0.9693046210013563,
+    "total_s": 1.0673820659867488
+  },
+  "inference_stages": {
+    "input_s": 0.007923676006612368,
+    "sam_s": 0.014798656993662007,
+    "proposal_filter_s": 0.0006648459966527298,
+    "dino_s": 0.16440929200325627,
+    "semantic_s": 0.0004240820126142353,
+    "assignment_s": 0.00025474000722169876,
+    "appearance_s": 0.00030598499870393425,
+    "projection_s": 0.0017037099896697327,
+    "geometry_s": 0.0004974199982825667,
+    "postprocess_s": 0.7744340580102289,
+    "comparison_export_s": 0.0036006310110678896,
+    "processing_s": 0.9693046210013563
+  },
+  "model_reused": true,
+  "reference_cache_hit": true,
+  "renderer": "existing_blender_templates",
+  "options": {
+    "mode": "rgbd",
+    "device": "cuda",
+    "backbone": "vit_h",
+    "cad_units": "mm",
+    "segmentor": "fastsam",
+    "pose": true,
+    "pose_backend": "foundationpose",
+    "fastsam_conf": 0.05,
+    "fastsam_iou": 0.9,
+    "min_score": 0.3,
+    "confidence": 0.5,
+    "stability": 0.97,
+    "pred_iou": 0.88,
+    "points_per_batch": 64,
+    "nms": 0.25,
+    "aggregation": "avg_5"
+  },
+  "detections": [
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 2,
+      "score": 0.46298909187316895,
+      "semantic_score": 0.3277156352996826,
+      "appearance_score": 0.49828818440437317,
+      "geometry_score": 0.6193845868110657,
+      "visible_ratio": 0.6392405033111572,
+      "bbox": [
+        0,
+        0,
+        506,
+        376
+      ],
+      "time": 0.9693046210013563
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 9,
+      "score": 0.352791428565979,
+      "semantic_score": 0.2932661771774292,
+      "appearance_score": 0.4123166799545288,
+      "geometry_score": 0.20554272830486298,
+      "visible_ratio": 0.0,
+      "bbox": [
+        389,
+        2,
+        208,
+        20
+      ],
+      "time": 0.9693046210013563
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 0,
+      "score": 0.35199642181396484,
+      "semantic_score": 0.23681406676769257,
+      "appearance_score": 0.4610063433647156,
+      "geometry_score": 0.37257105112075806,
+      "visible_ratio": 0.30000001192092896,
+      "bbox": [
+        77,
+        0,
+        261,
+        160
+      ],
+      "time": 0.9693046210013563
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 18,
+      "score": 0.3379298746585846,
+      "semantic_score": 0.2450128048658371,
+      "appearance_score": 0.3288514018058777,
+      "geometry_score": 0.7969098091125488,
+      "visible_ratio": 0.2222222238779068,
+      "bbox": [
+        481,
+        398,
+        158,
+        72
+      ],
+      "time": 0.9693046210013563
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 11,
+      "score": 0.3221445679664612,
+      "semantic_score": 0.33464527130126953,
+      "appearance_score": 0.30964383482933044,
+      "geometry_score": 0.5367553234100342,
+      "visible_ratio": 0.0,
+      "bbox": [
+        539,
+        0,
+        100,
+        466
+      ],
+      "time": 0.9693046210013563
+    }
+  ]
+}

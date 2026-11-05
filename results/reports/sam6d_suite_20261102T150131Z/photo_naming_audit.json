@@ -1,0 +1,19 @@
+{
+  "scope": "Visual comparison with geometric features in the CAD generator; original files unchanged",
+  "source": "Assembly CAD/sequential_converter_v1_FULL/generate_sequential_converter.py",
+  "correspondences": {
+    "communications_module": {
+      "cad_key": "03b_vertical_option_b",
+      "catalog_name": "sensor_module",
+      "evidence": "Four horizontal raised bands, a broad lower block and the shorter shielded body match make_vertical_option_b."
+    },
+    "sensor_module": {
+      "cad_key": "03a_vertical_option_a",
+      "catalog_name": "communications_module",
+      "evidence": "Irregular components and the longer open board match make_vertical_option_a."
+    }
+  },
+  "note_es": "Corrección del usuario: 03a es sensor_module y 03b es communications_module. El catálogo de entrada tenía estos dos nombres intercambiados; no se atribuye la discrepancia a las fotos.",
+  "historical_note_es": "Los nombres de estas dos fotos no coinciden con los nombres semánticos del catálogo CAD. La inferencia no utiliza los nombres de archivo para clasificar.",
+  "status": "superseded_by_user_correction"
+}

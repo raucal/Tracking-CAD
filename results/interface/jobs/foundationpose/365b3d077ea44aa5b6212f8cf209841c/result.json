@@ -1,0 +1,106 @@
+{
+  "status": "complete",
+  "mode": "rgbd",
+  "backend": "foundationpose",
+  "device": "cuda",
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "cad_name": "01_front_housing.stl",
+  "cad_key": "01_front_housing",
+  "display_name": "front_housing",
+  "recognized": false,
+  "accepted_detections": 0,
+  "valid_proposals": 11,
+  "best_score": 0.4877249598503113,
+  "formula": "(semantic + appearance + geometry * visible_ratio) / (2 + visible_ratio)",
+  "score_is_probability": false,
+  "pose_6d_estimated": false,
+  "pose": {
+    "status": "no_accepted_detection",
+    "backend": "foundationpose",
+    "poses": []
+  },
+  "timing": {
+    "model_load_s": 8.988999979919754e-06,
+    "cad_prepare_s": 7.62959998610313e-05,
+    "reference_features_s": 0.0004187250001450593,
+    "inference_s": 1.4971479060000092,
+    "total_s": 1.558126613000013
+  },
+  "inference_stages": {
+    "input_s": 0.012795287000017197,
+    "sam_s": 1.1487758299999768,
+    "proposal_filter_s": 0.000385158999961277,
+    "dino_s": 0.06623632600008023,
+    "semantic_s": 0.0006217339998784155,
+    "assignment_s": 0.00016653500006214017,
+    "appearance_s": 0.00019996800006083504,
+    "projection_s": 0.0011286389999440871,
+    "geometry_s": 0.00023559500004921574,
+    "postprocess_s": 0.26201440599993475,
+    "comparison_export_s": 0.00012787400009983685,
+    "processing_s": 1.4971479060000092
+  },
+  "model_reused": true,
+  "reference_cache_hit": true,
+  "renderer": "existing_blender_templates",
+  "options": {
+    "mode": "rgbd",
+    "device": "cuda",
+    "backbone": "vit_h",
+    "cad_units": "mm",
+    "segmentor": "sam",
+    "pose": true,
+    "pose_backend": "foundationpose",
+    "fastsam_conf": 0.05,
+    "fastsam_iou": 0.9,
+    "min_score": 0.3,
+    "confidence": 0.5,
+    "stability": 0.97,
+    "pred_iou": 0.88,
+    "points_per_batch": 64,
+    "nms": 0.25,
+    "aggregation": "avg_5"
+  },
+  "detections": [
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 2,
+      "part_key": "01_front_housing",
+      "part_name": "front_housing",
+      "proposal_id": 3,
+      "score": 0.4877249598503113,
+      "semantic_score": 0.3493804633617401,
+      "appearance_score": 0.4857300817966461,
+      "geometry_score": 0.7106170058250427,
+      "visible_ratio": 0.6296296119689941,
+      "bbox": [
+        0,
+        11,
+        376,
+        443
+      ],
+      "time": 1.4971479060000092
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 2,
+      "part_key": "01_front_housing",
+      "part_name": "front_housing",
+      "proposal_id": 9,
+      "score": 0.34169840812683105,
+      "semantic_score": 0.2657410800457001,
+      "appearance_score": 0.41765570640563965,
+      "geometry_score": 0.14099028706550598,
+      "visible_ratio": 0.0,
+      "bbox": [
+        84,
+        274,
+        226,
+        19
+      ],
+      "time": 1.4971479060000092
+    }
+  ]
+}

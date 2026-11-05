@@ -1,0 +1,141 @@
+{
+  "backend": "foundationpose",
+  "initialization": "manual_bbox",
+  "mode": "rgbd",
+  "device": "cuda",
+  "display_name": "01_front_housing.stl",
+  "cad_name": "01_front_housing.stl",
+  "cad_key": "manual_cad",
+  "recognized": false,
+  "accepted_detections": 0,
+  "valid_proposals": 0,
+  "best_score": null,
+  "formula": "manual rectangular mask; no automatic detection",
+  "score_is_probability": false,
+  "pose_6d_estimated": true,
+  "pose": {
+    "status": "estimated",
+    "backend": "foundationpose",
+    "poses": [
+      {
+        "R": [
+          [
+            -0.9997036457061768,
+            0.02325177937746048,
+            0.007207514718174934
+          ],
+          [
+            8.622260065749288e-05,
+            0.29945865273475647,
+            -0.9541091918945312
+          ],
+          [
+            -0.024343060329556465,
+            -0.9538258910179138,
+            -0.29937195777893066
+          ]
+        ],
+        "t_mm": [
+          -40.251631289720535,
+          -11.397039517760277,
+          435.08636951446533
+        ],
+        "T_camera_from_model_mm": [
+          [
+            -0.9997036457061768,
+            0.02325177937746048,
+            0.007207514718174934,
+            -40.251631289720535
+          ],
+          [
+            8.622260065749288e-05,
+            0.29945865273475647,
+            -0.9541091918945312,
+            -11.397039517760277
+          ],
+          [
+            -0.024343060329556465,
+            -0.9538258910179138,
+            -0.29937195777893066,
+            435.08636951446533
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "T_camera_from_input_cad_mm": [
+          [
+            -0.9997036457061768,
+            0.02325177937746048,
+            0.007207514718174934,
+            -41.47809554077685
+          ],
+          [
+            8.622260065749288e-05,
+            0.29945865273475647,
+            -0.9541091918945312,
+            103.67418833076954
+          ],
+          [
+            -0.024343060329556465,
+            -0.9538258910179138,
+            -0.29937195777893066,
+            485.86142671108246
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "translation_unit": "mm",
+        "frame": "OpenCV camera: X right, Y down, Z forward",
+        "pose_score": 60.53125
+      }
+    ],
+    "best_index": 0,
+    "pose_score_is_probability": false,
+    "device": "cuda",
+    "accuracy_validated": false,
+    "models_reused": true,
+    "worker_pid": 15128,
+    "timing": {
+      "model_load_s": 0.03415066399998068,
+      "pose_inference_s": 0.7884379600000102,
+      "total_s": 0.9592793780000193
+    },
+    "rpc_seconds": 0.9599768850000601
+  },
+  "timing": {
+    "inference_s": 0,
+    "pose_pipeline_s": 0.960190349999948,
+    "total_s": 1.0617654719999337
+  },
+  "inference_stages": {},
+  "model_reused": false,
+  "reference_cache_hit": false,
+  "renderer": "not_used",
+  "options": {
+    "mode": "rgbd",
+    "device": "cuda",
+    "backbone": "vit_h",
+    "cad_units": "mm",
+    "segmentor": "fastsam",
+    "pose": true,
+    "pose_backend": "foundationpose",
+    "fastsam_conf": 0.05,
+    "fastsam_iou": 0.9,
+    "min_score": 0.3,
+    "confidence": 0.5,
+    "stability": 0.97,
+    "pred_iou": 0.88,
+    "points_per_batch": 64,
+    "nms": 0.25,
+    "aggregation": "avg_5"
+  },
+  "detections": []
+}

@@ -1,0 +1,162 @@
+{
+  "status": "complete",
+  "mode": "rgbd",
+  "backend": "sam6d",
+  "device": "cuda",
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "cad_name": "02_control_panel.stl",
+  "cad_key": "02_control_panel",
+  "display_name": "hmi_panel",
+  "recognized": true,
+  "accepted_detections": 1,
+  "valid_proposals": 22,
+  "best_score": 0.5771917700767517,
+  "formula": "(semantic + appearance + geometry * visible_ratio) / (2 + visible_ratio)",
+  "score_is_probability": false,
+  "pose_6d_estimated": false,
+  "pose": null,
+  "timing": {
+    "model_load_s": 7.775000995025039e-06,
+    "cad_prepare_s": 0.00015307999274227768,
+    "reference_features_s": 0.6319359509943752,
+    "inference_s": 0.8740231939882506,
+    "total_s": 1.6194140809966484
+  },
+  "inference_stages": {
+    "input_s": 0.00858009498915635,
+    "sam_s": 0.011624377992120571,
+    "proposal_filter_s": 0.0006125560030341148,
+    "dino_s": 0.12200148899864871,
+    "semantic_s": 0.00038957899960223585,
+    "assignment_s": 0.00018167300731875002,
+    "appearance_s": 0.0002531909995013848,
+    "projection_s": 0.0012378799874568358,
+    "geometry_s": 0.0003180960047757253,
+    "postprocess_s": 0.7285392220073845,
+    "comparison_export_s": 0.00012287400022614747,
+    "processing_s": 0.8740231939882506
+  },
+  "model_reused": true,
+  "reference_cache_hit": true,
+  "renderer": "existing_blender_templates",
+  "options": {
+    "mode": "rgbd",
+    "device": "cuda",
+    "backbone": "vit_h",
+    "cad_units": "mm",
+    "segmentor": "fastsam",
+    "pose": false,
+    "pose_backend": "pem",
+    "fastsam_conf": 0.05,
+    "fastsam_iou": 0.9,
+    "min_score": 0.3,
+    "confidence": 0.5,
+    "stability": 0.97,
+    "pred_iou": 0.88,
+    "points_per_batch": 64,
+    "nms": 0.25,
+    "aggregation": "avg_5"
+  },
+  "detections": [
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 7,
+      "score": 0.5771917700767517,
+      "semantic_score": 0.4504774212837219,
+      "appearance_score": 0.5524922013282776,
+      "geometry_score": 0.7716909646987915,
+      "visible_ratio": 0.7784810066223145,
+      "bbox": [
+        267,
+        59,
+        214,
+        275
+      ],
+      "time": 0.8740231939882506
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 0,
+      "score": 0.33535194396972656,
+      "semantic_score": 0.2667123079299927,
+      "appearance_score": 0.43443015217781067,
+      "geometry_score": 0.19620433449745178,
+      "visible_ratio": 0.21875,
+      "bbox": [
+        316,
+        223,
+        125,
+        77
+      ],
+      "time": 0.8740231939882506
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 10,
+      "score": 0.32099011540412903,
+      "semantic_score": 0.27082163095474243,
+      "appearance_score": 0.3979816734790802,
+      "geometry_score": 0.09793446958065033,
+      "visible_ratio": 0.12025316804647446,
+      "bbox": [
+        0,
+        264,
+        44,
+        50
+      ],
+      "time": 0.8740231939882506
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 18,
+      "score": 0.315138041973114,
+      "semantic_score": 0.3038249909877777,
+      "appearance_score": 0.3264510929584503,
+      "geometry_score": 0.03511316329240799,
+      "visible_ratio": 0.0,
+      "bbox": [
+        562,
+        38,
+        17,
+        47
+      ],
+      "time": 0.8740231939882506
+    },
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 21,
+      "score": 0.3088994324207306,
+      "semantic_score": 0.24097271263599396,
+      "appearance_score": 0.42282089591026306,
+      "geometry_score": 0.09553475677967072,
+      "visible_ratio": 0.21556885540485382,
+      "bbox": [
+        129,
+        198,
+        57,
+        53
+      ],
+      "time": 0.8740231939882506
+    }
+  ]
+}

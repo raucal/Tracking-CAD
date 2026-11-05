@@ -1,0 +1,86 @@
+{
+  "status": "complete",
+  "mode": "rgbd",
+  "backend": "foundationpose",
+  "device": "cuda",
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "cad_name": "02_control_panel.stl",
+  "cad_key": "02_control_panel",
+  "display_name": "hmi_panel",
+  "recognized": false,
+  "accepted_detections": 0,
+  "valid_proposals": 29,
+  "best_score": 0.43672409653663635,
+  "formula": "(semantic + appearance + geometry * visible_ratio) / (2 + visible_ratio)",
+  "score_is_probability": false,
+  "pose_6d_estimated": false,
+  "pose": {
+    "status": "no_accepted_detection",
+    "backend": "foundationpose",
+    "poses": []
+  },
+  "timing": {
+    "model_load_s": 7.363007171079516e-06,
+    "cad_prepare_s": 0.00013716000830754638,
+    "reference_features_s": 0.6297917149931891,
+    "inference_s": 0.3326375730102882,
+    "total_s": 1.0658550009975443
+  },
+  "inference_stages": {
+    "input_s": 0.00858584899106063,
+    "sam_s": 0.016448716996819712,
+    "proposal_filter_s": 0.0007308290078071877,
+    "dino_s": 0.15359931800048798,
+    "semantic_s": 0.0003336380032123998,
+    "assignment_s": 0.00021959899459034204,
+    "appearance_s": 0.00028757999825756997,
+    "projection_s": 0.001563402998726815,
+    "geometry_s": 0.00031898000452201813,
+    "postprocess_s": 0.1503038560040295,
+    "comparison_export_s": 8.918999810703099e-05,
+    "processing_s": 0.3326375730102882
+  },
+  "model_reused": true,
+  "reference_cache_hit": true,
+  "renderer": "existing_blender_templates",
+  "options": {
+    "mode": "rgbd",
+    "device": "cuda",
+    "backbone": "vit_h",
+    "cad_units": "mm",
+    "segmentor": "fastsam",
+    "pose": true,
+    "pose_backend": "foundationpose",
+    "fastsam_conf": 0.05,
+    "fastsam_iou": 0.9,
+    "min_score": 0.4,
+    "confidence": 0.5,
+    "stability": 0.97,
+    "pred_iou": 0.88,
+    "points_per_batch": 64,
+    "nms": 0.25,
+    "aggregation": "max"
+  },
+  "detections": [
+    {
+      "scene_id": 0,
+      "image_id": 0,
+      "category_id": 3,
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "proposal_id": 12,
+      "score": 0.43672409653663635,
+      "semantic_score": 0.3389602601528168,
+      "appearance_score": 0.4760529398918152,
+      "geometry_score": 0.573654055595398,
+      "visible_ratio": 0.42675158381462097,
+      "bbox": [
+        283,
+        194,
+        219,
+        175
+      ],
+      "time": 0.3326375730102882
+    }
+  ]
+}

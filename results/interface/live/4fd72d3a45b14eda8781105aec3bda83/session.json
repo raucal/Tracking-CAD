@@ -1,0 +1,79 @@
+{
+  "running": false,
+  "state": "stopped",
+  "frames": 638,
+  "fps": 15.551680874833279,
+  "session": "4fd72d3a45b14eda8781105aec3bda83",
+  "seed_job": "6281d654abce46b293c1b2ecfc0c1013",
+  "error": null,
+  "redetect_interval_s": 10.0,
+  "redetect_attempts": 5,
+  "redetections": 1,
+  "redetect_error": null,
+  "sam_running": false,
+  "sam_checks": 4,
+  "sam_discarded": 1,
+  "sam_misses": 0,
+  "sam_disagreements": 0,
+  "automatic_recovery": true,
+  "losses": 1,
+  "recovery_attempts": 2,
+  "backup_attempts": 3,
+  "consecutive_quality_failures": 0,
+  "sam_reason": null,
+  "cad_key": "02_control_panel",
+  "display_name": "hmi_panel",
+  "identification": false,
+  "component_changes": 0,
+  "frame_number": 776,
+  "timestamp": 1793805426.1678398,
+  "latency_s": 0.037455081939697266,
+  "pose": [
+    [
+      -0.9981949329376221,
+      0.055431146174669266,
+      0.023062333464622498,
+      -206.4173150062561
+    ],
+    [
+      -0.004867091774940491,
+      0.3081549108028412,
+      -0.9513232707977295,
+      289.4929565489292
+    ],
+    [
+      -0.059839680790901184,
+      -0.9497194290161133,
+      -0.3073292374610901,
+      660.3819923847914
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "worker_pid": 26939,
+  "pose_quality": {
+    "ok": true,
+    "enabled": true,
+    "reasons": [],
+    "motion_checked": true,
+    "visible_fraction": 0.9001919385796545,
+    "depth_samples": 258,
+    "depth_support": 1.0,
+    "valid_depth_fraction": 0.6965174129353234,
+    "occlusion_fraction": 0.07857142857142857,
+    "median_depth_error_mm": 6.319093112976737,
+    "translation_jump_mm": 1.5095183395057064,
+    "rotation_jump_deg": 1.1880983161293281,
+    "elapsed_s": 0.05922412872314453
+  },
+  "last_redetect_s": 0.9184481299998879,
+  "last_redetect_at": 1793805416.1164439,
+  "last_detection_score": 0.5310681462287903,
+  "last_sam_agreement": null,
+  "last_loss_reason": "Recuperando pose con una detecci\u00f3n SAM reciente\u2026",
+  "last_registration_s": 0.764290090999566
+}

@@ -1,0 +1,34 @@
+{
+  "python": "/home/raca/projects/.venvs/assembly-runtime/bin/python",
+  "modules": {
+    "torch": true,
+    "torchvision": true,
+    "hydra": true,
+    "omegaconf": true,
+    "pytorch_lightning": true,
+    "segment_anything": true,
+    "cv2": true,
+    "trimesh": true,
+    "pycocotools": true,
+    "distinctipy": true,
+    "imageio": true,
+    "skimage": true,
+    "blenderproc": false,
+    "gorilla": false,
+    "timm": true,
+    "einops": true
+  },
+  "cuda_available": true,
+  "cuda_error": null,
+  "weights": {
+    "Instance_Segmentation_Model/checkpoints/segment-anything/sam_vit_h_4b8939.pth": true,
+    "Instance_Segmentation_Model/checkpoints/dinov2/dinov2_vitl14_pretrain.pth": true
+  },
+  "pem_checkpoints": [],
+  "pointnet2_extensions": [],
+  "blenderproc_executable": null,
+  "parts_missing_metric_templates": [],
+  "segmentation_ready": true,
+  "rendering_module_available": false,
+  "pose_ready": false
+}

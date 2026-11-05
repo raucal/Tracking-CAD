@@ -1,0 +1,79 @@
+{
+  "running": false,
+  "state": "stopped",
+  "frames": 3271,
+  "fps": 14.874830771147655,
+  "session": "18d47f15da8145c7934c983d9be7f1bc",
+  "seed_job": "9667403c05054991b38598997b6ed2b9",
+  "error": null,
+  "redetect_interval_s": 10.0,
+  "redetect_attempts": 60,
+  "redetections": 23,
+  "redetect_error": null,
+  "sam_running": false,
+  "sam_checks": 35,
+  "sam_discarded": 25,
+  "sam_misses": 0,
+  "sam_disagreements": 0,
+  "automatic_recovery": true,
+  "losses": 23,
+  "recovery_attempts": 48,
+  "backup_attempts": 12,
+  "consecutive_quality_failures": 0,
+  "sam_reason": null,
+  "cad_key": "07_thermal_core",
+  "display_name": "thermal_core",
+  "identification": true,
+  "component_changes": 20,
+  "frame_number": 6335,
+  "timestamp": 1793805068.6298027,
+  "latency_s": 0.03702497482299805,
+  "pose": [
+    [
+      -0.9550814628601074,
+      -0.028708450496196747,
+      0.2949497699737549,
+      -240.78961515426636
+    ],
+    [
+      -0.2887623608112335,
+      0.3138473927974701,
+      -0.9044975638389587,
+      344.46748238801956
+    ],
+    [
+      -0.06660238653421402,
+      -0.9490394592285156,
+      -0.3080393075942993,
+      598.5723787546158
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "worker_pid": 26939,
+  "pose_quality": {
+    "ok": true,
+    "enabled": true,
+    "reasons": [],
+    "motion_checked": true,
+    "visible_fraction": 0.4174573055028463,
+    "depth_samples": 129,
+    "depth_support": 0.8992248062015504,
+    "valid_depth_fraction": 0.6907216494845361,
+    "occlusion_fraction": 0.03731343283582089,
+    "median_depth_error_mm": 8.625293313503256,
+    "translation_jump_mm": 1.6410304646731795,
+    "rotation_jump_deg": 0.9282645586217512,
+    "elapsed_s": 0.06961917877197266
+  },
+  "last_redetect_s": 1.7046693010001945,
+  "last_redetect_at": 1793805063.7316642,
+  "last_detection_score": 0.6356476545333862,
+  "last_sam_agreement": null,
+  "last_loss_reason": "Recuperando pose con una detecci\u00f3n SAM reciente\u2026",
+  "last_registration_s": 0.7702056319999429
+}

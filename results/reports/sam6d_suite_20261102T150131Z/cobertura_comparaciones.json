@@ -1,0 +1,1485 @@
+{
+  "images": 22,
+  "cad_models": 10,
+  "expected_image_cad_pairs": 220,
+  "verified_image_cad_pairs": 220,
+  "complete": true,
+  "reference_views_per_cad": 42,
+  "scope": "Comparación semántica de todas las propuestas válidas frente a todos los CAD; no implica score final para cada clase.",
+  "frames": [
+    {
+      "name": "both_optional_modules",
+      "valid_proposals": 15,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.17064809799194336,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.28732872009277344,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.2726480960845947,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.28123152256011963,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.3870445191860199,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.48081740736961365,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.28854185342788696,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.27771422266960144,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.2720378637313843,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.2869236469268799,
+          "compared_proposals": 15
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "communications_module",
+      "valid_proposals": 10,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.15535412728786469,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.2553599774837494,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.2753590941429138,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.23317718505859375,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.34650468826293945,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.4121558368206024,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.24434839189052582,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.2527097165584564,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.23985253274440765,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.24545370042324066,
+          "compared_proposals": 10
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "control_board",
+      "valid_proposals": 12,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.24172095954418182,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.22050796449184418,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.21992039680480957,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.3773770034313202,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.21671640872955322,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.19226980209350586,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.4615623652935028,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.5197258591651917,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.48578396439552307,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.33549317717552185,
+          "compared_proposals": 12
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "front_housing_2",
+      "valid_proposals": 12,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.28701940178871155,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.5045914649963379,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.2950391471385956,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.309140682220459,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.2222088873386383,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.23152266442775726,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.28954944014549255,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.28611645102500916,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.2592197358608246,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.23264813423156738,
+          "compared_proposals": 12
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "hmi_panel",
+      "valid_proposals": 12,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.2524556815624237,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.2930300235748291,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.4266342222690582,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.3243256211280823,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.21994224190711975,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.20972660183906555,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.2834329605102539,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.2687796652317047,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.2652854025363922,
+          "compared_proposals": 12
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.2294447422027588,
+          "compared_proposals": 12
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "io_terminals",
+      "valid_proposals": 13,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.20067301392555237,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.10737790912389755,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.18194609880447388,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.25073209404945374,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.15840370953083038,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.1407807618379593,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.45674338936805725,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.37305474281311035,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.4332587420940399,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.280642569065094,
+          "compared_proposals": 13
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "mounted_both_optional_components",
+      "valid_proposals": 15,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.18641960620880127,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.25577959418296814,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.22511832416057587,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.2547665238380432,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.3562004864215851,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.44267764687538147,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.25286731123924255,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.23795104026794434,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.23762308061122894,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.25186842679977417,
+          "compared_proposals": 15
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "mounted_communications_module",
+      "valid_proposals": 14,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.1994965523481369,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.27445346117019653,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.24857349693775177,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.27106180787086487,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.3741864264011383,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.44932910799980164,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.27476227283477783,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.2571926712989807,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.2550064027309418,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.2706620693206787,
+          "compared_proposals": 14
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "mounted_control_board",
+      "valid_proposals": 15,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.23557524383068085,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.227439284324646,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.21259109675884247,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.35497623682022095,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.2667995095252991,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.225415900349617,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.4274522364139557,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.45040473341941833,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.4473969042301178,
+          "compared_proposals": 15
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.29972609877586365,
+          "compared_proposals": 15
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "mounted_front_housing",
+      "valid_proposals": 13,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.27371904253959656,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.3598863184452057,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.26412826776504517,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.28007039427757263,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.11873102188110352,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.14786691963672638,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.2785973846912384,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.29338669776916504,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.25086531043052673,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.2137981504201889,
+          "compared_proposals": 13
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "mounted_hmi",
+      "valid_proposals": 18,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.23836319148540497,
+          "compared_proposals": 18
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.2947610020637512,
+          "compared_proposals": 18
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.42150574922561646,
+          "compared_proposals": 18
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.34333327412605286,
+          "compared_proposals": 18
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.23261331021785736,
+          "compared_proposals": 18
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.23168639838695526,
+          "compared_proposals": 18
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.29035240411758423,
+          "compared_proposals": 18
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.27405038475990295,
+          "compared_proposals": 18
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.2699938714504242,
+          "compared_proposals": 18
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.2221156358718872,
+          "compared_proposals": 18
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "mounted_io_terminals",
+      "valid_proposals": 17,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.22381329536437988,
+          "compared_proposals": 17
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.15983787178993225,
+          "compared_proposals": 17
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.22590892016887665,
+          "compared_proposals": 17
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.25962114334106445,
+          "compared_proposals": 17
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.17627790570259094,
+          "compared_proposals": 17
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.17138636112213135,
+          "compared_proposals": 17
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.4391821026802063,
+          "compared_proposals": 17
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.35223791003227234,
+          "compared_proposals": 17
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.3991023600101471,
+          "compared_proposals": 17
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.2722126245498657,
+          "compared_proposals": 17
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "mounted_option_cassette",
+      "valid_proposals": 14,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.33672237396240234,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.2975277602672577,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.2783508896827698,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.6203120946884155,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.2739708125591278,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.2543768584728241,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.4157260060310364,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.47635284066200256,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.39145520329475403,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.3333005905151367,
+          "compared_proposals": 14
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "mounted_power_unit",
+      "valid_proposals": 21,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.22824926674365997,
+          "compared_proposals": 21
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.22654815018177032,
+          "compared_proposals": 21
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.2308763563632965,
+          "compared_proposals": 21
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.2312173694372177,
+          "compared_proposals": 21
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.11198089271783829,
+          "compared_proposals": 21
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.1360415667295456,
+          "compared_proposals": 21
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.40257883071899414,
+          "compared_proposals": 21
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.3399718999862671,
+          "compared_proposals": 21
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.44923415780067444,
+          "compared_proposals": 21
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.275762677192688,
+          "compared_proposals": 21
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "mounted_sensor_module",
+      "valid_proposals": 13,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.22399573028087616,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.23245668411254883,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.21978755295276642,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.44762715697288513,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.3113344609737396,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.27003273367881775,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.3639011085033417,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.4016205370426178,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.340801864862442,
+          "compared_proposals": 13
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.27510079741477966,
+          "compared_proposals": 13
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "mounted_termal_fan",
+      "valid_proposals": 18,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.22235889732837677,
+          "compared_proposals": 18
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.24138712882995605,
+          "compared_proposals": 18
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.25326475501060486,
+          "compared_proposals": 18
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.2984941601753235,
+          "compared_proposals": 18
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.18483616411685944,
+          "compared_proposals": 18
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.17896132171154022,
+          "compared_proposals": 18
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.2756389081478119,
+          "compared_proposals": 18
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.28096601366996765,
+          "compared_proposals": 18
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.3440200686454773,
+          "compared_proposals": 18
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.6279611587524414,
+          "compared_proposals": 18
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "option_cassette",
+      "valid_proposals": 10,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.25912490487098694,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.2565004229545593,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.2852446138858795,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.5880139470100403,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.31513258814811707,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.3002483546733856,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.3350681960582733,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.36850616335868835,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.3156653046607971,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.290098637342453,
+          "compared_proposals": 10
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "power_unit",
+      "valid_proposals": 14,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.19183149933815002,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.1803053915500641,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.1696009635925293,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.23674070835113525,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.10148639976978302,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.12326886504888535,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.4047175347805023,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.3528808653354645,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.46135076880455017,
+          "compared_proposals": 14
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.28275713324546814,
+          "compared_proposals": 14
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "prueba 1",
+      "valid_proposals": 21,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.16796641051769257,
+          "compared_proposals": 21
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.19451077282428741,
+          "compared_proposals": 21
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.16671782732009888,
+          "compared_proposals": 21
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.19250021874904633,
+          "compared_proposals": 21
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.27050963044166565,
+          "compared_proposals": 21
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.2522875964641571,
+          "compared_proposals": 21
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.1870698183774948,
+          "compared_proposals": 21
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.18832255899906158,
+          "compared_proposals": 21
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.18818287551403046,
+          "compared_proposals": 21
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.1927778273820877,
+          "compared_proposals": 21
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "rear_mounting",
+      "valid_proposals": 10,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.5539193749427795,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.18691854178905487,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.22607247531414032,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.31682348251342773,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.1451057344675064,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.13556011021137238,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.26476702094078064,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.30364781618118286,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.2698167860507965,
+          "compared_proposals": 10
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.2856123447418213,
+          "compared_proposals": 10
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "sensor_module",
+      "valid_proposals": 9,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.15290825068950653,
+          "compared_proposals": 9
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.22619251906871796,
+          "compared_proposals": 9
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.2511975169181824,
+          "compared_proposals": 9
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.23961913585662842,
+          "compared_proposals": 9
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.46871528029441833,
+          "compared_proposals": 9
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.4162757098674774,
+          "compared_proposals": 9
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.23906321823596954,
+          "compared_proposals": 9
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.23625297844409943,
+          "compared_proposals": 9
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.22718845307826996,
+          "compared_proposals": 9
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.23482541739940643,
+          "compared_proposals": 9
+        }
+      ],
+      "all_cads_compared": true
+    },
+    {
+      "name": "termal_fan",
+      "valid_proposals": 16,
+      "candidates": [
+        {
+          "part_key": "00_rear_mounting_plate",
+          "compared": true,
+          "semantic_score": 0.20787973701953888,
+          "compared_proposals": 16
+        },
+        {
+          "part_key": "01_front_housing",
+          "compared": true,
+          "semantic_score": 0.20490522682666779,
+          "compared_proposals": 16
+        },
+        {
+          "part_key": "02_control_panel",
+          "compared": true,
+          "semantic_score": 0.22026300430297852,
+          "compared_proposals": 16
+        },
+        {
+          "part_key": "03_option_cassette",
+          "compared": true,
+          "semantic_score": 0.3075549602508545,
+          "compared_proposals": 16
+        },
+        {
+          "part_key": "03a_vertical_option_a",
+          "compared": true,
+          "semantic_score": 0.1706620454788208,
+          "compared_proposals": 16
+        },
+        {
+          "part_key": "03b_vertical_option_b",
+          "compared": true,
+          "semantic_score": 0.17050908505916595,
+          "compared_proposals": 16
+        },
+        {
+          "part_key": "04_io_terminals",
+          "compared": true,
+          "semantic_score": 0.33473488688468933,
+          "compared_proposals": 16
+        },
+        {
+          "part_key": "05_control_board",
+          "compared": true,
+          "semantic_score": 0.33363276720046997,
+          "compared_proposals": 16
+        },
+        {
+          "part_key": "06_power_unit",
+          "compared": true,
+          "semantic_score": 0.4210079610347748,
+          "compared_proposals": 16
+        },
+        {
+          "part_key": "07_thermal_core",
+          "compared": true,
+          "semantic_score": 0.6925318241119385,
+          "compared_proposals": 16
+        }
+      ],
+      "all_cads_compared": true
+    }
+  ]
+}
