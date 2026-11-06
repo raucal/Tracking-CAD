@@ -1,0 +1,85 @@
+{
+  "running": false,
+  "state": "stopped",
+  "frames": 1923,
+  "fps": 15.21171271319395,
+  "session": "3c259617389e485c9fb34dd824bb45da",
+  "seed_job": "aa0ac8c810ba401b8307ec3ca9fadbfa",
+  "error": null,
+  "redetect_interval_s": 10.0,
+  "redetect_attempts": 27,
+  "redetections": 9,
+  "redetect_error": null,
+  "sam_running": false,
+  "sam_checks": 18,
+  "sam_discarded": 9,
+  "sam_misses": 0,
+  "sam_disagreements": 0,
+  "automatic_recovery": true,
+  "losses": 9,
+  "recovery_attempts": 19,
+  "backup_attempts": 8,
+  "consecutive_quality_failures": 0,
+  "sam_reason": null,
+  "cad_key": "01_front_housing",
+  "display_name": "front_housing",
+  "identification": true,
+  "component_changes": 9,
+  "cad_view_error": null,
+  "cad_render_s": 0.0022846579959150404,
+  "frame_number": 3091,
+  "timestamp": 1793892220.6268547,
+  "latency_s": 0.026015043258666992,
+  "pose": [
+    [
+      -0.9990519881248474,
+      -0.019527511671185493,
+      0.03887913376092911,
+      -41.50163374468684
+    ],
+    [
+      -0.043026819825172424,
+      0.3109578788280487,
+      -0.949447751045227,
+      121.97871625423431
+    ],
+    [
+      0.006450566928833723,
+      -0.9502202868461609,
+      -0.3115040063858032,
+      478.5119869709015
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "worker_pid": 167107,
+  "pose_quality": {
+    "ok": true,
+    "enabled": true,
+    "reasons": [],
+    "motion_checked": true,
+    "visible_fraction": 1.0,
+    "depth_samples": 390,
+    "depth_support": 1.0,
+    "valid_depth_fraction": 0.8533916849015317,
+    "occlusion_fraction": 0.0,
+    "median_depth_error_mm": 2.194894003161807,
+    "translation_jump_mm": 0.12312253708062314,
+    "rotation_jump_deg": 0.2801998751120397,
+    "elapsed_s": 0.06644940376281738
+  },
+  "last_redetect_s": 2.610587717994349,
+  "last_redetect_at": 1793892213.9259179,
+  "last_detection_score": 0.5225427150726318,
+  "last_sam_agreement": {
+    "iou": 0.8640672175284535,
+    "center_offset": 0.04304737728876535,
+    "consistent": true
+  },
+  "last_loss_reason": "Recuperando pose con una detecci\u00f3n SAM reciente\u2026",
+  "last_registration_s": 0.7680491049977718
+}

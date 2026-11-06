@@ -32,6 +32,14 @@ class AllCadScores(unittest.TestCase):
         self.assertEqual(detections.masks.shape, (1, 9, 8))
         self.assertEqual(detections.boxes.shape, (1, 4))
 
+    def test_scalar_zero_from_upstream_geometry_remains_exportable(self):
+        model, detections = self.fixture()
+        model.compute_geometric_score = lambda *args: (0.0, torch.ones(3))
+        values = score_hypotheses(model, detections, torch.ones(1, 4, 4), {},
+                                 torch.tensor([[.1, .2, .9]]), torch.zeros(1, 3, dtype=torch.long))
+        self.assertEqual(values['geometry'].cpu().tolist(), [0., 0., 0.])
+        self.assertTrue(torch.isfinite(values['score']).all())
+
     def test_nonfinite_score_is_error_not_zero(self):
         model, detections = self.fixture()
         with self.assertRaisesRegex(ValueError, "no finito"):

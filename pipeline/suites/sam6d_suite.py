@@ -42,6 +42,7 @@ def main():
     parser.add_argument("--threads", type=int, default=config['threads'])
     parser.add_argument("--reference-cache", type=Path, default=config['reference_cache'])
     parser.add_argument("--pose",action=argparse.BooleanOptionalAction,default=config["pose"],help="Calculate PEM poses for accepted detections")
+    parser.add_argument("--view-details", action=argparse.BooleanOptionalAction, default=True, help="Audit all reference views after a new run; --no-view-details skips this extra computation")
     parser.add_argument("--overwrite-pose",action="store_true",help="Recompute poses of a saved suite")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--no-export", action="store_true")
@@ -109,6 +110,11 @@ def main():
         if output.is_dir():
             shutil.copy2(logfile, output / "execution.log")
             shutil.copy2(manifest, output / "dataset_manifest.json")
+    if args.command == "run" and returncode == 0 and args.view_details:
+        audit_command = [sys.executable, str(Path(__file__).resolve().parents[1] / "tools/score_all_cads.py"),
+                         "--run", str(output), "--view-details", "--device", args.device,
+                         "--threads", str(args.threads), "--reference-cache", str(args.reference_cache.resolve())]
+        subprocess.run(audit_command, check=True)
     if args.command=="pose":
         from suites.sam6d_suite_pose import enrich_suite
         enrich_suite(output,args.overwrite_pose,args.frame)

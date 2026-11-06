@@ -181,3 +181,53 @@ hasta recuperarla. El render usa la GPU ya inicializada y muestra su tiempo en m
 También puedes pulsar «Abrir visor compacto» y elegir «CAD + triedro · fondo negro»
 para verlo en una ventana independiente. La vista se actualiza con los fotogramas
 del seguimiento; no vuelve a ejecutar SAM para dibujar el modelo.
+
+## Detalle del ISM en el informe de la suite
+
+El informe incluye todas las vistas renderizadas de cada CAD y desplegables por
+captura, CAD, scores por vista, geometría, detecciones y pose. Los enlaces del
+resumen abren automáticamente el desplegable de destino.
+
+Las nuevas suites calculan una auditoría adicional sobre la **misma máscara
+primaria guardada** de cada captura: similitud DINOv2 y apariencia para cada vista,
+ganadora semántica, ganadora por apariencia y valores intermedios de geometría.
+Esto añade tiempo de cálculo, registrado aparte en `ism_view_details.json`.
+`--no-view-details` omite ese diagnóstico en una nueva ejecución.
+
+Para añadirlo a una suite antigua, sin volver a ejecutar SAM ni PEM:
+
+```bash
+bash run.sh scores --run results/suites/ID --view-details
+bash run.sh suite report --output results/suites/ID
+```
+
+El diagnóstico preserva los resultados originales y se niega a sobrescribir otro
+`ism_view_details.json`. Se exporta también `ism_vistas.csv`. La auditoría verifica
+el hash de la suite y que el score recalculado de la clase original no difiera más
+de 0,001. Si se recalcula en otro entorno y se necesita inspeccionar una discrepancia,
+`--view-details --allow-score-drift` permite guardar las nuevas mediciones: registra
+la diferencia por captura y el informe la muestra explícitamente, sin sustituir los
+scores originales. `--device cpu` permite ejecutar esta auditoría sin CUDA. Sus tablas evalúan todos los CAD sobre la región primaria; no representan
+el conjunto completo de propuestas SAM. Una captura sin región guardada se marca
+sin mediciones. La regeneración de HTML por sí sola no ejecuta modelos.
+
+DINOv2 proporciona tanto el descriptor global para semántica como los patches
+locales para apariencia. La vista de mayor similitud global se usa en ISM para
+apariencia y geometría. La semántica agregada usa la configuración del modelo
+(`avg_5` es la media de las cinco mejores similitudes); no equivale necesariamente
+al valor de esa vista ganadora. La ganadora por apariencia es un dato adicional,
+no modifica la decisión de ISM.
+
+La geometría de ISM es una **IoU de cajas 2D**: rota la nube del CAD con la vista
+seleccionada, la traslada usando la media de puntos RGB-D dentro de la máscara,
+la proyecta con la calibración de cámara y compara su caja con la caja SAM.
+No mide distancias entre superficies ni optimiza una pose. La visibilidad se estima
+por correspondencias de patches, no con un test de oclusión en profundidad. El
+informe explica las fórmulas, unidades, limitaciones y el peso final
+`(semántica + apariencia + geometría × visibilidad) / (2 + visibilidad)`.
+
+Fuentes de implementación: `model/detector.py`, `model/loss.py`,
+`utils/trimesh_utils.py` y `utils/bbox_utils.py` dentro de
+`models/SAM-6D/SAM-6D/Instance_Segmentation_Model/`. La rutina original de IoU usa
+una condición sobre todo el lote: un no solapamiento puede anular el lote completo.
+La auditoría conserva el valor del modelo y muestra las áreas para revisarlo.

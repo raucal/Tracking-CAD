@@ -1,0 +1,75 @@
+{
+  "running": false,
+  "state": "stopped",
+  "frames": 467,
+  "fps": 15.14533458488601,
+  "session": "4ec3c95794f6451c9876e8facc35f0d9",
+  "seed_job": "c2e36d9eab504b728e38b505150f25a8",
+  "error": null,
+  "redetect_interval_s": 0.0,
+  "redetect_attempts": 0,
+  "redetections": 0,
+  "redetect_error": null,
+  "sam_running": false,
+  "sam_checks": 0,
+  "sam_discarded": 0,
+  "sam_misses": 0,
+  "sam_disagreements": 0,
+  "automatic_recovery": false,
+  "losses": 0,
+  "recovery_attempts": 0,
+  "backup_attempts": 0,
+  "consecutive_quality_failures": 0,
+  "sam_reason": null,
+  "cad_key": "manual_cad",
+  "display_name": "01_front_housing.stl",
+  "identification": false,
+  "component_changes": 0,
+  "cad_view_error": null,
+  "cad_render_s": 0.0022263959981501102,
+  "frame_number": 939,
+  "timestamp": 1793891939.0323966,
+  "latency_s": 0.0308840274810791,
+  "pose": [
+    [
+      -0.9980503916740417,
+      -0.02943243831396103,
+      -0.05497727543115616,
+      0.25939173996448517
+    ],
+    [
+      0.043974634259939194,
+      0.29292112588882446,
+      -0.95512455701828,
+      132.88185438513756
+    ],
+    [
+      0.04421563819050789,
+      -0.955684244632721,
+      -0.2910562753677368,
+      480.81012630462646
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "worker_pid": 167107,
+  "pose_quality": {
+    "ok": true,
+    "enabled": true,
+    "reasons": [],
+    "motion_checked": true,
+    "visible_fraction": 1.0,
+    "depth_samples": 413,
+    "depth_support": 1.0,
+    "valid_depth_fraction": 0.9261744966442953,
+    "occlusion_fraction": 0.0024154589371980675,
+    "median_depth_error_mm": 2.238400500497395,
+    "translation_jump_mm": 0.1285167694784787,
+    "rotation_jump_deg": 0.2094489354788525,
+    "elapsed_s": 0.06491827964782715
+  }
+}

@@ -16,6 +16,7 @@ import shutil
 import statistics
 from urllib.parse import quote
 import zipfile
+from suites.ism_report_details import reference_gallery, methodology, view_audit_section
 
 
 def save_csv(path, rows, fields):
@@ -327,6 +328,31 @@ def export_report(source, target, create_archive=False):
         (target / "correccion_nombres_cad.json").write_text(json.dumps(corrections, ensure_ascii=False, indent=2) + "\n")
     coverage = comparison_coverage(run)
     (target / "cobertura_comparaciones.json").write_text(json.dumps(coverage, ensure_ascii=False, indent=2) + "\n")
+    view_path = source / 'ism_view_details.json'
+    view_frames = {}
+    view_rows = []
+    audit_note = "<p>Esta suite aún no dispone de auditoría por vista.</p>"
+    if view_path.is_file():
+        view_data = json.loads(view_path.read_text())
+        if view_data.get('source_run_sha256') != hashlib.sha256((source/'run.json').read_bytes()).hexdigest():
+            raise ValueError('La auditoría por vista no corresponde a esta suite')
+        if view_data.get('status') != 'complete':
+            raise ValueError('La auditoría por vista está incompleta; revisa ism_view_details.json')
+        shutil.copy2(view_path, target/view_path.name)
+        view_frames = {f['name']: f for f in view_data['frames']}
+        audit_note = ('<p>Auditoría adicional: dispositivo '+html.escape(view_data['device'])+
+                      ' · agregación semántica: '+html.escape(str(view_data.get('aggregation')))+
+                      '. Los tiempos originales de ISM excluyen esta auditoría.</p>'
+                      '<p><a href="ism_vistas.csv">Scores por vista CSV</a> · <a href="ism_view_details.json">Auditoría JSON y tiempos adicionales</a></p>')
+        for frame in view_data['frames']:
+            for item in frame['scores']:
+                for view, (semantic, appearance) in enumerate(zip(item['semantic_by_view'], item['appearance_by_view'])):
+                    view_rows.append({'imagen':frame['name'], 'cad':item['part_key'], 'vista':view,
+                                      'dinov2_semantic':semantic, 'appearance':appearance,
+                                      'ganadora_semantica':view == item['semantic_winner'],
+                                      'ganadora_apariencia':view == item['appearance_winner'],
+                                      'agregacion_semantica':view_data.get('aggregation')})
+    save_csv(target/'ism_vistas.csv', view_rows, ['imagen','cad','vista','dinov2_semantic','appearance','ganadora_semantica','ganadora_apariencia','agregacion_semantica'])
     cad_previews = {}
     manifest_parts = {p["key"]: p for p in dataset["parts"]}
     for part in run["catalog"]:
@@ -337,6 +363,7 @@ def export_report(source, target, create_archive=False):
             reference_preview(folder, 2, target / relative)
             reference_preview(folder, 19, target / relative.with_stem(relative.stem + "_frontal"))
             cad_previews[part["key"]] = relative.as_posix()
+    all_reference_views = reference_gallery(run["catalog"], manifest_parts, base, target)
     label_provenance = {
         "nombre_captura": "Nombre del archivo RGB original; solo identifica la captura.",
         "cad_predicho": "category_id y part_key elegidos por SAM-6D al comparar las máscaras con las referencias CAD.",
@@ -482,14 +509,14 @@ def export_report(source, target, create_archive=False):
             dense_rows = "".join(f'<tr class="{score_style(s["score"], s["part_key"] == chosen)}"><td>{e(s["part_key"])}</td>'
                                   f'<td>{e(names.get(s["part_key"], s["part_name"]))}</td><td>{fmt(s["score"])}</td><td>{fmt(s.get("semantic"))}</td><td>{fmt(s.get("appearance"))}</td><td>{fmt(s.get("geometry"))}</td><td>{fmt(s.get("visible_ratio"))}</td></tr>'
                                   for s in sorted(dense["scores"], key=lambda s: s["score"], reverse=True))
-            dense_block = ('<section class="diagnostic"><h3>Scores de los diez CAD sobre esta misma región</h3>'
+            dense_block = ('<details class="diagnostic"><summary>Scores de todos los CAD sobre esta misma región</summary>'
                            f'<img class="roi-detail" src="{rel}/primary_region.png" alt="Recorte de la región principal evaluada" loading="lazy">'
                            '<p>Evaluación adicional sin descartar scores bajos: se supone, por turno, que esta región es cada uno de los diez CAD. '
                            'Se calcula la fórmula completa de SAM-6D con apariencia y geometría. Son hipótesis sobre este recorte, '
                            'no diez piezas detectadas ni probabilidades. La predicción original se conserva.</p>'
                            '<table><thead><tr><th>CAD evaluado</th><th>Nombre corregido</th><th>Score de la hipótesis</th><th>Semántica</th><th>Apariencia</th><th>Geométrica</th><th>Visibilidad</th></tr></thead>'
-                           f'<tbody>{dense_rows}</tbody></table></section>')
-        cards.append(f'<article id="{anchor}"><h2>Imagen {number:02d} · {e(filename)}</h2>'
+                           f'<tbody>{dense_rows}</tbody></table></details>')
+        cards.append(f'<details class="capture" id="{anchor}"><summary>Imagen {number:02d} · {e(filename)} · {e(label)} · ISM {fmt(score)}</summary><article><h2>Imagen {number:02d} · {e(filename)}</h2>'
                      f'<div class="prediction"><div><small>CAD predicho por SAM-6D</small><p><b>{e(label)}</b></p>'
                      f'<small>Nombre asociado en el catálogo: {e(c["part_name"] if c else "—")}</small></div>'
                      f'<div class="confidence"><small>Confianza final SAM-6D · ISM</small><strong style="color:{confidence_color}" data-score-source="score">{fmt(score)}</strong>{meter}'
@@ -500,17 +527,19 @@ def export_report(source, target, create_archive=False):
                      f'Componentes visibles aceptados: {e(visible)}.</p>'
                      f'<div class="pictures"><img src="{rel}/rgb.png" alt="RGB original" loading="lazy">'
                      f'<img src="{rel}/overlay_decision.png" alt="Elegida en verde y alternativas mayores de 0,40 en naranja" loading="lazy"></div>'
-                     f'<div id="{anchor}-pose">{pose_section(pose,rel)}</div>'
+                     f'<details id="{anchor}-pose"><summary>Pose 6D: triedros y matrices</summary>{pose_section(pose,rel)}</details>'
+                     f'{view_audit_section(view_frames.get(frame["name"]),rel)}'
                      f'{dense_block}'
                      '<p class="provenance">El nombre de la captura procede del archivo RGB. La etiqueta predicha procede del CAD elegido '
                      'y de su nombre en el catálogo; no se ha tomado del nombre de esta foto.</p>'
-                     '<h3>Detecciones originales conservadas en esta imagen</h3>'
+                     '<details><summary>Detecciones originales conservadas en esta imagen</summary>'
                      '<p>Verde: pieza elegida. Naranja: otra clase con score final &gt; 0,40, que puede corresponder a otra pieza o a una confusión. '
                      'Cada fila muestra solo la región de mayor score de esa clase; varias máscaras no equivalen a varias piezas.</p>'
                      '<table><thead><tr><th>CAD candidato</th><th>Score final ISM</th><th>Semántica</th><th>Apariencia</th><th>Geométrica</th><th>Visibilidad</th><th>Interpretación</th><th>Región evaluada</th></tr></thead>'
                      f'<tbody>{final_table}</tbody></table>'
                      f'<p>Se compararon los diez CAD. Los demás no tienen una detección conservada en esta imagen. '
                      f'La aceptación automática sigue en {run["settings"]["confidence"]:.2f}; el naranja es una ayuda visual, no una aceptación nueva.</p>'
+                     '</details>'
                      f'<details><summary>Todas las detecciones guardadas y sus máscaras ({len(saved)})</summary>'
                      '<table><thead><tr><th>Detección</th><th>CAD predicho</th><th>Score final ISM</th><th>Semántica</th><th>Apariencia</th><th>Geométrica</th><th>Visibilidad</th><th>Estado</th><th>Máscara</th></tr></thead>'
                      f'<tbody>{detection_rows}</tbody></table></details>'
@@ -524,7 +553,7 @@ def export_report(source, target, create_archive=False):
                      f'<th>Comparación CAD (ms)</th></tr></thead><tbody>{ranking}</tbody></table><p>{details}</p>'
                      f'<pre>{e(json.dumps(frame["proposal_counts"], ensure_ascii=False, indent=2))}</pre>'
                      f'<a href="{rel}/case.json">JSON del caso</a> · <a href="{rel}/detection_ism.json">Detecciones y máscaras RLE</a>'
-                     '</details><p><a href="#inicio">Volver al resumen</a></p></article>')
+                     '</details><p><a href="#inicio">Volver al resumen</a></p></article></details>')
     setup = run["setup_timing"]
     settings=run['settings'];sam=settings.get('segmentor','sam')=='sam'
     stability_note=('SAM · YAML: '+str(settings.get('stability_score_yaml','no registrado'))+' · solicitado: '+str(settings.get('stability_score'))+' · efectivo en el generador: '+str(settings.get('stability_score_effective','no registrado en esta ejecución antigua'))) if sam else 'FastSAM: el umbral de estabilidad SAM no es aplicable.' 
@@ -552,6 +581,7 @@ article,.panel{{background:white;border-radius:12px;padding:22px;margin:20px 0;o
 td,th{{padding:8px;border-bottom:1px solid #ccd5dd;text-align:left}}th{{background:#e9eff5}}a{{color:#075a9f}}
 .pictures{{display:flex;gap:12px;flex-wrap:wrap}}.pictures img{{width:min(100%,600px);height:auto}}img.chart{{max-width:100%}}
 pre{{white-space:pre-wrap}}
+summary{{cursor:pointer;font-weight:600;padding:12px;border-radius:6px;background:#e9eff5}}details[open]>summary{{margin-bottom:12px}}.capture{{background:white;border-radius:12px;padding:12px;margin:16px 0}}.capture article{{margin:0;padding:12px}}.view-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}}.view-grid figure{{margin:0}}.view-grid img{{width:100%;height:160px;object-fit:contain}}.view-thumb{{width:90px;height:72px;object-fit:contain;vertical-align:middle}}table{{display:block;overflow-x:auto}}
 .pose-gallery{{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}}.pose-card{{display:flex;flex-direction:column;gap:5px;padding:12px;background:#edf5f3;border-radius:8px}}.pose-card img{{width:100%;height:auto}}details{{margin-top:14px}}.device{{font-size:24px;font-weight:bold}}h1{{margin-bottom:0}}
 .prediction{{display:flex;justify-content:space-between;gap:20px;padding:18px;background:#edf5f3;border-radius:10px;flex-wrap:wrap}}
 .prediction p{{margin:5px 0}}.prediction small{{display:block;color:#526979}}.confidence strong{{display:block;font-size:42px;color:#116b5a}}
@@ -566,7 +596,7 @@ meter{{width:180px;height:16px}}.provenance{{padding:12px;background:#f0f3f7;bor
 .diagnostic{{background:#f5f7fb;border:1px solid #d8e2ed;border-radius:8px;padding:16px;margin-top:16px}}
 </style><body id="inicio"><h1>SAM-6D · Confianza final por imagen</h1>
 <p class="device">Dispositivo real: {e(run["device"]["used"])} {e(run["device"].get("gpu_name") or "")}</p>
-<p><a href="#poses">Ver matrices y triedros de pose 6D</a> · <a href="#comparacion-cads">Ver elegidas y alternativas por imagen · {coverage["verified_image_cad_pairs"]}/{coverage["expected_image_cad_pairs"]} comparaciones verificadas</a></p>
+<p><a href="#metodo-ism">Cómo funciona ISM</a> · <a href="#referencias">Todas las vistas CAD</a> · <a href="#poses">Ver matrices y triedros de pose 6D</a> · <a href="#comparacion-cads">Ver elegidas y alternativas por imagen · {coverage["verified_image_cad_pairs"]}/{coverage["expected_image_cad_pairs"]} comparaciones verificadas</a></p>
 <div class="panel"><p>Estado: {e(run["status"])} · {stats["processed"]}/{stats["selected"]} capturas procesadas ·
 {len(run["catalog"])} CAD × 42 vistas · {stats["recognized"]} imágenes con identificación aceptada.</p>
 <p>Tiempo de proceso medio: <b>{fmt(stats["mean_processing_s"])} s</b> · mediana: {fmt(stats["median_processing_s"])} s.
@@ -584,8 +614,10 @@ El nombre semántico asociado al CAD procede del catálogo de piezas preparado, 
 <a href="poses_pem.csv">CSV de poses PEM</a> · <a href="resultados_poses.json">JSON de poses</a> · <a href="resultados_completos.json">JSON completo ISM</a></p>
 <table id="resumen-confianza"><thead><tr><th>Archivo original de la captura</th><th>CAD predicho / candidato</th><th>Score final ISM</th><th>Semántica</th><th>Apariencia</th><th>Geométrica</th><th>Visibilidad</th><th>Estado</th><th>Proceso ISM (s)</th><th>Pose PEM</th>
 </tr></thead><tbody>{''.join(tables)}</tbody></table></div>
-{pose_gallery(run["frames"], poses_by_frame)}
-<section class="panel" id="comparacion-cads"><h2>{matrix_title}</h2>
+{methodology(audit_note)}
+{all_reference_views}
+<details class="panel"><summary>Galería de poses 6D</summary>{pose_gallery(run["frames"], poses_by_frame)}</details>
+<details class="panel" id="comparacion-cads"><summary>{matrix_title}</summary>
 <p>{matrix_description} Pulsa la foto para ver el detalle.</p>
 <div class="legend"><span class="score-winner">Verde: predicción original aceptada</span><span class="score-alternative">Naranja: otra hipótesis &gt; 0,40</span>
 <span class="score-low">Gris: score ≤ 0,40</span><span>—: sin score final conservado</span></div>
@@ -597,7 +629,7 @@ El nombre semántico asociado al CAD procede del catálogo de piezas preparado, 
 <details><summary>Auditoría: comparación interna de todos los CAD ({coverage["verified_image_cad_pairs"]}/{coverage["expected_image_cad_pairs"]})</summary>
 <p>Esta segunda matriz muestra la similitud interna sobre la región principal. No es el score final y no debe compararse numéricamente con la tabla anterior.</p>
 <div class="matrix-scroll"><table id="matriz-interna"><thead><tr><th>Imagen</th>{matrix_headers}</tr></thead><tbody>{''.join(coverage_rows)}</tbody></table></div>
-<p><a href="cobertura_comparaciones.json">Ver cobertura</a> · <a href="comparacion_todos_los_cad.csv">Descargar comparaciones internas</a></p></details></section>
+<p><a href="cobertura_comparaciones.json">Ver cobertura</a> · <a href="comparacion_todos_los_cad.csv">Descargar comparaciones internas</a></p></details></details>
 <details class="panel"><summary>Tiempos por etapa y comparaciones internas</summary>
 <p>DINOv2 forma parte del descriptor interno de SAM-6D; estos valores no proceden del clasificador independiente de DINOPDDL.
 La confianza final combina similitud semántica, apariencia y coherencia geométrica. Las puntuaciones internas se muestran por separado dentro de cada captura.</p>
@@ -607,7 +639,10 @@ PyTorch: {e(run["device"]["torch"])} · CUDA: {e(run["device"].get("torch_cuda_b
 <p><a href="tiempos_por_imagen.csv">CSV de tiempos</a> · <a href="comparacion_todos_los_cad.csv">CSV de similitudes internas DINOv2 (no score final)</a> ·
 <a href="resumen.json">Resumen numérico</a></p><img class="chart" src="tiempos_por_imagen.png" alt="Tiempos por etapa"></details>{''.join(cards)}
 <p>Abre index.html en tu navegador. El informe funciona sin conexión; usa <code>suite report --zip</code> para crear un ZIP cuando lo necesites. Contiene RGB, profundidad original de 16 bits,
-calibración, máscaras, scores y mediciones. No incluye los pesos de los modelos.</p></body></html>'''
+calibración, máscaras, scores y mediciones. No incluye los pesos de los modelos.</p><script>
+function revealAnchor() {{ const node=document.getElementById(decodeURIComponent(location.hash.slice(1))); if(!node)return; let p=node; while(p){{if(p.tagName==='DETAILS')p.open=true;p=p.parentElement;}} node.scrollIntoView(); }}
+window.addEventListener('hashchange',revealAnchor);window.addEventListener('DOMContentLoaded',revealAnchor);
+</script></body></html>'''
     (target / "index.html").write_text(page, encoding="utf-8")
     # Retirar la entrada anterior al regenerar una exportación de esta herramienta.
     legacy = target / "ABRIR_EN_WINDOWS.html"
