@@ -115,6 +115,7 @@ Para empezar puedes usar los valores actuales. Un argumento de terminal prevalec
 - **Imágenes y vídeos guardados:** `captures/`.
 - **Análisis, logs y seguimiento de la interfaz:** `results/interface/`.
 - **Ejecuciones originales de suites:** `results/suites/`.
+- **GitHub:** se conservan las suites y sus informes (`results/suites/` y `results/reports/`). Las ejecuciones sueltas (`results/runs/`) y los trabajos y sesiones de la interfaz (`results/interface/`) permanecen solo en disco y se ignoran en Git.
 - **Informes:** `results/reports/`; `results/dashboard` apunta al último exportado.
 
 **Conserva `data/` y `checkpoints/`.** El dataset, manifest y plantillas del catálogo no se reconstruyen automáticamente al abrir una suite o la interfaz. Consulta [qué se puede reconstruir y cómo](docs/REFERENCE.md#plantillas-manifest-y-reconstrucción).

@@ -5,6 +5,9 @@
 /pipeline/native/
 /checkpoints/
 /.cache/
+# Keep suite results and exported reports; local interactive executions stay off GitHub.
+/results/interface/
+/results/runs/
 # Model sources are pinned submodules; generated assembly inputs remain local.
 /data/assemblies/*/prepared/
 __pycache__/
