@@ -1,24 +1,74 @@
-# Generated data, histories, weights and native builds.
+# Local inputs, generated datasets, model weights, and caches.
 /captures/
 /archives/maintenance/
-/data/prepared/
-/pipeline/native/
+/data/prepared*/
+/data/assemblies/*/prepared*/
 /checkpoints/
 /.cache/
-# Keep suite results and exported reports; local interactive executions stay off GitHub.
-/results/interface/
-/results/runs/
-# Model sources are pinned submodules; generated assembly inputs remain local.
-/data/assemblies/*/prepared/
+/.runtime/
+
+# Keep suite evidence, exported reports, and the latest-report symlink.
+# Individual analyses, interface sessions, and auxiliary diagnostics stay local.
+/results/*
+!/results/suites/
+!/results/reports/
+!/results/dashboard
+
+# Compiled extensions and local build products; rebuild for the target runtime.
+/pipeline/native/
+build/
+dist/
+*.egg-info/
+*.so
+*.o
+*.a
+*.dll
+*.dylib
+*.pyd
+
+# Python environments, bytecode, test and tooling caches.
+.venv/
+.venvs/
+venv/
+env/
 __pycache__/
 *.py[cod]
-*.so
 .pytest_cache/
-.venv/
-venv/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Downloaded model artifacts, including interrupted downloads.
+*.pth
+*.pt
+*.ckpt
+*.safetensors
+*.onnx
+*.download
+*.part
+
+# Personal credentials and machine-specific overrides.
 .env
 .env.*
-*.log
+!.env.example
+/config/*.local.json
+/config/*.local.json.*
 
-# Protected legacy SDU checkout; no longer used.
+# Local logs; suite/report logs remain eligible as result evidence.
+*.log
+!/results/suites/**/*.log
+!/results/reports/**/*.log
+
+# Editor/OS files.
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.swo
+
+# Protected legacy SDU checkout; the official submodule is used instead.
 /models/FoundationPose/

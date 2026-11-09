@@ -1,0 +1,5 @@
+# Optional dataset repair and full mesh-proximity audits.
+# Install in the SAM6D runtime only when these features are needed.
+# These packages were absent from the recorded runtime, so no tested pins exist.
+manifold3d
+rtree

@@ -1,234 +1,77 @@
 # CAD Tracking
 
-Detecta una pieza CAD en una imagen o en la Intel RealSense, calcula su pose con PEM/FoundationPose y permite seguirla en directo. Se utiliza desde el navegador.
+Detect a CAD part in an image or Intel RealSense stream, estimate its pose with PEM or FoundationPose, and track it through a browser interface.
 
-**Esta página es el arranque rápido.** Los archivos y parámetros se explican en la [referencia](docs/REFERENCE.md). Si este equipo todavía no tiene entornos, pesos o datos preparados, sigue primero la [instalación](installation/README.md).
+| Guide | Purpose |
+| --- | --- |
+| [Installation](docs/INSTALLATION.md) | Set up another machine, install dependencies and weights, and prepare data. |
+| [Reference](docs/REFERENCE.md) | Commands, configuration, camera workflows, suites, results, and troubleshooting. |
+| [Provenance](docs/PROVENANCE.md) | Model sources, pinned revisions, project adaptations, and attribution. |
 
-## Código original, SDU y nuestra integración
+## Start the application
 
-- `models/SAM-6D`: submódulo de [nuestro fork](https://github.com/raucal/SAM-6D),
-  basado en [SAM-6D oficial](https://github.com/JiehongLin/SAM-6D), con las adaptaciones de CADTracking.
-- `models/FoundationPoseOfficial`: submódulo oficial de [FoundationPose de NVIDIA](https://github.com/NVlabs/FoundationPose).
-- `integrations/foundationpose_sdu/`: archivos añadidos por SDU, parche de sus modificaciones y procedencia documentada.
-- `pipeline/`, `config/` y `run.sh`: nuestra integración, interfaz y suites.
-
-Las revisiones exactas, atribuciones y comandos de clonación están en
-[Procedencia y adaptaciones](docs/PROVENANCE.md). Ambos submódulos se recuperan desde GitHub;
-las adaptaciones SDU están incluidas por separado. Los pesos y datos se instalan aparte.
-
-## 1. Abrir el programa
-
-En el servidor actual, abre una terminal y ejecuta:
+On the configured server, run these commands from the project directory:
 
 ```bash
-cd ~/projects/CADTracking
 bash run.sh ui
 ```
 
-Si guardaste el proyecto en otro lugar, entra en esa carpeta antes de ejecutar `run.sh`.
+Open **http://127.0.0.1:8770**, keep the terminal open, and wait for model loading. The launcher selects the configured Python environments; manual environment activation is unnecessary for normal use. Stop the service with **Ctrl+C**.
 
-Abre **http://127.0.0.1:8770** en el navegador. Deja la terminal abierta y espera a que termine la carga de modelos. En esta instalación no necesitas activar Conda manualmente: el lanzador selecciona el Python configurado.
+For a new machine, follow [Installation](docs/INSTALLATION.md) first.
 
-Para detener el programa pulsa **Ctrl+C** en esa terminal.
+The [dependency list](docs/INSTALLATION.md#dependencies) covers system software and both Python environments. A clone does not include weights or prepared data: use the [asset handoff checklist](docs/INSTALLATION.md#assets-required-after-cloning) before running the application. Complete exported reports can be viewed independently of those assets.
 
-### Si entras por VS Code o SSH
+### Remote access
 
-Ejecuta el comando anterior en la **terminal del servidor**. En VS Code Remote SSH abre **Puertos/Ports**, reenvía **8770** y abre su dirección local en el navegador.
-
-Como alternativa, ejecuta este túnel en una terminal de tu ordenador:
+Run the application on the server and forward port **8770** through VS Code Remote SSH, or create a tunnel from your computer:
 
 ```bash
-ssh -N -L 8770:127.0.0.1:8770 usuario@servidor
+ssh -N -L 8770:127.0.0.1:8770 user@server
 ```
 
-Deja también esa terminal abierta y entra en **http://127.0.0.1:8770**. Esta interfaz web no necesita X11. La RealSense debe estar conectada al servidor que ejecuta el programa.
+Then open the same local URL. The web interface does not require X11. The RealSense must be connected to the server running the application.
 
-## 2. Hacer la primera prueba
+## Try an image or the camera
 
-**Sin cámara:** despliega **Probar con los datos del ensamblaje** y selecciona una captura y un CAD. Si quieres pose, selecciona **RGB-D** y activa la estimación PEM o elige **FoundationPose**. Después pulsa **Ejecutar ejemplo**.
+The interface currently uses Spanish labels.
 
-**Con RealSense:**
+**Without a camera:** expand **Probar con los datos del ensamblaje**, select a capture and CAD, and click **Ejecutar ejemplo**. For pose estimation, select RGB-D and enable PEM, or choose FoundationPose.
 
-1. Selecciona **Intel RealSense en directo** y pulsa **Abrir cámara**.
-2. Selecciona el archivo CAD e indica sus unidades; normalmente, mm.
-3. Elige **FoundationPose** como motor de pose para seguir la pieza.
-4. Pulsa **Localizar e iniciar seguimiento rápido** y espera a la primera localización.
+**With RealSense:** select **Intel RealSense en directo**, click **Abrir cámara**, select a CAD and its units (usually mm), choose FoundationPose, and click **Localizar e iniciar seguimiento rápido**.
 
-El seguimiento usa modelos ya cargados. SAM recupera la pieza al perder el seguimiento y comprueba cada **10 segundos** como respaldo. Puedes cambiar ese intervalo en la web.
+Fast tracking updates the pose between SAM checks. Automatic initialization enables recovery after tracking loss and a periodic check every 10 seconds by default. **Iniciar detección en directo** instead repeats full analyses. See the [camera and tracking reference](docs/REFERENCE.md#camera-and-tracking) for manual initialization, automatic part identification, recording, and the CAD viewer.
 
-**Iniciar detección en directo** repite análisis completos; para seguir una pose con más fluidez utiliza **seguimiento rápido**. Para guardar imágenes o grabar vídeo están los botones de cámara. Los pasos detallados, incluida la caja manual sin SAM, están en la [referencia de la interfaz](docs/REFERENCE.md#interfaz-imágenes-y-cad).
+## Run a suite and open its report
 
-## 3. Ejecutar una suite y ver el informe
-
-Para medir una suite en la misma GPU, detén antes la interfaz con Ctrl+C. Desde la carpeta del proyecto:
+Stop the interface before benchmarking on the same GPU. From the project directory:
 
 ```bash
-# Primero, una captura con detección y pose PEM
+# One capture, including PEM pose estimation
 bash run.sh suite run --frame hmi_panel
 
-# Para ejecutar después todas las capturas del perfil
+# All captures in the configured profile
 bash run.sh suite run
 ```
 
-Cada comando crea una ejecución distinta. El perfil actual calcula pose PEM además de detección; FoundationPose se utiliza desde la interfaz. La primera ejecución puede tardar más por la carga de modelos y referencias.
-
-Al terminar aparece la ruta del informe. Para verlo en el navegador:
+Each command creates a separate result directory. The first run can take longer while models and references load. To open the latest exported report:
 
 ```bash
 python3 -m http.server 8766 --bind 127.0.0.1 --directory results/dashboard
 ```
 
-Abre **http://127.0.0.1:8766** y pulsa **Matrices y triedros** para revisar las poses. En remoto reenvía también el puerto **8766** desde VS Code o mediante un túnel SSH. Detén este servidor con Ctrl+C cuando termines.
+Open **http://127.0.0.1:8766** and use **Matrices y triedros** to inspect poses. Forward port **8766** for remote access. See [Suites](docs/REFERENCE.md#suites) for detection-only runs, saved results, ZIP exports, and per-view audits.
 
-## 4. Comandos principales
+## Configuration and saved files
 
-Ejecuta estos comandos desde la raíz del proyecto. Donde aparece `ID`, escribe el nombre real de una carpeta de `results/suites/`; puedes consultarlos con `ls results/suites`.
-
-| Quiero… | Comando |
+| Location | Purpose |
 | --- | --- |
-| Abrir la interfaz | `bash run.sh ui` |
-| Usar otro puerto | `bash run.sh ui --port 8771` |
-| Revisar una suite sin ejecutarla | `bash run.sh suite run --dry-run` |
-| Ejecutar una sola captura | `bash run.sh suite run --frame hmi_panel` |
-| Ejecutar la suite completa | `bash run.sh suite run` |
-| Ejecutar solo detección, sin pose | `bash run.sh suite run --no-pose` |
-| Usar FastSAM en la suite | `bash run.sh suite run --segmentor fastsam` |
-| Regenerar el informe, sin repetir inferencia | `bash run.sh suite report --output results/suites/ID` |
-| Añadir poses a una suite guardada | `bash run.sh suite pose --output results/suites/ID` |
-| Crear un ZIP del informe | `bash run.sh suite report --output results/suites/ID --zip` |
-| Comprobar CUDA, pesos y plantillas SAM6D/PEM | `bash run.sh sam doctor` |
-| Ver las rutas configuradas | `bash run.sh settings` |
-| Consultar opciones de la interfaz o suite | `bash run.sh ui --help` / `bash run.sh suite run --help` |
+| `config/settings.json` | Python environments, models, Blender, data, weights, and cache paths. |
+| `config/interface.json` | Server, inference, camera, and tracking defaults. |
+| `config/suite.json` | Suite selection, thresholds, pose estimation, and output paths. |
+| `captures/` | Saved camera images and recordings. |
+| `results/suites/` | Original suite results. |
+| `results/reports/` | Exported reports; `results/dashboard` links to the latest export. |
+| `results/interface/`, `results/runs/` | Local interface sessions and individual analyses, ignored by Git. |
 
-Los comandos de instalación, preparación, reconstrucción de plantillas y diagnóstico avanzado están en la [tabla completa de comandos](docs/REFERENCE.md#todos-los-comandos). No necesitas ejecutarlos cada vez que abres la aplicación.
-
-## 5. Qué configurar y dónde se guarda todo
-
-| Archivo | Cuándo editarlo |
-| --- | --- |
-| `config/interface.json` | Cambiar puerto, cámara, valores iniciales y seguimiento. |
-| `config/suite.json` | Elegir capturas, segmentador, umbrales, pose y salidas de la suite. |
-| `config/settings.json` | Cambiar las rutas de los Python, Blender, datos o pesos. |
-
-Para empezar puedes usar los valores actuales. Un argumento de terminal prevalece sobre su perfil. Las rutas dentro de los JSON se interpretan respecto a ese archivo; no necesitas copiar rutas personales en los scripts.
-
-- **Imágenes y vídeos guardados:** `captures/`.
-- **Análisis, logs y seguimiento de la interfaz:** `results/interface/`.
-- **Ejecuciones originales de suites:** `results/suites/`.
-- **GitHub:** se conservan las suites y sus informes (`results/suites/` y `results/reports/`). Las ejecuciones sueltas (`results/runs/`) y los trabajos y sesiones de la interfaz (`results/interface/`) permanecen solo en disco y se ignoran en Git.
-- **Informes:** `results/reports/`; `results/dashboard` apunta al último exportado.
-
-**Conserva `data/` y `checkpoints/`.** El dataset, manifest y plantillas del catálogo no se reconstruyen automáticamente al abrir una suite o la interfaz. Consulta [qué se puede reconstruir y cómo](docs/REFERENCE.md#plantillas-manifest-y-reconstrucción).
-
-## 6. Si algo falla
-
-| Qué ocurre | Primer paso |
-| --- | --- |
-| El puerto 8770 está ocupado | Utiliza la instancia que ya está abierta, detenla desde su terminal o arranca con `--port 8771` y abre ese puerto. |
-| La web no abre desde tu ordenador | Comprueba que el servicio sigue en marcha y que has reenviado el puerto correcto. |
-| No aparece la RealSense | Comprueba que esté conectada al servidor y que otro programa no la esté utilizando. |
-| Faltan modelos, datos o el Python configurado | Ejecuta `bash run.sh settings` y `bash run.sh sam doctor`; sigue la guía de instalación según el error. |
-| No aparecen matrices o triedros | Abre el informe actual, comprueba que la suite tenía PEM activado y revisa los errores de pose. Sin detección aceptada puede no haber pose. |
-| Un análisis falla | Lee el mensaje de la interfaz y el enlace a `error.log`. |
-
-Para continuar: [referencia de archivos, parámetros y funcionamiento](docs/REFERENCE.md) · [instalación y reconstrucción de datos](installation/README.md).
-
-## Elegir ensamblaje
-
-Los inventarios compartidos son los archivos `assembly.json` junto a los CAD en
-`PDDL/Assembly CAD/Assembly parts/<ensamblaje>/`. La configuración `assembly_registry`
-apunta a `PDDL/Assembly CAD`; también admite el antiguo registro JSON. La interfaz
-descubre los tres ensamblajes disponibles. Consulta la [guía de los ensamblajes](../PDDL/Assembly%20CAD/README.md).
-
-La suite admite `assembly` en `config/suite.json` y `--assembly printed_assembly`
-en terminal. La preparación admite `--assembly printed_assembly_2`, que usa un
-directorio de salida independiente. La interfaz incluye un selector de ensamblaje
-y pieza para usar sus STL originales. La segunda versión aún necesita sus capturas
-y plantillas antes de ejecutar una suite; no reutiliza las de la primera.
-
-### Identificar automáticamente la pieza en cámara
-
-En «Intel RealSense en directo», cambia «Origen del CAD» a «Identificar pieza del
-ensamblaje» y elige el ensamblaje. No necesitas seleccionar su pieza: SAM6D compara
-las propuestas de la imagen con todos sus CAD preparados y elige la detección con
-mayor score que supere el umbral de aceptación. Requiere RGB-D, milímetros y las
-plantillas completas de ese ensamblaje. Si no supera el umbral, no declara una pieza.
-
-«Analizar fotograma actual» identifica una vez. «Iniciar detección en directo»
-repite el análisis tras el intervalo SAM indicado. Con FoundationPose, «Localizar
-e iniciar seguimiento rápido» mantiene la pose entre comprobaciones y vuelve a
-identificar cada 10 segundos por defecto. Si SAM encuentra otra pieza, confirma
-con un fotograma nuevo y registra el nuevo CAD antes de publicar su pose. El estado
-muestra la pieza actual, su score y el número de cambios. Solo se ejecuta una
-comprobación SAM a la vez; no se acumulan intervalos si el análisis tarda más.
-El intervalo 0 desactiva la comprobación periódica; en seguimiento rápido conserva
-la recuperación automática cuando se pierde la pose.
-
-Para seleccionar este modo por defecto, usa `"identify_assembly": true` dentro de
-`tracking` en `config/interface.json`. La frecuencia sigue controlada por
-`tracking.redetect_interval_s`. Si hay varias piezas visibles se sigue una sola,
-la de mayor score; no es seguimiento simultáneo de todas las piezas.
-
-### Ver el CAD y su triedro sobre fondo negro
-
-Al iniciar el seguimiento rápido con FoundationPose aparece una segunda vista
-«CAD y triedro sobre fondo negro». Renderiza el modelo con la pose actual, sin
-mostrar la imagen de cámara, y dibuja el mismo triedro centrado que la vista de
-cámara, con idéntico origen y longitud: X rojo, Y verde y Z azul.
-La traslación y orientación corresponden a la cámara;
-la vista no recentra artificialmente el objeto. Si se pierde la pose, se oculta
-hasta recuperarla. El render usa la GPU ya inicializada y muestra su tiempo en ms.
-
-También puedes pulsar «Abrir visor compacto» y elegir «CAD + triedro · fondo negro»
-para verlo en una ventana independiente. La vista se actualiza con los fotogramas
-del seguimiento; no vuelve a ejecutar SAM para dibujar el modelo.
-
-## Detalle del ISM en el informe de la suite
-
-El informe incluye todas las vistas renderizadas de cada CAD y desplegables por
-captura, CAD, scores por vista, geometría, detecciones y pose. Los enlaces del
-resumen abren automáticamente el desplegable de destino.
-
-Las nuevas suites calculan una auditoría adicional sobre la **misma máscara
-primaria guardada** de cada captura: similitud DINOv2 y apariencia para cada vista,
-ganadora semántica, ganadora por apariencia y valores intermedios de geometría.
-Esto añade tiempo de cálculo, registrado aparte en `ism_view_details.json`.
-`--no-view-details` omite ese diagnóstico en una nueva ejecución.
-
-Para añadirlo a una suite antigua, sin volver a ejecutar SAM ni PEM:
-
-```bash
-bash run.sh scores --run results/suites/ID --view-details
-bash run.sh suite report --output results/suites/ID
-```
-
-El diagnóstico preserva los resultados originales y se niega a sobrescribir otro
-`ism_view_details.json`. Se exporta también `ism_vistas.csv`. La auditoría verifica
-el hash de la suite y que el score recalculado de la clase original no difiera más
-de 0,001. Si se recalcula en otro entorno y se necesita inspeccionar una discrepancia,
-`--view-details --allow-score-drift` permite guardar las nuevas mediciones: registra
-la diferencia por captura y el informe la muestra explícitamente, sin sustituir los
-scores originales. `--device cpu` permite ejecutar esta auditoría sin CUDA. Sus tablas evalúan todos los CAD sobre la región primaria; no representan
-el conjunto completo de propuestas SAM. Una captura sin región guardada se marca
-sin mediciones. La regeneración de HTML por sí sola no ejecuta modelos.
-
-DINOv2 proporciona tanto el descriptor global para semántica como los patches
-locales para apariencia. La vista de mayor similitud global se usa en ISM para
-apariencia y geometría. La semántica agregada usa la configuración del modelo
-(`avg_5` es la media de las cinco mejores similitudes); no equivale necesariamente
-al valor de esa vista ganadora. La ganadora por apariencia es un dato adicional,
-no modifica la decisión de ISM.
-
-La geometría de ISM es una **IoU de cajas 2D**: rota la nube del CAD con la vista
-seleccionada, la traslada usando la media de puntos RGB-D dentro de la máscara,
-la proyecta con la calibración de cámara y compara su caja con la caja SAM.
-No mide distancias entre superficies ni optimiza una pose. La visibilidad se estima
-por correspondencias de patches, no con un test de oclusión en profundidad. El
-informe explica las fórmulas, unidades, limitaciones y el peso final
-`(semántica + apariencia + geometría × visibilidad) / (2 + visibilidad)`.
-
-Fuentes de implementación: `model/detector.py`, `model/loss.py`,
-`utils/trimesh_utils.py` y `utils/bbox_utils.py` dentro de
-`models/SAM-6D/SAM-6D/Instance_Segmentation_Model/`. La rutina original de IoU usa
-una condición sobre todo el lote: un no solapamiento puede anular el lote completo.
-La auditoría conserva el valor del modelo y muestra las áreas para revisarlo.
+**Keep `data/`, `checkpoints/`, and the configured environments.** Prepared data and catalog templates are not rebuilt when the application starts. See [Storage and cleanup](docs/REFERENCE.md#storage-and-cleanup) for what can be removed, and [Troubleshooting](docs/REFERENCE.md#troubleshooting) if startup fails.

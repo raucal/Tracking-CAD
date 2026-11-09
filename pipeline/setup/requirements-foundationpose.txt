@@ -1,4 +1,6 @@
-# Entorno aislado; PyTorch y el runtime común se comparten mediante assembly_runtime.pth.
+# FoundationPose environment; PyTorch/base libraries are shared via assembly_runtime.pth.
+# Install through run.sh install-foundationpose with constraints-foundationpose.txt.
+# The installer separately builds PyTorch3D, nvdiffrast, and mycpp.
 open3d-cpu==0.19.0
 warp-lang==1.6.2
 kornia>=0.7,<0.8

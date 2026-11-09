@@ -1,4 +1,5 @@
-# CAD Tracking: datos, interfaz, ISM/PEM y renderizado.
+# CAD Tracking: data, browser interface, ISM/PEM, camera, and rendering.
+# Install through run.sh install; use constraints-assembly-runtime.txt.
 numpy>=1.23
 Pillow>=9
 PyYAML>=6
@@ -16,12 +17,12 @@ addict==2.4.0
 yapf==0.43.0
 tensorboard==2.21.0
 
-# Additional CAD rendering dependencies; use the existing assembly-runtime environment.
+# Additional CAD rendering dependencies.
 pyrender==0.1.45
 PyOpenGL==3.1.0
 pyglet==2.1.19
 
-# Imports principales del runtime; las versiones efectivas están en constraints.
+# Main runtime dependencies; effective versions are recorded in constraints.
 torch
 torchvision
 hydra-core
