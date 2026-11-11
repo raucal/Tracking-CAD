@@ -25,6 +25,14 @@ Paths in `config/settings.json` are relative to that file. The supplied layout e
 
 **A Git clone is not a complete inference installation.** Weights, prepared templates, captures, Blender, native extensions and environments are external assets. The example `data/dataset.json` also points to CAD inventories and a catalog in the sibling `PDDL/` project. Configure your own sources or obtain the [asset handoff bundle](docs/INSTALLATION.md#assets-required-after-cloning). The original example photographs are unavailable in this working copy, so preserve `data/prepared/`; rebuilding it from the configured sources is currently impossible.
 
+### Shared DINOv2 checkpoint in this workspace
+
+The local DINOv2 ViT-L/14 checkpoint is stored once at `../PDDL/DINO/torch_hub/checkpoints/dinov2_vitl14_pretrain.pth`. The existing `checkpoints/dinov2_vitl14_pretrain.pth`, grouped checkpoint path and SAM6D checkpoint path are relative symlink aliases to it. The bytes and SAM6D model are unchanged; DINOPDDL can load the same weights for reference/stage comparison. Each process still has its own RAM/VRAM allocation.
+
+This is a local asset arrangement, excluded from Git. Model **source repositories** are pinned Git submodules, not symlinked folders. A fresh clone installs its weights through the documented installers; it does not contain this workspace's checkpoint aliases. Installers reuse valid shared aliases rather than downloading another copy, and evaluation provenance hashes each physical checkpoint once.
+
+The SAM ViT-H, two FoundationPose checkpoints (refiner and scorer), optional FastSAM and optional PEM weights are different models. They were retained so the available backends continue to work. Standalone DINOv2 does not supply SAM masks or FoundationPose poses.
+
 ## Dependencies and installation
 
 The validated inference environment uses **Linux, Python 3.10, PyTorch 2.5.1 / torchvision 0.20.1 with CUDA 12.4, and NumPy 1.26.4**. Native extensions were built with CUDA Toolkit 12.5. CPU tests do not certify GPU inference or hardware behaviour.

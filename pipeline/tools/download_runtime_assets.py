@@ -52,11 +52,12 @@ def main():
                 digest.update(block)
         link = ISM / "checkpoints" / group / name
         link.parent.mkdir(parents=True, exist_ok=True)
-        if link.is_symlink() and link.resolve() != target:
+        if link.is_symlink() and link.resolve() != target.resolve():
             raise ValueError(f"Checkpoint link already points elsewhere: {link}")
         if not link.exists() and not link.is_symlink():
             link.symlink_to(os.path.relpath(target, link.parent))
         report.append({"name": name, "url": url, "cache": str(target),
+                       "canonical_cache": str(target.resolve()),
                        "bytes": target.stat().st_size, "sha256": digest.hexdigest()})
         print(f"Ready: {name}, {target.stat().st_size / 1e6:.0f} MB", flush=True)
     print(json.dumps(report, indent=2))
