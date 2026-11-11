@@ -21,6 +21,12 @@ from segmentor_runtime import configure, move_segmentor
 from run_suite_pddl import choose_device, hash_files, load_references, measured, process_frame  # noqa: E402
 
 WEIGHTS = {"vit_h": "sam_vit_h_4b8939.pth", "vit_l": "sam_vit_l_0b3195.pth", "vit_b": "sam_vit_b_01ec64.pth"}
+from region_filters import reject_vertical_option_a_corner
+
+
+def reject_repeated_region(detection, image_size):
+    """Reject vertical option A only in the lower-right scene region."""
+    return reject_vertical_option_a_corner(detection.get('part_key'), detection.get('bbox'), image_size)
 
 
 def environment():
@@ -93,7 +99,7 @@ class Engine:
                 if part["source_sha256"] == digest:
                     part = dict(part)
                     part["name"] = self.names.get(part["key"], part["name"])
-                    update("Reutilizando las 42 vistas del CAD conocido")
+                    update("Reusing the 42 views of the known CAD")
                     return part, self.manifest_path.parent, "existing_blender_templates"
         key = hashlib.sha256(raw + inputs["options"]["cad_units"].encode() + b"blender_cycles_v2").hexdigest()
         base = self.data_root / "cache/cad"
@@ -106,7 +112,7 @@ class Engine:
         metadata = templates / "render_metadata.json"
         ready = metadata.is_file() and all((templates / f"{prefix}_{i}.png").is_file() for i in range(42) for prefix in ("rgb", "mask")) and all((templates / f"xyz_{i}.npy").is_file() for i in range(42))
         if not ready:
-            update("Generando las 42 vistas del CAD nuevo; este paso se guarda en caché")
+            update("Rendering 42 views of the new CAD; this step is cached")
             command = [sys.executable, str(Path(__file__).with_name("render_reference.py")), "--mesh", str(mesh),
                        "--output", str(templates), "--poses", str(ISM / "utils/poses/predefined_poses/cam_poses_level0.npy")]
             with (folder / "render.log").open("w") as log:
@@ -123,7 +129,7 @@ class Engine:
                 self.model = None
                 if torch.cuda.is_available():
                     torch.cuda.empty_cache()
-                update("Cargando SAM y DINOv2 en " + str(device))
+                update("Loading SAM and DINOv2 on " + str(device))
                 with initialize_config_dir(version_base=None, config_dir=str(ISM / "configs")):
                     cfg = compose(config_name="run_inference.yaml", overrides=["model=ISM_fastsam"] if config["segmentor"] == "fastsam" else [])
                 configure(cfg, config["segmentor"], config["backbone"], config["stability"])
@@ -142,7 +148,7 @@ class Engine:
         from .inputs import DEFAULTS
         config={**DEFAULTS,'segmentor':segmentor,'backbone':backbone}
         if not environment()['cuda_available']:
-            raise RuntimeError('No hay CUDA disponible para precargar los modelos.')
+            raise RuntimeError('CUDA is unavailable for model preloading.')
         timing={};os.chdir(ISM)
         self.prepare_model(config,choose_device('cuda'),update,timing)
         torch.cuda.synchronize()
@@ -158,7 +164,7 @@ class Engine:
     def run(self, folder, inputs, update, save_outputs=True):
         started = time.perf_counter()
         config = inputs["options"]
-        if not save_outputs and config["pose"]:raise ValueError("La detección en segundo plano no puede registrar poses.")
+        if not save_outputs and config["pose"]:raise ValueError("Background detection cannot register poses.")
         device = choose_device(config["device"])
         torch.set_num_threads(16)
         key = (config["segmentor"], config["backbone"], str(device))
@@ -168,8 +174,8 @@ class Engine:
         missing = [path for path in required if not path.is_file()]
         if missing:
             temporary = any(path.is_symlink() and str(path.resolve()).startswith("/dev/shm/") for path in missing)
-            detail = " Los enlaces apuntan a /dev/shm, que es temporal y se vacía al reiniciar el equipo." if temporary else ""
-            raise ValueError("Faltan checkpoints: " + ", ".join(path.name for path in missing) + "." + detail + " Consulta la sección de recuperación de pesos del README de la interfaz.")
+            detail = " Links point to /dev/shm, which is temporary and cleared on restart." if temporary else ""
+            raise ValueError("Missing checkpoints: " + ", ".join(path.name for path in missing) + "." + detail + " See the weight recovery section in the installation guide.")
         timing = {}
         os.chdir(ISM)
         reused_model = self.prepare_model(config,device,update,timing)
@@ -195,14 +201,14 @@ class Engine:
                 part, base, renderer = self.prepare_cad(folder, inputs, update)
                 parts = [part]
         with measured(timing, "reference_features_s", device):
-            update("Preparando las referencias DINOv2 del CAD")
+            update("Preparing the CAD DINOv2 references")
             reference_token=tuple(self.reference_key(p,base) for p in parts)
             if reference_token==self.reference_token and self.reference_record is not None:
                 references={**self.reference_record,'parts':[{**record,'cache_hit':True,'memory_hit':True} for record in self.reference_record['parts']]}
             else:
                 references = load_references(model, parts, base, device, self.reference_cache)
                 self.reference_token=reference_token;self.reference_record=references
-        update("Detectando y segmentando el objeto en la imagen")
+        update("Detecting and segmenting the object in the image")
         with Image.open(folder / "input_rgb.png") as source:
             rgb = source.convert("RGB")
         if config["mode"] == "rgbd":
@@ -214,7 +220,20 @@ class Engine:
         else:
             detections, masks, inference_timing, proposals = rgb_inference(model, rgb, part, device, config["min_score"])
             accepted = [i for i, d in enumerate(detections) if d["score"] >= config["confidence"]]
-            formula = "(semantic + appearance) / 2; sin geometría ni profundidad"
+            formula = "(semantic + appearance) / 2; no geometry or depth"
+
+        filtered = []
+        filtered_masks = []
+        for index, detection in enumerate(detections):
+            if reject_repeated_region(detection, rgb.size):
+                continue
+            filtered.append(detection)
+            if index < len(masks):
+                filtered_masks.append(masks[index])
+        if len(filtered) != len(detections):
+            detections = filtered
+            masks = filtered_masks
+            accepted = [i for i, d in enumerate(detections) if d["score"] >= config["confidence"]]
         identification = None
         if inputs.get('auto_assembly'):
             # process_frame sorts by score. Keep one CAD for registration and retain
@@ -229,7 +248,7 @@ class Engine:
                 detections, masks = [detections[i] for i in keep], [masks[i] for i in keep]
                 accepted = [i for i, d in enumerate(detections) if d['score'] >= config['confidence']]
         if save_outputs:
-            update("Exportando máscaras y resultados")
+            update("Exporting masks and results")
             visualize(rgb, [detections[i] for i in accepted], [masks[i] for i in accepted], folder / "overlay.png")
             for i, mask in enumerate(masks):
                 Image.fromarray(mask.astype(np.uint8) * 255).save(folder / f"mask_{i:03d}.png")
@@ -241,14 +260,14 @@ class Engine:
         else:
             model_from_input[:3, 3] = -np.array(inputs["input_center_mm"])
         if inputs.get('auto_assembly') and 'T_local_from_sam_mm' not in part:
-            raise ValueError('El CAD preparado necesita T_local_from_sam_mm para identificar su pose automáticamente.')
+            raise ValueError('Prepared CADs require T_local_from_sam_mm for automatic pose identification.')
         if config["pose"]:
             if device.type != "cuda":
-                raise ValueError('La pose 6D requiere CUDA.')
+                raise ValueError('6D pose requires CUDA.')
             if config['pose_backend'] == 'foundationpose':
                 if accepted:
                     from .backends.foundationpose import run as foundationpose_run
-                    update('FoundationPose: registrando el CAD' + (' y siguiendo la grabación' if inputs.get('recording_path') else ''))
+                    update('FoundationPose: registering the CAD' + (' and tracking the recording' if inputs.get('recording_path') else ''))
                     with measured(timing, 'pose_pipeline_s', device):
                         pose_result = foundationpose_run(folder, base / part['sam_ply'], accepted[0],
                                                          model_from_input, inputs.get('recording_path'))
@@ -258,9 +277,9 @@ class Engine:
                 else:
                     pose_result = {'status': 'no_accepted_detection', 'backend': 'foundationpose', 'poses': []}
             elif not weights["pose_available"]:
-                raise ValueError("PEM requiere CUDA, su checkpoint y la extensión PointNet2 compilada.")
+                raise ValueError("PEM requires CUDA, its checkpoint and the compiled PointNet2 extension.")
             elif accepted:
-                update("Estimando posición y orientación 6D con PEM")
+                update("Estimating 6D position and orientation with PEM")
                 pose_input = folder / "pose_detections.json"
                 pose_input.write_text(json.dumps([detections[i] for i in accepted]))
                 pose_output = folder / "pose.json"
@@ -279,7 +298,7 @@ class Engine:
             else:
                 pose_result = {"status": "no_accepted_detection", "poses": []}
         result = {"status": "complete", "mode": config["mode"], "backend": config['pose_backend'] if config['pose'] else 'sam6d', "device": str(device), "gpu": torch.cuda.get_device_name(device) if device.type == "cuda" else None,
-                  "cad_name": part['name'] if identification else inputs["cad_name"], "cad_key": part["key"] if not identification or identification['part_key'] else None, "display_name": part["name"] if not identification or identification['part_key'] else 'Sin identificación fiable',
+                  "cad_name": part['name'] if identification else inputs["cad_name"], "cad_key": part["key"] if not identification or identification['part_key'] else None, "display_name": part["name"] if not identification or identification['part_key'] else 'No reliable identification',
                   "recognized": bool(accepted), "accepted_detections": len(accepted), "valid_proposals": proposals,
                   "best_score": detections[0]["score"] if detections else None,
                   "formula": formula, "score_is_probability": False, "pose_6d_estimated": bool(pose_result and pose_result.get("poses")), "pose": pose_result,

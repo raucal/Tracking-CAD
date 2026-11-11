@@ -35,7 +35,7 @@ for line in sys.stdin:
   self.assertIsNotNone(process.poll());self.assertFalse(self.worker.status()['ready'])
   self.worker.warmup();self.assertNotEqual(process.pid,self.worker.status()['pid'])
  def test_timeout_releases_worker(self):
-  with self.assertRaisesRegex(RuntimeError,'tiempo'):self.worker.request('slow',timeout=.03)
+  with self.assertRaisesRegex(RuntimeError,'in time'):self.worker.request('slow',timeout=.03)
   self.assertIsNone(self.worker.process)
  def test_tracking_uses_same_worker_without_unloading_on_stop(self):
   root=self.root;seed=root/'seed';seed.mkdir();camera_data={'cam_K':[100,0,5,0,100,5,0,0,1],'depth_scale':1}

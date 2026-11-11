@@ -65,8 +65,8 @@ class SamReport(unittest.TestCase):
 
     def test_rejects_inconsistent_label_mapping(self):
         wrong = copy.deepcopy(self.detections)
-        wrong[0]["part_name"] = "nombre_tomado_de_la_foto"
-        with self.assertRaisesRegex(ValueError, "etiqueta"):
+        wrong[0]["part_name"] = "name_taken_from_photo"
+        with self.assertRaisesRegex(ValueError, "label"):
             self.read(detections=wrong)
 
     def coverage_run(self):

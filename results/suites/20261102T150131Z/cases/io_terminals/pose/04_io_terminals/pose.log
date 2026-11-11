@@ -1,3 +1,0 @@
-/home/raca/projects/.venvs/assembly-runtime/lib/python3.10/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
-  import pynvml  # type: ignore[import]
-{"poses": 1, "timing": {"model_load_s": 1.9618493480375037, "reference_features_s": 0.4093672779854387, "pose_inference_s": 0.20549665298312902, "total_s": 2.6795716549968347}}

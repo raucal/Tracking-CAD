@@ -4,7 +4,7 @@ import importlib.util
 import unittest
 from unittest.mock import patch
 import numpy as np
-p=Path(__file__).resolve().parents[3]/'CADTracking/models/SAM-6D/SAM-6D/Pose_Estimation_Model/utils/draw_utils.py'
+p=Path(__file__).resolve().parents[2]/'models/SAM-6D/SAM-6D/Pose_Estimation_Model/utils/draw_utils.py'
 spec=importlib.util.spec_from_file_location('tested_pem_draw',p);draw=importlib.util.module_from_spec(spec);spec.loader.exec_module(draw)
 
 class PemAxes(unittest.TestCase):

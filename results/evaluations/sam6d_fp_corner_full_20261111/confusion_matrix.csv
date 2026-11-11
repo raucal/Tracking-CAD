@@ -1,0 +1,11 @@
+﻿expected_cad,00_rear_mounting_plate,01_front_housing,02_control_panel,03_option_cassette,03a_vertical_option_a,03b_vertical_option_b,04_io_terminals,05_control_board,06_power_unit,07_thermal_core,NO_PREDICTION
+00_rear_mounting_plate,4,0,0,0,1,0,0,0,0,0,0
+01_front_housing,0,4,0,0,0,1,0,0,0,0,0
+02_control_panel,0,0,5,0,0,0,0,0,0,0,0
+03_option_cassette,0,0,0,3,1,0,0,1,0,0,0
+03a_vertical_option_a,1,0,0,0,2,1,0,1,0,0,0
+03b_vertical_option_b,0,0,0,0,0,0,0,0,0,0,0
+04_io_terminals,0,0,0,0,0,1,3,0,1,0,0
+05_control_board,0,0,0,0,0,0,0,5,0,0,0
+06_power_unit,0,0,0,0,0,0,0,0,5,0,0
+07_thermal_core,0,0,0,0,0,0,0,0,0,5,0

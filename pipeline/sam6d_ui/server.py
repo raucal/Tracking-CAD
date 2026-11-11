@@ -20,7 +20,7 @@ from .camera.tracking import LivePoseTracker, validate_interval
 
 HERE = Path(__file__).resolve().parent
 PIPELINE = HERE.parent
-from settings import PREPARED, CONFIG, path, profile, display_names
+from settings import PREPARED, CONFIG, ROOT, path, profile, display_names
 from .inputs import DEFAULTS
 
 
@@ -42,11 +42,17 @@ class App:
         self.submission_lock = threading.Lock()
         self.pool = ThreadPoolExecutor(max_workers=1)
         self.engine = None
-        self.startup = {'state':'idle','message':'Precarga no solicitada','segmentor':None}
+        self.startup = {'state':'idle','message':'Preloading not requested','segmentor':None}
+        # The robot extension lives outside the vision pipeline and connects only
+        # after an explicit request from its panel.
+        import sys
+        if str(ROOT) not in sys.path: sys.path.insert(0, str(ROOT))
+        from alignment_pose_cad import AlignmentService
+        self.alignment = AlignmentService(self)
 
     def preload(self, segmentor='sam', backbone='vit_h'):
         with self.lock:
-            self.startup={'state':'loading','message':'Precargando modelos en GPU…','segmentor':segmentor,'backbone':backbone}
+            self.startup={'state':'loading','message':'Preloading models on GPU…','segmentor':segmentor,'backbone':backbone}
         self.pool.submit(self._preload,segmentor,backbone)
 
     def _preload(self,segmentor,backbone):
@@ -55,7 +61,7 @@ class App:
         def update(message):
             with self.lock:self.startup['message']=message
         try:
-            update('Cargando FoundationPose en GPU…')
+            update('Loading FoundationPose on GPU…')
             worker=self.pose_worker();worker.warmup();timing['foundationpose_load_s']=worker.status()['load_s']
             self.foundationpose_status={'available':True,'verified':True,'cuda':True,'python':str(worker.python)}
         except Exception as error:errors.append('FoundationPose: '+str(error))
@@ -65,7 +71,7 @@ class App:
             timing.update(self.engine.warmup(segmentor,backbone,update))
         except Exception as error:errors.append('SAM/DINOv2: '+str(error))
         with self.lock:
-            self.startup.update(state='error' if errors else 'ready',message='; '.join(errors) if errors else 'Modelos cargados en GPU',timing={**timing,'total_s':time.perf_counter()-started})
+            self.startup.update(state='error' if errors else 'ready',message='; '.join(errors) if errors else 'Models loaded on GPU',timing={**timing,'total_s':time.perf_counter()-started})
 
     def viewer_status(self):
         with self.lock:
@@ -118,25 +124,27 @@ class App:
                 "max_image_pixels": 4_000_000, "cad_formats": ["STL", "OBJ", "PLY"]}
 
     def start_tracking(self, request):
-        if not isinstance(request,dict):raise ValueError('Se requiere una petición JSON.')
+        if not isinstance(request,dict):raise ValueError('A JSON request is required.')
+        if getattr(self, 'alignment', None) is not None and self.alignment.status()['busy']:
+            raise ValueError('Wait for robot alignment to finish or stop the operation.')
         with self.submission_lock:
             with self.lock:
                 if any(j['status'] in ('queued','running') for j in self.jobs.values()):
-                    raise ValueError('Espera a que terminen los análisis pendientes.')
+                    raise ValueError('Wait for pending analyses to finish.')
             job_id = request.get('job_id','')
             job = self.job(job_id)
             result = job.get('result',{})
             folder = self.job_folder(job_id)
             inputs = json.loads((folder/'inputs.json').read_text())
             if job['status'] != 'complete' or result.get('backend') != 'foundationpose' or not result.get('pose_6d_estimated') or not inputs.get('capture_id'):
-                raise ValueError('Primero localiza la pieza con FoundationPose sobre la cámara en directo.')
+                raise ValueError('First locate the part with FoundationPose on the live camera.')
             captured = json.loads((self.camera.capture_folder(inputs['capture_id'])/'capture.json').read_text())
             import time
             if time.time()-captured['timestamp']>120:
-                raise ValueError('La pose inicial es antigua. Vuelve a localizar la pieza.')
+                raise ValueError('The initial pose is stale. Locate the part again.')
             interval=validate_interval(request['redetect_interval_s'] if 'redetect_interval_s' in request else (0 if 'manual_bbox' in inputs else profile('interface')['tracking']['redetect_interval_s']))
             if interval and 'manual_bbox' in inputs:
-                raise ValueError('Selecciona inicialización automática para activar los refrescos SAM.')
+                raise ValueError('Select automatic initialization to enable SAM refreshes.')
             from .camera.redetection import Redetector
             def engine():
                 if self.engine is None:
@@ -151,47 +159,49 @@ class App:
         return self.camera.stop()
 
     def submit(self, request):
+        if getattr(self, 'alignment', None) is not None and self.alignment.status()['busy']:
+            raise ValueError('Wait for robot alignment to finish or stop the operation.')
         with self.submission_lock:
             return self._submit(request)
 
     def _submit(self, request):
         if self.tracker.busy():
-            raise ValueError('Detén el seguimiento rápido antes de iniciar otro análisis.')
+            raise ValueError('Stop fast tracking before starting another analysis.')
         if not isinstance(request, dict):
-            raise ValueError('Se requiere una petición JSON.')
+            raise ValueError('A JSON request is required.')
         if request.get('continuous') and min(shutil.disk_usage(folder).free for folder in (self.data_root, self.camera.root)) < 256 * 1024**2:
-            raise ValueError('Detección en directo detenida: se necesitan al menos 256 MiB libres para otro análisis.')
+            raise ValueError('Live detection stopped: at least 256 MiB must be free for another analysis.')
         manual_bbox=request.get('manual_bbox')
         auto_assembly = request.get('auto_assembly')
         assembly_manifest = None
         if auto_assembly is not None:
             if not isinstance(auto_assembly, str) or not request.get('live_camera') or manual_bbox is not None or request.get('recording_id'):
-                raise ValueError('La identificación de ensamblaje requiere RealSense en directo e inicialización automática.')
+                raise ValueError('Assembly identification requires live RealSense and automatic initialization.')
             from .assembly_identification import assembly_catalog
             assembly_manifest, parts = assembly_catalog(auto_assembly)
             request = {**request, 'server_files': {'cad': str(assembly_manifest.parent / parts[0]['source_stl'])}}
         if manual_bbox is not None and request.get('continuous'):
-            raise ValueError('La caja manual usa una imagen congelada. Utiliza el seguimiento rápido para continuar en directo.')
+            raise ValueError('The manual box uses a frozen image. Use fast tracking to continue live.')
         config = options(request.get('options', {}))
         if auto_assembly is not None and (config['mode'] != 'rgbd' or config['cad_units'] != 'mm'):
-            raise ValueError('La identificación del ensamblaje requiere RGB-D y unidades CAD en milímetros.')
+            raise ValueError('Assembly identification requires RGB-D and CAD units in millimetres.')
         if manual_bbox is not None and config['pose_backend']!='foundationpose':
-            raise ValueError('La caja manual está disponible con FoundationPose.')
+            raise ValueError('Manual boxes are available with FoundationPose.')
         request = {**request, 'options': config}
         if config['pose_backend'] == 'foundationpose':
             from .backends.foundationpose import availability
             if self.foundationpose_status is None or not self.foundationpose_status.get('verified', False):
                 self.foundationpose_status = availability()
             if not self.foundationpose_status['available']:
-                raise ValueError(self.foundationpose_status.get('reason') or 'FoundationPose no está preparado.')
+                raise ValueError(self.foundationpose_status.get('reason') or 'FoundationPose is not ready.')
         with self.lock:
             if sum(j["status"] in ("queued", "running") for j in self.jobs.values()) >= 4:
-                raise ValueError("Ya hay cuatro trabajos en cola. Espera a que termine uno.")
+                raise ValueError("Four jobs are already queued. Wait for one to finish.")
         if request.get("example"):
             frame = next((f for f in self.manifest["frames"] if f["name"] == request["example"]), None)
             part = next((p for p in self.manifest["parts"] if p["key"] == request.get("example_cad")), None)
             if not frame or not part:
-                raise ValueError("Ejemplo o CAD desconocido.")
+                raise ValueError("Unknown example or CAD.")
             base = self.manifest_path.parent
             def file(path):
                 return {"name": Path(path).name, "data": base64.b64encode((base / path).read_bytes()).decode()}
@@ -208,7 +218,7 @@ class App:
             recording_id = request.get('recording_id')
             if recording_id:
                 if config['pose_backend'] != 'foundationpose':
-                    raise ValueError('El seguimiento de una grabación requiere FoundationPose.')
+                    raise ValueError('Tracking a recording requires FoundationPose.')
                 recording_path = self.camera.recording_folder(recording_id)
                 first = json.loads((recording_path / 'frames.jsonl').read_text().splitlines()[0])
                 rgb_path, depth_path = recording_path / first['rgb'], recording_path / first['depth']
@@ -217,7 +227,7 @@ class App:
                 capture_id = request.get('capture_id')
                 if capture_id:
                     if manual_bbox is None:
-                        raise ValueError('Una captura seleccionada requiere una región manual explícita.')
+                        raise ValueError('A selected capture requires an explicit manual region.')
                     folder = self.camera.capture_folder(capture_id)
                 else:
                     capture = self.camera.capture()
@@ -229,7 +239,7 @@ class App:
             if 'server_files' in request:
                 cad_path = self.files.resolve(request['server_files'].get('cad', ''))
                 if not cad_path.is_file() or cad_path.suffix.lower() not in ('.stl', '.obj', '.ply') or cad_path.stat().st_size > 50 * 1024**2:
-                    raise ValueError('Selecciona una malla CAD válida de hasta 50 MiB.')
+                    raise ValueError('Select a valid CAD mesh up to 50 MiB.')
                 cad = upload(cad_path)
                 server_paths = {'cad': str(cad_path)}
             else:
@@ -268,7 +278,7 @@ class App:
             with self.lock:
                 self.jobs[job_id].update(status="running", message=message)
         try:
-            update("Preparando el motor de inferencia")
+            update("Preparing the inference engine")
             if 'manual_bbox' in inputs:
                 from .backends.manual_pose import run as manual_pose
                 result = manual_pose(folder, inputs, update)
@@ -292,7 +302,7 @@ class App:
                 return dict(self.jobs[job_id])
         result = self.job_folder(job_id) / "result.json"
         if result.is_file():
-            return {"id": job_id, "status": "complete", "message": "Resultado guardado", "result": json.loads(result.read_text())}
+            return {"id": job_id, "status": "complete", "message": "Result saved", "result": json.loads(result.read_text())}
         raise KeyError(job_id)
 
     def job_folder(self, job_id):
@@ -372,7 +382,7 @@ def handler(app):
             try:
                 after=int(parse_qs(urlparse(self.path).query).get('after',['-1'])[0])
             except ValueError:
-                self.json({'error':'Número de imagen no válido.'},400);return
+                self.json({'error':'Invalid image number.'},400);return
             frame=stream.latest_preview('cad') if cad else stream.latest_preview()
             unchanged=frame is not None and after==frame['sequence']
             self.send_response(204 if frame is None or unchanged else 200)
@@ -392,6 +402,12 @@ def handler(app):
 
         def do_GET(self):
             path = unquote(urlparse(self.path).path)
+            if path == '/api/alignment/status':
+                self.json(app.alignment.status())
+                return
+            if path == '/alignment_pose_cad/panel.js':
+                self.send_file(ROOT / 'alignment_pose_cad/static/panel.js')
+                return
             if path == '/api/cad/frame.jpg':
                 self.send_preview(app.tracker, cad=True)
                 return
@@ -492,7 +508,7 @@ def handler(app):
         def do_POST(self):
             route = urlparse(self.path).path
             if route not in ('/api/jobs', '/api/camera/start', '/api/camera/stop', '/api/camera/capture',
-                             '/api/camera/record/start', '/api/camera/record/stop', '/api/tracking/start', '/api/tracking/stop', '/api/tracking/config'):
+                             '/api/camera/record/start', '/api/camera/record/stop', '/api/tracking/start', '/api/tracking/stop', '/api/tracking/config') and route not in app.alignment.routes:
                 self.json({"error": "Ruta no encontrada"}, 404)
                 return
             origin = self.headers.get("Origin")
@@ -502,15 +518,17 @@ def handler(app):
             try:
                 length = int(self.headers.get("Content-Length", "0"))
             except ValueError:
-                self.json({'error': 'Content-Length no válido.'}, 400)
+                self.json({'error': 'Invalid Content-Length.'}, 400)
                 return
             if not 0 < length <= 96 * 1024**2 or self.headers.get_content_type() != "application/json":
-                self.json({"error": "Se requiere JSON con archivos de tamaño limitado."}, 400)
+                self.json({"error": "JSON with size-limited files is required."}, 400)
                 return
             try:
                 request = json.loads(self.rfile.read(length))
-                if not isinstance(request,dict):raise ValueError('Se requiere un objeto JSON.')
-                if route == '/api/jobs':
+                if not isinstance(request,dict):raise ValueError('A JSON object is required.')
+                if route in app.alignment.routes:
+                    self.json(app.alignment.action(route, request))
+                elif route == '/api/jobs':
                     self.json(app.submit(request), 202)
                 else:
                     actions = {'/api/tracking/config': lambda: app.tracker.configure(request.get('redetect_interval_s')),
@@ -537,21 +555,22 @@ def main():
     options({})  # Validate numerical and backend settings before opening the service.
     parser.add_argument("--port", type=int, default=config['server']['port'])
     parser.add_argument("--data-dir", type=Path, default=config['server']['data_dir'])
-    parser.add_argument("--capture-dir", type=Path, default=config['server']['capture_dir'], help="Carpeta para imágenes y vídeos de cámara")
-    parser.add_argument("--file-root", type=Path, default=config['server']['file_root'], help='Carpeta del servidor disponible en el selector')
-    parser.add_argument('--preload', choices=('sam','fastsam','none'), default=config['server']['preload'], help='Segmentador a precargar con DINOv2 y FoundationPose; none desactiva la precarga')
-    parser.add_argument('--backbone', choices=('vit_h','vit_l','vit_b'), default=config['server']['backbone'], help='Variante SAM a precargar; se ignora con FastSAM')
+    parser.add_argument("--capture-dir", type=Path, default=config['server']['capture_dir'], help="Directory for camera images and videos")
+    parser.add_argument("--file-root", type=Path, default=config['server']['file_root'], help='Server directory available in the file selector')
+    parser.add_argument('--preload', choices=('sam','fastsam','none'), default=config['server']['preload'], help='Segmenter to preload with DINOv2 and FoundationPose; none disables preloading')
+    parser.add_argument('--backbone', choices=('vit_h','vit_l','vit_b'), default=config['server']['backbone'], help='SAM variant to preload; ignored with FastSAM')
     args = parser.parse_args()
     app = App(args.data_dir, args.file_root, args.capture_dir)
     server = ThreadingHTTPServer(("127.0.0.1", args.port), handler(app))
     if args.preload!='none':app.preload(args.preload,args.backbone)
     print(f"CAD Tracking: http://127.0.0.1:{args.port}/", flush=True)
-    print("Servicio local para túnel SSH. Ctrl+C para detenerlo.", flush=True)
+    print("Local service for SSH tunnelling. Ctrl+C stops it.", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
         pass
     finally:
+        app.alignment.close()
         app.tracker.stop()
         app.camera.stop()
         server.server_close()

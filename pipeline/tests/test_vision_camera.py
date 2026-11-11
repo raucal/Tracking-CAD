@@ -1,4 +1,4 @@
-"""Contrato RGB-D, persistencia y API: sin cámara ni modelos físicos."""
+"""RGB-D contract, persistence and API without physical cameras or models."""
 from io import BytesIO
 import base64
 import json
@@ -8,6 +8,7 @@ import tempfile
 import threading
 import time
 import unittest
+import pytest
 from unittest.mock import patch
 from http.server import ThreadingHTTPServer
 from urllib.error import HTTPError
@@ -55,13 +56,13 @@ class CameraTests(unittest.TestCase):
 
     def test_capture_before_camera_start_reports_required_action_without_waiting(self):
         with patch.object(self.camera.condition, 'wait_for') as wait:
-            with self.assertRaisesRegex(RuntimeError, 'Abrir cámara'):
+            with self.assertRaisesRegex(RuntimeError, 'Open camera'):
                 self.camera.capture()
             wait.assert_not_called()
 
     def test_camera_failure_is_preserved_when_capture_is_requested(self):
-        self.camera.error = 'Dispositivo ocupado'
-        with self.assertRaisesRegex(RuntimeError, 'Dispositivo ocupado'):
+        self.camera.error = 'Device ocupado'
+        with self.assertRaisesRegex(RuntimeError, 'Device ocupado'):
             self.camera.capture()
 
     def test_one_source_shared_by_preview_and_lossless_capture(self):
@@ -124,7 +125,7 @@ class CameraTests(unittest.TestCase):
         self.start()
         with self.camera.condition:
             self.camera.latest['received'] -= 100
-            with self.assertRaisesRegex(RuntimeError, 'caducado'):
+            with self.assertRaisesRegex(RuntimeError, 'stale'):
                 self.camera.frame()
 
     def test_foundationpose_requires_real_rgbd_and_never_silently_becomes_2d(self):
@@ -136,6 +137,7 @@ class CameraTests(unittest.TestCase):
         self.assertTrue(options({'pose_backend':'foundationpose','mode':'rgbd'})['pose'])
 
 
+@pytest.mark.usefixtures("app_dataset")
 class CameraApiTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()

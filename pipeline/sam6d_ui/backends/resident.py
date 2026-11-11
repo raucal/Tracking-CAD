@@ -15,8 +15,8 @@ class ResidentPose:
         self.ready=False;self.load_s=None
     def _receive(self,timeout):
         try:item=self.messages.get(timeout=timeout)
-        except Empty:raise RuntimeError('El trabajador de pose no respondió a tiempo.')
-        if item is None:raise RuntimeError('Se cerró el trabajador de pose. Consulta '+str(self.log_path))
+        except Empty:raise RuntimeError('The pose worker did not respond in time.')
+        if item is None:raise RuntimeError('The pose worker closed. See '+str(self.log_path))
         return item
     def _start(self):
         if self.process and self.process.poll() is None and self.ready:return
@@ -35,7 +35,7 @@ class ResidentPose:
         self.reader=threading.Thread(target=read,name='FoundationPose-RPC',daemon=True);self.reader.start()
         try:
             result=self._receive(180)
-            if result.get('status')!='ready':raise RuntimeError(result.get('error','No se pudo cargar FoundationPose.'))
+            if result.get('status')!='ready':raise RuntimeError(result.get('error','Failed to load FoundationPose.'))
             self.ready=True;self.load_s=result['load_s']
         except BaseException:self.close();raise
     def request(self,command,timeout=300,**payload):
@@ -45,9 +45,9 @@ class ResidentPose:
             try:
                 self.process.stdin.write(json.dumps(dict(id=rid,command=command,**payload))+'\n');self.process.stdin.flush()
                 response=self._receive(timeout)
-                if response.get('request_id')!=rid:raise RuntimeError('Respuesta fuera de secuencia del trabajador de pose.')
+                if response.get('request_id')!=rid:raise RuntimeError('Out-of-sequence response from the pose worker.')
             except (OSError,RuntimeError):self.close();raise
-            if response['status']=='error':raise RuntimeError(response.get('error','Error de pose.'))
+            if response['status']=='error':raise RuntimeError(response.get('error','Pose error.'))
             result=response['result'];result['rpc_seconds']=time.perf_counter()-started
             return result
     def warmup(self):return self.request('warmup')

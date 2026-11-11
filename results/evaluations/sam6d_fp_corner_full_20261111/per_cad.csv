@@ -1,0 +1,11 @@
+﻿cad_key,support,predictions,correct,recall_on_selected,precision
+00_rear_mounting_plate,5,5,4,0.8,0.8
+01_front_housing,5,4,4,0.8,1.0
+02_control_panel,5,5,5,1.0,1.0
+03_option_cassette,5,3,3,0.6,1.0
+03a_vertical_option_a,5,4,2,0.4,0.5
+03b_vertical_option_b,0,3,0,,0.0
+04_io_terminals,5,3,3,0.6,1.0
+05_control_board,5,7,5,1.0,0.7142857142857143
+06_power_unit,5,6,5,1.0,0.8333333333333334
+07_thermal_core,5,5,5,1.0,1.0

@@ -11,6 +11,7 @@ Run all commands from the project root. Use this document for operational detail
 | Command | Purpose |
 | --- | --- |
 | `bash run.sh ui` | Start the browser application. Use `--port 8771` for another port or `--preload none` to skip startup model loading. |
+| `bash run.sh evaluate --output results/evaluations/ID` | Run label-blind SAM6D + FoundationPose identification; see [evaluation](EVALUATION.md). |
 | `bash run.sh suite run` | Run the suite profile, including PEM by default, and export a report. |
 | `bash run.sh suite report --output results/suites/ID` | Export saved results without rerunning inference; `--zip` also creates a ZIP. |
 | `bash run.sh suite pose --output results/suites/ID` | Add PEM to saved detections; requires CUDA and dataset resources. |
@@ -189,7 +190,7 @@ The following tables describe the distributed JSON values. Effective values depe
 
 ## Images and CAD input
 
-Select server files or upload them, choose a CAD, declare mm/cm/m, and select RGB or RGB-D. Enable PEM or choose FoundationPose for pose estimation, then click **Detectar objeto**. The result includes scores, timings, the actual device, and available pose/projection. Example names come from the prepared manifest; photo filenames are not ground-truth classification labels.
+Select server files or upload them, choose a CAD, declare mm/cm/m, and select RGB or RGB-D. Enable PEM or choose FoundationPose for pose estimation, then click **Detect object**. The result includes scores, timings, the actual device, and available pose/projection. Example names come from the prepared manifest; photo filenames are not ground-truth classification labels.
 
 | Input | Requirement |
 | --- | --- |
@@ -200,20 +201,20 @@ Select server files or upload them, choose a CAD, declare mm/cm/m, and select RG
 
 BOP/SAM6D `depth_scale` means **millimeters per raw depth unit**, not meters per unit. Preparation converts RealSense metadata where appropriate.
 
-For manual initialization, select FoundationPose and **Caja manual · solo FoundationPose**, freeze a capture, and mark the object's rectangle. This is an approximate initial mask, not a precise segmentation. SAM/DINOv2 is bypassed for localization; after loss, manually locate the object again. Start with `ui --preload none` to skip SAM preload in a manual-only session; FoundationPose loads on first use and its worker is reused.
+For manual initialization, select FoundationPose and **Manual box · FoundationPose only**, freeze a capture, and mark the object's rectangle. This is an approximate initial mask, not a precise segmentation. SAM/DINOv2 is bypassed for localization; after loss, manually locate the object again. Start with `ui --preload none` to skip SAM preload in a manual-only session; FoundationPose loads on first use and its worker is reused.
 
 ## Camera and tracking
 
-Select **Intel RealSense en directo**, a device, and connect. Controls support 640×480 and 1280×720 at 15 or 30 FPS, subject to device/SDK support.
+Select **Live Intel RealSense**, a device, and connect. Controls support 640×480 and 1280×720 at 15 or 30 FPS, subject to device/SDK support.
 
 | Control | Behavior |
 | --- | --- |
 | **Analizar fotograma actual** | Analyze the latest RGB-D frame when the request is sent. |
-| **Iniciar detección en directo** | Repeat complete analyses at the available inference rate. |
-| **Localizar e iniciar seguimiento rápido** | Initialize FoundationPose, then update pose on the latest frames. |
+| **Start live detection** | Repeat complete analyses at the available inference rate. |
+| **Locate and start fast tracking** | Initialize FoundationPose, then update pose on the latest frames. |
 | Capture/export controls | Save RGB-D or download result originals/overlays. |
 | Video recording controls | Save RGB-D, calibration, timestamps, and a preview video; recording-tracking results can also be downloaded. |
-| **Abrir visor compacto** | Open a compact camera/pose window; it does not reduce inference cost. |
+| **Open compact viewer** | Open a compact camera/pose window; it does not reduce inference cost. |
 
 Acquisition keeps the latest frame rather than queuing every frame for inference. Camera and tracking FPS are different measurements; intermediate frames are skipped when processing is slower than acquisition.
 
@@ -227,13 +228,13 @@ These checks are heuristic: geometrically plausible drift can pass. Tune them fo
 
 ### Automatic part identification
 
-Choose **Identificar pieza del ensamblaje** as the CAD source and select an assembly. SAM6D compares image proposals with all its prepared CADs and selects the highest accepted score. This requires RGB-D, millimeter units, and complete assembly templates. No accepted score means no declared part.
+Choose **Identify assembly part** as the CAD source and select an assembly. SAM6D compares image proposals with all its prepared CADs and selects the highest accepted score. This requires RGB-D, millimeter units, and complete assembly templates. No accepted score means no declared part.
 
 Single-frame analysis identifies once; live detection repeats it. Fast FoundationPose tracking maintains pose between checks and confirms a detected part change with a new frame before registering and publishing the new CAD pose. The status shows the current part, score, and change count. One object is tracked: this is not simultaneous tracking of all visible parts. Set `tracking.identify_assembly` to `true` for this mode by default.
 
 ### CAD and axes viewer
 
-Fast FoundationPose tracking includes **CAD y triedro sobre fondo negro**, also available in the compact viewer as **CAD + triedro · fondo negro**. It renders the current model pose without the camera image, using the initialized GPU. The camera overlay and CAD view use the same centered axes: X red, Y green, Z blue. The object remains in camera coordinates rather than being artificially recentered. The view hides when pose is lost, reports rendering time, and does not rerun SAM.
+Fast FoundationPose tracking includes **CAD and axes on a black background**, also available in the compact viewer as **CAD + axes · black background**. It renders the current model pose without the camera image, using the initialized GPU. The camera overlay and CAD view use the same centered axes: X red, Y green, Z blue. The object remains in camera coordinates rather than being artificially recentered. The view hides when pose is lost, reports rendering time, and does not rerun SAM.
 
 ## Assembly selection
 
@@ -305,7 +306,7 @@ The tool refuses to overwrite an existing audit, verifies the source suite hash,
 
 ## Reports and pose interpretation
 
-Serve `results/dashboard` as shown in the README or open an exported folder's `index.html`. **Matrices y triedros** opens the pose gallery; `#poses` links directly to it. Each complete export updates the dashboard symlink.
+Serve `results/dashboard` as shown in the README or open an exported folder's `index.html`. **Matrices and coordinate axes** opens the pose gallery; `#poses` links directly to it. Each complete export updates the dashboard symlink.
 
 The report includes saved scores/components, timings, images, masks, CAD comparisons, reference views, and available poses. Captures without accepted detections may have no pose; PEM errors are shown separately.
 
@@ -343,14 +344,15 @@ PEM's combined score can incorporate ISM and ranks pose hypotheses; it is neithe
 | `results/interface/cache/cad/` | Custom-CAD references; missing references are rebuilt when that CAD is analyzed again. |
 | `results/interface/camera/` | Compatibility links to captures; not an independent copy of recordings. |
 | `results/runs/` | Individual CLI analyses and local startup checks. |
-| `results/suites/` | Original suite evidence, including detections, poses, and manifest snapshots. Keep to enrich or re-export results. |
-| `results/reports/` | Exported reports. Copies case resources to make viewing independent of source suites. |
+| `results/suites/` | New local suite runs; ignored. Historical redundant source suites were removed after preserving self-contained exports. |
+| `results/reports/` | Selected 22-image detailed bundle. Other exports stay local and ignored. |
+| `results/evaluations/` | Selected 45-image FoundationPose bundle. Other evaluations stay local and ignored. |
 | `results/dashboard` | Symlink to the latest report, not another report copy. |
 | `.cache/` | Regenerable embeddings and SDU compatibility copies; removing them adds future startup/computation work. |
 
-Git retains suites and reports. Individual runs, interface sessions, captures, prepared data, caches, weights, and native builds are ignored. **Ignoring files does not delete them or prevent disk accumulation.** Stop processing before removing local execution artifacts; preserve suite/report folders and wanted captures. Failed jobs retain `error.log`; suites retain `execution.log` and per-part `pose.log`. The HTTP server logs to the terminal.
+Git retains only the two bundles listed in [RESULTS.md](RESULTS.md). Other suites and exports, individual runs, interface sessions, captures, prepared data, caches, weights and native builds are ignored. **Ignoring files does not delete them or prevent disk accumulation.** Stop processing before removing local execution artifacts; preserve suite/report folders and wanted captures. Failed jobs retain `error.log`; suites retain `execution.log` and per-part `pose.log`. The HTTP server logs to the terminal.
 
-An exported report can be copied to another computer and viewed without models, CUDA, Python, source suites, or Internet. Copy the **entire real report folder**, including `cases/` and `referencias_cad/`; `index.html` or the dashboard symlink alone is insufficient. Reprocessing or rebuilding an export still requires the application and relevant data. See [Installation](INSTALLATION.md#prepare-data-and-templates) for dataset reconstruction. ASAP planning code and data remain in the sibling ASAP project.
+An exported report can be copied to another computer and viewed without models, CUDA, Python, source suites, or Internet. Copy the **entire real report folder**, preserving its relative symlinks (for example with `cp -a` or a tar archive), including `cases/` and `referencias_cad/`; `index.html` or the dashboard symlink alone is insufficient. Reprocessing or rebuilding an export still requires the application and relevant data. See [Installation](INSTALLATION.md#prepare-data-and-templates) for dataset reconstruction. ASAP planning code and data remain in the sibling ASAP project.
 
 ## Troubleshooting
 
@@ -360,7 +362,7 @@ An exported report can be copied to another computer and viewed without models, 
 | Remote browser cannot connect | Keep the service running and forward its port through SSH/VS Code. |
 | RealSense missing or busy | Check server connection, SDK/USB permissions, and other camera users. |
 | Missing weights, runtime, or templates | Run `settings` and `sam doctor`; follow Installation. FoundationPose weights belong under `models/FoundationPoseOfficial/weights/`. |
-| Missing pose matrices/axes | Open the current dashboard's `#poses`, inspect errors, and check whether PEM ran. Use `suite pose` to add it. |
+| Missing pose matrices/axes | In the historical PEM report open `#poses` and inspect saved errors. In the FoundationPose report open the case overlay and `poses.json`. Newly generated suites can use `suite pose`. |
 | Correct mask but poor CAD projection | Check CAD units, aligned depth, intrinsics, and transforms. A good mask does not guarantee a good pose. |
 | Smooth stream but slow detections | Acquisition and inference have different rates. Use fast FoundationPose tracking and inspect stage timings. |
 | Repeated recovery | Inspect `pose_quality`, depth support, and motion limits; tune the profile for the scene. |

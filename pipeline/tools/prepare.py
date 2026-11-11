@@ -9,7 +9,6 @@ from pathlib import Path as _Path
 _sys.path.insert(0, str(next(p for p in _Path(__file__).resolve().parents if (p / 'settings.py').is_file())))
 
 import argparse
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -22,14 +21,7 @@ from settings import PREPARED, dataset_path
 HERE = dataset_path().parent
 
 
-def write_json(path, value):
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, indent=2, ensure_ascii=False, allow_nan=False) + "\n")
-
-
-def sha256(path):
-    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+from file_utils import sha256, write_json
 
 
 def translation(x=0.0, y=0.0, z=0.0):
@@ -41,23 +33,23 @@ def translation(x=0.0, y=0.0, z=0.0):
 def camera_from_metadata(metadata, depth, rgb_size):
     """BOP/SAM-6D depth_scale is millimetres per raw integer, not metres."""
     if metadata.get("aligned_to") != "color":
-        raise ValueError("La profundidad debe estar alineada al color.")
+        raise ValueError("Depth must be aligned to colour.")
     height, width = int(metadata["height"]), int(metadata["width"])
     if depth.shape != (height, width) or tuple(rgb_size) != (width, height):
-        raise ValueError("RGB, profundidad y calibración tienen resoluciones distintas.")
+        raise ValueError("RGB, depth and calibration have different resolutions.")
     if depth.dtype != np.uint16 or metadata.get("dtype") != "uint16":
-        raise ValueError("Se esperaba profundidad raw uint16; no se convierte silenciosamente.")
+        raise ValueError("Expected raw uint16 depth; implicit conversion is not supported.")
     if metadata.get("invalid_depth_value") != 0:
-        raise ValueError("SAM-6D espera cero como profundidad inválida.")
+        raise ValueError("SAM-6D expects zero for invalid depth.")
     scale = float(metadata["depth_scale_m_per_unit"]) * 1000.0
     if not np.isfinite(scale) or scale <= 0 or not np.any(depth > 0):
-        raise ValueError("Escala o profundidad no válida.")
+        raise ValueError("Invalid scale or depth.")
     intr = metadata["intrinsics"]
     if np.any(np.abs(intr.get("coefficients", [])) > 1e-10):
-        raise ValueError("Hay distorsión no nula: rectificar RGB-D antes de usar SAM-6D.")
+        raise ValueError("Nonzero distortion: rectify RGB-D before using SAM-6D.")
     fx, fy, cx, cy = [float(intr[k]) for k in ("fx", "fy", "ppx", "ppy")]
     if not np.all(np.isfinite([fx, fy, cx, cy])) or min(fx, fy) <= 0:
-        raise ValueError("Intrínsecos de cámara no válidos.")
+        raise ValueError("Invalid camera intrinsics.")
     return {"cam_K": [fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0], "depth_scale": scale}
 
 
@@ -75,16 +67,16 @@ def repair_topology(mesh):
     solid = manifold3d.Manifold(manifold3d.Mesh(
         np.asarray(mesh.vertices, dtype=np.float32), np.asarray(mesh.faces, dtype=np.uint32)))
     if solid.status() != manifold3d.Error.NoError:
-        raise ValueError(f"No se puede reparar la topología sin cambiar geometría: {solid.status()}")
+        raise ValueError(f"Topology cannot be repaired without changing geometry: {solid.status()}")
     result = solid.to_mesh()
     repaired = trimesh.Trimesh(result.vert_properties[:, :3], result.tri_verts, process=False)
     def signature(m):
         return sorted(tuple(sorted(tuple(float(x) for x in v) for v in triangle))
                       for triangle in np.asarray(m.triangles, dtype=np.float32))
     if not repaired.is_watertight or not repaired.is_winding_consistent or signature(repaired) != signature(mesh):
-        raise ValueError("La reparación cambia triángulos o no deja una malla cerrada.")
+        raise ValueError("Repair changes triangles or does not produce a watertight mesh.")
     if not np.isclose(repaired.volume, mesh.volume, rtol=1e-6):
-        raise ValueError("La reparación cambia el volumen del CAD.")
+        raise ValueError("Repair changes CAD volume.")
     return repaired
 
 
@@ -100,7 +92,7 @@ def prepare(config_path, output, repair=False, assembly=None):
     # Never overwrite source data or share a destination between source inputs.
     for source in (cad_dir, photos):
         if output == source or source in output.parents or output in source.parents:
-            raise ValueError("La salida debe estar separada de los datos originales.")
+            raise ValueError("Output must be separate from the original data.")
     catalog = yaml.safe_load(resolve("catalog").read_text())
     by_key = {p["cad_stem"]: dict(p, name=name, fixed=False)
               for name, p in catalog["parts"].items()}
@@ -110,12 +102,12 @@ def prepare(config_path, output, repair=False, assembly=None):
         by_key = {key: dict(info, cad_stem=key) for key, info in selected_assembly['parts'].items()}
     stls = {p.stem: p for p in cad_dir.glob("*.stl")}
     if set(stls) != set(by_key):
-        raise ValueError("El inventario CAD y catálogo no coincide.")
+        raise ValueError("CAD inventory does not match the catalog.")
     output.mkdir(parents=True, exist_ok=True)
     # An existing output must belong to this tool, avoiding stale optional meshes.
     marker = output / ".cad_tracking_prepared"
     if not marker.exists() and any(output.iterdir()):
-        raise ValueError("El directorio de salida no está vacío ni pertenece a esta herramienta.")
+        raise ValueError("The output directory is not empty or owned by this tool.")
     marker.touch()
     def rel(p):
         return os.path.relpath(Path(p).resolve(), output)
@@ -129,9 +121,9 @@ def prepare(config_path, output, repair=False, assembly=None):
     for category_id, key in enumerate(sorted(stls), 1):
         mesh = trimesh.load_mesh(stls[key], process=True)
         if not isinstance(mesh, trimesh.Trimesh) or len(mesh.faces) == 0:
-            raise ValueError(f"Malla vacía o no triangular: {key}")
+            raise ValueError(f"Empty or non-triangular mesh: {key}")
         if not np.all(np.isfinite(mesh.vertices)) or mesh.volume <= 0:
-            raise ValueError(f"Geometría no válida: {key}")
+            raise ValueError(f"Invalid geometry: {key}")
         original_watertight = bool(mesh.is_watertight)
         if not original_watertight and repair:
             mesh = repair_topology(mesh)
@@ -162,7 +154,7 @@ def prepare(config_path, output, repair=False, assembly=None):
                     "faces": len(mesh.faces), "volume_mm3": float(mesh.volume)}}
         manifest["parts"].append(part)
         if not mesh.is_watertight:
-            manifest["warnings"].append(f"Malla CAD no cerrada; revisar antes de usarla en simulación: {key}")
+            manifest["warnings"].append(f"CAD mesh is not watertight; review before simulation: {key}")
 
     seen_rgb = set()
     names = {p["name"] for p in manifest["parts"]}
@@ -171,14 +163,14 @@ def prepare(config_path, output, repair=False, assembly=None):
         rgb = photos / metadata["color_image"]
         depth_file = photos / metadata["depth_image"]
         if rgb.parent.resolve() != photos or depth_file.parent.resolve() != photos:
-            raise ValueError("Los nombres RGB-D deben estar dentro del directorio de capturas.")
+            raise ValueError("RGB-D names must remain inside the captures directory.")
         depth = np.load(depth_file, allow_pickle=False)
         with Image.open(rgb) as im:
             camera = camera_from_metadata(metadata, depth, im.size)
             converted_rgb = im.convert("RGB")
         name = rgb.stem
         if name in seen_rgb:
-            raise ValueError(f"Captura duplicada: {name}")
+            raise ValueError(f"Duplicate capture: {name}")
         seen_rgb.add(name)
         frame_dir = output / "sam6d" / "frames" / name
         frame_dir.mkdir(parents=True, exist_ok=True)
@@ -200,11 +192,11 @@ def prepare(config_path, output, repair=False, assembly=None):
     unpaired = sorted(p.name for p in photos.glob("*.jpg") if p.stem not in seen_rgb)
     manifest["unpaired_rgb"] = unpaired
     if unpaired:
-        manifest["warnings"].append("RGB sin profundidad/calibración: " + ", ".join(unpaired))
+        manifest["warnings"].append("RGB without depth/calibration: " + ", ".join(unpaired))
     write_json(output / "manifest.json", manifest)
-    print(f"Preparadas {len(manifest['parts'])} piezas y {len(manifest['frames'])} capturas RGB-D: {output}")
+    print(f"Prepared {len(manifest['parts'])} parts and {len(manifest['frames'])} RGB-D captures: {output}")
     for warning in manifest["warnings"]:
-        print("AVISO:", warning)
+        print("WARNING:", warning)
     return manifest
 
 

@@ -42,7 +42,7 @@ class AllCadScores(unittest.TestCase):
 
     def test_nonfinite_score_is_error_not_zero(self):
         model, detections = self.fixture()
-        with self.assertRaisesRegex(ValueError, "no finito"):
+        with self.assertRaisesRegex(ValueError, "non-finite"):
             score_hypotheses(model, detections, torch.ones(1, 4, 4), {},
                              torch.tensor([[float('nan'), 0.2, 0.3]]), torch.zeros(1, 3, dtype=torch.long))
 

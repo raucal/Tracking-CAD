@@ -1,0 +1,382 @@
+{
+  "name": "16",
+  "frame_id": 16,
+  "status": "ok",
+  "device": "cuda",
+  "recognized": true,
+  "candidate": {
+    "scene_id": 0,
+    "image_id": 16,
+    "category_id": 4,
+    "part_key": "03_option_cassette",
+    "part_name": "option_cassette",
+    "proposal_id": 0,
+    "score": 0.7002081274986267,
+    "semantic_score": 0.547564685344696,
+    "appearance_score": 0.6587289571762085,
+    "geometry_score": 0.9300492405891418,
+    "visible_ratio": 0.8445945978164673,
+    "bbox": [
+      239,
+      201,
+      131,
+      184
+    ],
+    "time": 1.9510219489457086
+  },
+  "visible_components": [
+    "02_control_panel",
+    "03_option_cassette",
+    "03a_vertical_option_a",
+    "04_io_terminals"
+  ],
+  "proposal_counts": {
+    "sam": 98,
+    "valid_depth_and_size": 9,
+    "semantic_selected": 9
+  },
+  "detections": 7,
+  "timing": {
+    "input_s": 0.007637234055437148,
+    "sam_s": 1.0009987480007112,
+    "proposal_filter_s": 0.00044524797704070807,
+    "dino_s": 0.05125851696357131,
+    "semantic_s": 0.0016352939419448376,
+    "assignment_s": 0.0001343010226264596,
+    "appearance_s": 0.00018827104941010475,
+    "projection_s": 0.0011419260408729315,
+    "geometry_s": 0.0002397999633103609,
+    "postprocess_s": 0.88711761997547,
+    "comparison_export_s": 6.300397217273712e-05,
+    "processing_s": 1.9510219489457086
+  },
+  "comparison_region_proposal_id": 0,
+  "comparison_scope": "primary_detection",
+  "comparisons": [
+    {
+      "part_key": "00_rear_mounting_plate",
+      "part_name": "rear_mounting",
+      "category_id": 1,
+      "semantic_score": 0.26601284742355347,
+      "best_template": 12,
+      "semantic_comparison_s": 0.00026162201538681984,
+      "compared_proposals": 9
+    },
+    {
+      "part_key": "01_front_housing",
+      "part_name": "front_housing",
+      "category_id": 2,
+      "semantic_score": 0.2356749325990677,
+      "best_template": 41,
+      "semantic_comparison_s": 0.00014610809739679098,
+      "compared_proposals": 9
+    },
+    {
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "category_id": 3,
+      "semantic_score": 0.3036077618598938,
+      "best_template": 2,
+      "semantic_comparison_s": 0.00013382791075855494,
+      "compared_proposals": 9
+    },
+    {
+      "part_key": "03_option_cassette",
+      "part_name": "option_cassette",
+      "category_id": 4,
+      "semantic_score": 0.547564685344696,
+      "best_template": 35,
+      "semantic_comparison_s": 0.00013622106052935123,
+      "compared_proposals": 9
+    },
+    {
+      "part_key": "03a_vertical_option_a",
+      "part_name": "sensor_module",
+      "category_id": 5,
+      "semantic_score": 0.265568345785141,
+      "best_template": 2,
+      "semantic_comparison_s": 0.00013015896547585726,
+      "compared_proposals": 9
+    },
+    {
+      "part_key": "03b_vertical_option_b",
+      "part_name": "communications_module",
+      "category_id": 6,
+      "semantic_score": 0.2477703094482422,
+      "best_template": 2,
+      "semantic_comparison_s": 0.00015724299009889364,
+      "compared_proposals": 9
+    },
+    {
+      "part_key": "04_io_terminals",
+      "part_name": "io_terminals",
+      "category_id": 7,
+      "semantic_score": 0.3329851031303406,
+      "best_template": 39,
+      "semantic_comparison_s": 0.00013111205771565437,
+      "compared_proposals": 9
+    },
+    {
+      "part_key": "05_control_board",
+      "part_name": "control_board",
+      "category_id": 8,
+      "semantic_score": 0.4433114528656006,
+      "best_template": 39,
+      "semantic_comparison_s": 0.0001321909949183464,
+      "compared_proposals": 9
+    },
+    {
+      "part_key": "06_power_unit",
+      "part_name": "power_unit",
+      "category_id": 9,
+      "semantic_score": 0.30572134256362915,
+      "best_template": 39,
+      "semantic_comparison_s": 0.0001272200606763363,
+      "compared_proposals": 9
+    },
+    {
+      "part_key": "07_thermal_core",
+      "part_name": "thermal_core",
+      "category_id": 10,
+      "semantic_score": 0.2505476176738739,
+      "best_template": 2,
+      "semantic_comparison_s": 0.00015194597654044628,
+      "compared_proposals": 9
+    }
+  ],
+  "proposal_semantic_scores": [
+    [
+      0.26601284742355347,
+      0.2356749325990677,
+      0.3036077618598938,
+      0.547564685344696,
+      0.265568345785141,
+      0.2477703094482422,
+      0.3329851031303406,
+      0.4433114528656006,
+      0.30572134256362915,
+      0.2505476176738739
+    ],
+    [
+      0.2424445003271103,
+      0.35099393129348755,
+      0.3108377158641815,
+      0.304438978433609,
+      0.4669589102268219,
+      0.44058963656425476,
+      0.3031582534313202,
+      0.3199692666530609,
+      0.3234456181526184,
+      0.3266952633857727
+    ],
+    [
+      0.17034558951854706,
+      0.3167061507701874,
+      0.29322826862335205,
+      0.3008534908294678,
+      0.3888600170612335,
+      0.3504961431026459,
+      0.2689877152442932,
+      0.28554195165634155,
+      0.2815290093421936,
+      0.29377126693725586
+    ],
+    [
+      0.23497359454631805,
+      0.22458358108997345,
+      0.2599198818206787,
+      0.26331958174705505,
+      0.2623930871486664,
+      0.2321266233921051,
+      0.26681068539619446,
+      0.26196908950805664,
+      0.24307572841644287,
+      0.2281164973974228
+    ],
+    [
+      0.2226661741733551,
+      0.3363129198551178,
+      0.3068024218082428,
+      0.27653613686561584,
+      0.4797821044921875,
+      0.44012951850891113,
+      0.27322623133659363,
+      0.29612305760383606,
+      0.31006792187690735,
+      0.3082924783229828
+    ],
+    [
+      0.24323168396949768,
+      0.22250831127166748,
+      0.27132460474967957,
+      0.2553710639476776,
+      0.24510648846626282,
+      0.22159714996814728,
+      0.2578437030315399,
+      0.25277984142303467,
+      0.2408694475889206,
+      0.22509026527404785
+    ],
+    [
+      0.17138832807540894,
+      0.13980761170387268,
+      0.16847138106822968,
+      0.1795230358839035,
+      0.18590722978115082,
+      0.18785296380519867,
+      0.16913917660713196,
+      0.17067961394786835,
+      0.1698969602584839,
+      0.20855712890625
+    ],
+    [
+      0.26806458830833435,
+      0.2712317109107971,
+      0.312267929315567,
+      0.31980329751968384,
+      0.3422599732875824,
+      0.33735308051109314,
+      0.3383484184741974,
+      0.33082982897758484,
+      0.31616783142089844,
+      0.2995375692844391
+    ],
+    [
+      0.22556619346141815,
+      0.25118762254714966,
+      0.2736304998397827,
+      0.304115891456604,
+      0.31759244203567505,
+      0.278999000787735,
+      0.32017946243286133,
+      0.3150956332683563,
+      0.2888399660587311,
+      0.29524263739585876
+    ]
+  ],
+  "proposal_best_templates": [
+    [
+      12,
+      41,
+      2,
+      35,
+      2,
+      2,
+      39,
+      39,
+      39,
+      2
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      41,
+      41,
+      0,
+      0,
+      0
+    ],
+    [
+      25,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      36,
+      36,
+      5
+    ],
+    [
+      1,
+      36,
+      4,
+      1,
+      0,
+      0,
+      23,
+      1,
+      1,
+      4
+    ],
+    [
+      0,
+      41,
+      0,
+      0,
+      41,
+      41,
+      41,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      9,
+      4,
+      1,
+      0,
+      0,
+      23,
+      1,
+      20,
+      4
+    ],
+    [
+      1,
+      36,
+      4,
+      4,
+      0,
+      0,
+      4,
+      4,
+      4,
+      4
+    ],
+    [
+      25,
+      20,
+      4,
+      25,
+      0,
+      0,
+      23,
+      7,
+      7,
+      4
+    ],
+    [
+      25,
+      33,
+      4,
+      7,
+      0,
+      4,
+      23,
+      8,
+      37,
+      4
+    ]
+  ],
+  "region_filter": {
+    "enabled": true,
+    "rejected_detections": [
+      {
+        "cad_key": "03a_vertical_option_a",
+        "bbox": [
+          542,
+          470,
+          97,
+          9
+        ],
+        "reason": "vertical_option_a_lower_right_corner"
+      }
+    ]
+  }
+}

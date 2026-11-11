@@ -31,7 +31,7 @@ class IsmViewDetails(unittest.TestCase):
         self.assertEqual(detections.masks.shape, (1, 10, 10))
         result.update(part_key='cad', semantic=.7, appearance=.1, geometry=.36, visible_ratio=.5, score=.392)
         page = view_audit_section({'status':'scored', 'scores':[result]})
-        for value in ['Ganadora semántica', 'Ganadora apariencia', 'vista ISM 0', '36.000 px²', '100.000 px²']:
+        for value in ['Semantic winner', 'Appearance winner', 'ISM view 0', '36.000 px²', '100.000 px²']:
             self.assertIn(value, page)
 
     def test_gallery_exports_every_available_view_and_escapes_labels(self):
@@ -41,12 +41,12 @@ class IsmViewDetails(unittest.TestCase):
             part={'key':'cad', 'name':'<CAD>', 'sam_template_dir':'templates'}
             page=reference_gallery([part], {'cad':part}, root, target)
             self.assertEqual(len(list((target/'referencias_cad/cad').glob('*.png'))),42)
-            self.assertIn('42 vistas',page);self.assertIn('Vista 41',page);self.assertIn('&lt;CAD&gt;',page)
+            self.assertIn('42 views',page);self.assertIn('View 41',page);self.assertIn('&lt;CAD&gt;',page)
             self.assertNotIn('<CAD>',page)
 
     def test_missing_measurements_are_explicit(self):
-        self.assertIn('mediciones no disponibles', view_audit_section(None))
-        self.assertIn('mediciones no disponibles', view_audit_section({'status':'no_saved_region'}))
+        self.assertIn('measurements unavailable', view_audit_section(None))
+        self.assertIn('measurements unavailable', view_audit_section({'status':'no_saved_region'}))
 
 
 if __name__ == '__main__': unittest.main()

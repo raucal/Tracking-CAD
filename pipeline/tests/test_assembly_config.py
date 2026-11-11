@@ -7,6 +7,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from assembly_config import load_registry, select_assembly
+from tools.prepare import sha256
 
 
 class AssemblyConfigTests(unittest.TestCase):
@@ -46,6 +47,15 @@ class AssemblyConfigTests(unittest.TestCase):
             config, _ = select_assembly(Path(temporary) / 'dataset.json',
                                        {'assembly_registry': 'assemblies.json'}, 'demo')
             self.assertEqual(config['cad_dir'], 'parts')
+
+    def test_sha256_accepts_directory_registry(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            directory = root / 'assembly_registry'
+            directory.mkdir()
+            digest = sha256(directory)
+            self.assertTrue(isinstance(digest, str))
+            self.assertEqual(len(digest), 64)
 
 
 if __name__ == '__main__':

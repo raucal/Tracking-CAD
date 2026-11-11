@@ -9,7 +9,7 @@ try:
     import torch
 except ImportError:
     torch = None
-ISM = Path(__file__).resolve().parents[3] / "CADTracking/models/SAM-6D/SAM-6D/Instance_Segmentation_Model"
+ISM = Path(__file__).resolve().parents[2] / "models/SAM-6D/SAM-6D/Instance_Segmentation_Model"
 
 
 def method(path, class_name, name, globals_dict):
@@ -23,7 +23,7 @@ def method(path, class_name, name, globals_dict):
     return namespace[name]
 
 
-@unittest.skipUnless(torch is not None, "PyTorch no está instalado en este intérprete")
+@unittest.skipUnless(torch is not None, "PyTorch is not installed in this interpreter")
 class TensorShapes(unittest.TestCase):
     def test_dino_mask_cropping_keeps_detection_axis_and_input_shape(self):
         function = method(ISM / "model/dinov2.py", "CustomDINOv2", "process_masks_proposals", {})

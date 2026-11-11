@@ -1,0 +1,366 @@
+{
+  "status": "predicted",
+  "error": null,
+  "timing": {
+    "input_s": 0.008660506922751665,
+    "sam_s": 1.0493767510633916,
+    "proposal_filter_s": 0.0005076529923826456,
+    "dino_s": 0.07654362299945205,
+    "semantic_s": 0.0015710029983893037,
+    "assignment_s": 0.00017401494551450014,
+    "appearance_s": 0.00018995197024196386,
+    "projection_s": 0.0011089459294453263,
+    "geometry_s": 0.0002383131068199873,
+    "postprocess_s": 0.9351033380953595,
+    "comparison_export_s": 5.966797471046448e-05,
+    "processing_s": 2.0736868580570444,
+    "ranking_query_features_s": 0.010665209032595158,
+    "ranking_all_cads_s": 0.0029872229788452387,
+    "foundationpose_pipeline_s": 0.9931652569212019,
+    "total_s": 3.2499193570110947
+  },
+  "scores": [
+    {
+      "cad_key": "07_thermal_core",
+      "category_id": 10,
+      "status": "scored",
+      "error": null,
+      "best_template": 6,
+      "score": 0.6023977994918823,
+      "semantic": 0.5774834752082825,
+      "appearance": 0.5757397413253784,
+      "geometry": 0.6857470870018005,
+      "visible_ratio": 0.6187499761581421,
+      "raw_rank": 1,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 1,
+      "semantic_rank": 1,
+      "foundationpose_score": 97.380859375,
+      "foundationpose_status": "estimated",
+      "foundationpose_reason": null
+    },
+    {
+      "cad_key": "05_control_board",
+      "category_id": 8,
+      "status": "scored",
+      "error": null,
+      "best_template": 6,
+      "score": 0.4673005938529968,
+      "semantic": 0.3266068398952484,
+      "appearance": 0.47422438859939575,
+      "geometry": 0.7348406910896301,
+      "visible_ratio": 0.5,
+      "raw_rank": 2,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 2,
+      "semantic_rank": 2,
+      "foundationpose_score": null,
+      "foundationpose_status": "not_evaluated",
+      "foundationpose_reason": "Only ISM winner registered; FP does not select CAD"
+    },
+    {
+      "cad_key": "06_power_unit",
+      "category_id": 9,
+      "status": "scored",
+      "error": null,
+      "best_template": 12,
+      "score": 0.4279916286468506,
+      "semantic": 0.32091426849365234,
+      "appearance": 0.43956905603408813,
+      "geometry": 0.6914397478103638,
+      "visible_ratio": 0.36250001192092896,
+      "raw_rank": 3,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 3,
+      "semantic_rank": 3,
+      "foundationpose_score": null,
+      "foundationpose_status": "not_evaluated",
+      "foundationpose_reason": "Only ISM winner registered; FP does not select CAD"
+    },
+    {
+      "cad_key": "03_option_cassette",
+      "category_id": 4,
+      "status": "scored",
+      "error": null,
+      "best_template": 35,
+      "score": 0.4006873369216919,
+      "semantic": 0.2940180003643036,
+      "appearance": 0.4232858121395111,
+      "geometry": 0.6228746771812439,
+      "visible_ratio": 0.37837839126586914,
+      "raw_rank": 4,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 4,
+      "semantic_rank": 4,
+      "foundationpose_score": null,
+      "foundationpose_status": "not_evaluated",
+      "foundationpose_reason": "Only ISM winner registered; FP does not select CAD"
+    },
+    {
+      "cad_key": "04_io_terminals",
+      "category_id": 7,
+      "status": "scored",
+      "error": null,
+      "best_template": 39,
+      "score": 0.34164994955062866,
+      "semantic": 0.24579420685768127,
+      "appearance": 0.4078686833381653,
+      "geometry": 0.6397630572319031,
+      "visible_ratio": 0.09941520541906357,
+      "raw_rank": 5,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 5,
+      "semantic_rank": 5,
+      "foundationpose_score": null,
+      "foundationpose_status": "not_evaluated",
+      "foundationpose_reason": "Only ISM winner registered; FP does not select CAD"
+    },
+    {
+      "cad_key": "01_front_housing",
+      "category_id": 2,
+      "status": "scored",
+      "error": null,
+      "best_template": 2,
+      "score": 0.3003745675086975,
+      "semantic": 0.22163616120815277,
+      "appearance": 0.36591729521751404,
+      "geometry": 0.7127416729927063,
+      "visible_ratio": 0.03200000151991844,
+      "raw_rank": 6,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 6,
+      "semantic_rank": 7,
+      "foundationpose_score": null,
+      "foundationpose_status": "not_evaluated",
+      "foundationpose_reason": "Only ISM winner registered; FP does not select CAD"
+    },
+    {
+      "cad_key": "02_control_panel",
+      "category_id": 3,
+      "status": "scored",
+      "error": null,
+      "best_template": 2,
+      "score": 0.2895861864089966,
+      "semantic": 0.19077308475971222,
+      "appearance": 0.330920547246933,
+      "geometry": 0.8542302250862122,
+      "visible_ratio": 0.10179640352725983,
+      "raw_rank": 7,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 7,
+      "semantic_rank": 8,
+      "foundationpose_score": null,
+      "foundationpose_status": "not_evaluated",
+      "foundationpose_reason": "Only ISM winner registered; FP does not select CAD"
+    },
+    {
+      "cad_key": "00_rear_mounting_plate",
+      "category_id": 1,
+      "status": "scored",
+      "error": null,
+      "best_template": 2,
+      "score": 0.2757794260978699,
+      "semantic": 0.23081305623054504,
+      "appearance": 0.3178921937942505,
+      "geometry": 0.3102429509162903,
+      "visible_ratio": 0.08280254900455475,
+      "raw_rank": 8,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 8,
+      "semantic_rank": 6,
+      "foundationpose_score": null,
+      "foundationpose_status": "not_evaluated",
+      "foundationpose_reason": "Only ISM winner registered; FP does not select CAD"
+    },
+    {
+      "cad_key": "03b_vertical_option_b",
+      "category_id": 6,
+      "status": "scored",
+      "error": null,
+      "best_template": 2,
+      "score": 0.21369317173957825,
+      "semantic": 0.1328856199979782,
+      "appearance": 0.2945007383823395,
+      "geometry": 0.14473377168178558,
+      "visible_ratio": 0.0,
+      "raw_rank": 9,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 9,
+      "semantic_rank": 9,
+      "foundationpose_score": null,
+      "foundationpose_status": "not_evaluated",
+      "foundationpose_reason": "Only ISM winner registered; FP does not select CAD"
+    },
+    {
+      "cad_key": "03a_vertical_option_a",
+      "category_id": 5,
+      "status": "scored",
+      "error": null,
+      "best_template": 2,
+      "score": 0.1999109983444214,
+      "semantic": 0.11862700432538986,
+      "appearance": 0.2811949849128723,
+      "geometry": 0.13330742716789246,
+      "visible_ratio": 0.0,
+      "raw_rank": 10,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 10,
+      "semantic_rank": 10,
+      "foundationpose_score": null,
+      "foundationpose_status": "not_evaluated",
+      "foundationpose_reason": "Only ISM winner registered; FP does not select CAD"
+    }
+  ],
+  "pose": {
+    "status": "estimated",
+    "backend": "foundationpose",
+    "poses": [
+      {
+        "R": [
+          [
+            -0.9954577088356018,
+            -0.058364901691675186,
+            0.07521499693393707
+          ],
+          [
+            -0.049370914697647095,
+            -0.3590356707572937,
+            -0.9320170879364014
+          ],
+          [
+            0.0814020112156868,
+            -0.9314970374107361,
+            0.3545234203338623
+          ]
+        ],
+        "t_mm": [
+          -27.222951874136925,
+          -28.549186885356903,
+          587.6131057739258
+        ],
+        "T_camera_from_model_mm": [
+          [
+            -0.9954577088356018,
+            -0.058364901691675186,
+            0.07521499693393707,
+            -27.222951874136925
+          ],
+          [
+            -0.049370914697647095,
+            -0.3590356707572937,
+            -0.9320170879364014,
+            -28.549186885356903
+          ],
+          [
+            0.0814020112156868,
+            -0.9314970374107361,
+            0.3545234203338623,
+            587.6131057739258
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "T_camera_from_input_cad_mm": [
+          [
+            -0.9954577088356018,
+            -0.058364901691675186,
+            0.07521499693393707,
+            -35.690988063812256
+          ],
+          [
+            -0.049370914697647095,
+            -0.3590356707572937,
+            -0.9320170879364014,
+            93.69751983880997
+          ],
+          [
+            0.0814020112156868,
+            -0.9314970374107361,
+            0.3545234203338623,
+            558.2016308307648
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "translation_unit": "mm",
+        "frame": "OpenCV camera: X right, Y down, Z forward",
+        "pose_score": 97.380859375
+      }
+    ],
+    "best_index": 0,
+    "pose_score_is_probability": false,
+    "device": "cuda",
+    "accuracy_validated": false,
+    "models_reused": true,
+    "worker_pid": 1332968,
+    "timing": {
+      "model_load_s": 0.014654005062766373,
+      "pose_inference_s": 0.7181518089491874,
+      "total_s": 0.8495153579860926
+    },
+    "rpc_seconds": 0.8501968210330233
+  },
+  "original_assignment_winner": "07_thermal_core",
+  "predicted_cad": "07_thermal_core",
+  "semantic_winner": "07_thermal_core",
+  "margin": 0.1350972056388855,
+  "region_filter": {
+    "enabled": true,
+    "rejected_detections": [
+      {
+        "cad_key": "03a_vertical_option_a",
+        "bbox": [
+          542,
+          469,
+          97,
+          10
+        ],
+        "reason": "vertical_option_a_lower_right_corner"
+      },
+      {
+        "cad_key": "03a_vertical_option_a",
+        "bbox": [
+          603,
+          346,
+          36,
+          89
+        ],
+        "reason": "vertical_option_a_lower_right_corner"
+      },
+      {
+        "cad_key": "03a_vertical_option_a",
+        "bbox": [
+          445,
+          417,
+          37,
+          22
+        ],
+        "reason": "vertical_option_a_lower_right_corner"
+      }
+    ]
+  },
+  "primary_mask_sha256": "ecda17604d51c0865eefb85c6aabb386d4ffe5692a13d5c670cd490db00856d2",
+  "frame_id": 44,
+  "name": "termal_side",
+  "rgb_path": "/home/raca/projects/CADTracking/data/prepared/sam6d/frames/termal_side/rgb.png",
+  "expected_cad": "07_thermal_core",
+  "correct": true
+}

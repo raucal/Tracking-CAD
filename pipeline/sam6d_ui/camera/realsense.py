@@ -1,4 +1,4 @@
-"""Adquisición RGB-D y rectificación; importar el SDK no abre la cámara."""
+"""RGB-D acquisition and rectification; importing the SDK does not open the camera."""
 import time
 
 import cv2
@@ -22,8 +22,8 @@ class RealSenseSource:
         serial = options.get('serial')
         if not serial:
             if len(available) != 1:
-                raise ValueError('Selecciona una RealSense conectada.' if available else
-                                 'No se detecta ninguna Intel RealSense en el servidor.')
+                raise ValueError('Select a connected RealSense camera.' if available else
+                                 'No Intel RealSense camera was detected on the server.')
             serial = available[0]['serial']
         config.enable_device(serial)
         width, height, fps = options['width'], options['height'], options['fps']
@@ -43,7 +43,7 @@ class RealSenseSource:
             self.maps = None
             if np.any(np.abs(coefficients) > 1e-10):
                 if intr.model not in (rs.distortion.brown_conrady, rs.distortion.modified_brown_conrady):
-                    raise ValueError('Este modelo de distorsión requiere una calibración de rectificación compatible.')
+                    raise ValueError('This distortion model requires compatible rectification calibration.')
                 self.maps = cv2.initUndistortRectifyMap(K, coefficients, None, K, (width, height), cv2.CV_32FC1)
             self.camera = {'cam_K': K.reshape(-1).tolist(),
                            'depth_scale': self.profile.get_device().first_depth_sensor().get_depth_scale() * 1000,
@@ -64,7 +64,7 @@ class RealSenseSource:
         frames = self.align.process(frames)
         color, depth = frames.get_color_frame(), frames.get_depth_frame()
         if not color or not depth:
-            raise RuntimeError('La RealSense no ha entregado un par RGB-D alineado.')
+            raise RuntimeError('RealSense did not deliver an aligned RGB-D pair.')
         rgb = np.asanyarray(color.get_data()).copy()
         raw = np.asanyarray(depth.get_data()).copy()
         if self.maps is not None:

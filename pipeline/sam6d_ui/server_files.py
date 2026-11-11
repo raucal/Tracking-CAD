@@ -11,7 +11,7 @@ class ServerFiles:
     def __init__(self, root):
         self.root = Path(root).resolve(strict=True)
         if not self.root.is_dir():
-            raise ValueError('La raíz de archivos debe ser una carpeta.')
+            raise ValueError('The file root must be a directory.')
 
     def resolve(self, path):
         candidate = Path(path)
@@ -21,17 +21,17 @@ class ServerFiles:
         try:
             relative = candidate.relative_to(self.root)
         except ValueError:
-            raise ValueError('Selecciona un archivo dentro de ' + str(self.root)) from None
+            raise ValueError('Select a file inside ' + str(self.root)) from None
         if any(part.startswith('.') for part in relative.parts):
-            raise ValueError('Las carpetas y archivos ocultos no están disponibles en este selector.')
+            raise ValueError('Hidden files and directories are unavailable in this selector.')
         return candidate
 
     def browse(self, path, kind):
         if kind not in FORMATS:
-            raise ValueError('Tipo de archivo desconocido.')
+            raise ValueError('Unknown file type.')
         folder = self.resolve(path or self.root)
         if not folder.is_dir():
-            raise ValueError('Introduce una carpeta del servidor.')
+            raise ValueError('Enter a server directory.')
         entries = []
         for item in folder.iterdir():
             if item.name.startswith('.'):
@@ -50,21 +50,21 @@ class ServerFiles:
 
     def read_request(self, paths, mode):
         if not isinstance(paths, dict):
-            raise ValueError('Se requieren rutas de archivos del servidor.')
+            raise ValueError('Server file paths are required.')
         kinds = ('rgb', 'cad', 'depth', 'camera') if mode == 'rgbd' else ('rgb', 'cad')
         request, sources = {}, {}
         for kind in kinds:
             if not isinstance(paths.get(kind), str) or not paths[kind].strip():
-                raise ValueError('Falta seleccionar el archivo del servidor: ' + kind)
+                raise ValueError('No server file selected: ' + kind)
             path = self.resolve(paths[kind].strip())
             if not path.is_file() or path.suffix.lower() not in FORMATS[kind]:
-                raise ValueError('Formato de archivo no admitido para ' + kind)
+                raise ValueError('Unsupported file format for ' + kind)
             if path.stat().st_size > LIMITS[kind]:
-                raise ValueError('El archivo supera el tamaño máximo para ' + kind)
+                raise ValueError('File exceeds the maximum size for ' + kind)
             with path.open('rb') as source:
                 content = source.read(LIMITS[kind] + 1)
             if len(content) > LIMITS[kind]:
-                raise ValueError('El archivo supera el tamaño máximo para ' + kind)
+                raise ValueError('File exceeds the maximum size for ' + kind)
             request[kind] = {'name': path.name, 'data': base64.b64encode(content).decode()}
             sources[kind] = str(path)
         return request, sources

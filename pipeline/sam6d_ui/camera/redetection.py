@@ -41,7 +41,7 @@ class Redetector:
         index, detection = max(accepted, key=lambda pair: pair[1]['score'])
         mask=np.asarray(result['_masks'][index])>0
         if mask.shape != frame['depth'].shape or not mask.any():
-            raise ValueError('La máscara de refresco no corresponde al RGB-D actual.')
+            raise ValueError('The refresh mask does not match the current RGB-D frame.')
         np.save(mask_path, mask, allow_pickle=False)
         if self.inputs.get('auto_assembly'):
             (scratch / 'tracking_model.json').write_text(json.dumps(result['tracking_model']))

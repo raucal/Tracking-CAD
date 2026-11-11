@@ -1,0 +1,14 @@
+/home/raca/projects/.venvs/assembly-runtime/lib/python3.10/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+test_corner_filter_is_specific_to_identity_and_location (test_identification_evaluation.IdentificationEvaluationTests) ... ok
+test_disjoint_box_does_not_zero_other_pairs (test_identification_evaluation.IdentificationEvaluationTests) ... ok
+test_filtered_candidate_keeps_measured_score_but_cannot_win (test_identification_evaluation.IdentificationEvaluationTests) ... ok
+test_ground_truth_and_label_fields_are_not_prediction_inputs (test_identification_evaluation.IdentificationEvaluationTests) ... ok
+test_missing_candidate_scores_are_null_and_denominators_are_selected (test_identification_evaluation.IdentificationEvaluationTests) ... ok
+test_top_k_does_not_count_an_excluded_CAD (test_identification_evaluation.IdentificationEvaluationTests) ... ok
+test_ui_and_suite_share_the_same_scoped_filter (test_identification_evaluation.IdentificationEvaluationTests) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.607s
+
+OK

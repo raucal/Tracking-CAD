@@ -1,4 +1,4 @@
-"""Adaptador de FoundationPose en un Python aislado del motor SAM-6D."""
+"""FoundationPose adapter in a Python process isolated from the SAM-6D engine."""
 import json
 import os
 from pathlib import Path
@@ -31,19 +31,19 @@ def configured():
         'available': available,
         'verified': False,
         'python': str(python),
-        'reason': None if available else 'Falta el entorno, el código o los pesos de FoundationPose.',
+        'reason': None if available else 'FoundationPose environment, code or weights are missing.',
     }
 
 
 def availability():
     python = python_path()
     if not python.is_file():
-        return {'available': False, 'verified': True, 'reason': 'Falta instalar el entorno de FoundationPose.', 'python': str(python)}
+        return {'available': False, 'verified': True, 'reason': 'The FoundationPose environment is not installed.', 'python': str(python)}
     try:
         result = subprocess.run([str(python), '-B', str(Path(__file__).with_name('foundationpose_worker.py')), '--probe'],
                                 capture_output=True, text=True, timeout=25)
         if result.returncode:
-            return {'available': False, 'verified': True, 'reason': result.stderr[-1500:] or 'No se pudo comprobar FoundationPose.'}
+            return {'available': False, 'verified': True, 'reason': result.stderr[-1500:] or 'Could not probe FoundationPose.'}
         return {**json.loads(result.stdout.strip().splitlines()[-1]), 'verified': True}
     except (OSError, ValueError, subprocess.TimeoutExpired) as error:
         return {'available': False, 'verified': True, 'reason': str(error)}

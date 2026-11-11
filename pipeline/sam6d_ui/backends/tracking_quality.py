@@ -14,7 +14,7 @@ class PoseHealth:
         triangles = np.asarray(mesh.triangles, dtype=float)
         areas = np.asarray(mesh.area_faces, dtype=float)
         if not len(triangles) or not np.isfinite(areas).all() or areas.sum() <= 0:
-            raise ValueError('El CAD no tiene una superficie válida para comprobar profundidad.')
+            raise ValueError('The CAD has no valid surface for depth checks.')
         rng = np.random.default_rng(0)
         selected = rng.choice(len(triangles), self.config['sample_points'], p=areas / areas.sum())
         uv = rng.random((len(selected), 2))

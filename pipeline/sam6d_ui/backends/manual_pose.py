@@ -12,12 +12,12 @@ from .foundationpose import run as foundationpose_run
 
 def validate_box(value,size):
     if not isinstance(value,list) or len(value)!=4:
-        raise ValueError('La caja manual debe contener [x, y, ancho, alto].')
+        raise ValueError('The manual box must contain [x, y, width, height].')
     if any(isinstance(v,bool) or not isinstance(v,(int,float)) or not math.isfinite(v) or int(v)!=v for v in value):
-        raise ValueError('La caja manual requiere coordenadas enteras en píxeles.')
+        raise ValueError('Manual boxes require integer pixel coordinates.')
     x,y,width,height=map(int,value)
     if min(x,y)<0 or min(width,height)<4 or x+width>size[0] or y+height>size[1]:
-        raise ValueError('La caja manual debe estar dentro de la imagen y medir al menos 4×4 píxeles.')
+        raise ValueError('The manual box must be inside the image and at least 4×4 pixels.')
     return [x,y,width,height]
 
 
@@ -25,7 +25,7 @@ def run(folder,inputs,update):
     started=time.perf_counter();folder=Path(folder)
     config=inputs['options']
     if config['pose_backend']!='foundationpose' or config['mode']!='rgbd' or not config['pose']:
-        raise ValueError('La inicialización manual requiere FoundationPose y RGB-D.')
+        raise ValueError('Manual initialization requires FoundationPose and RGB-D.')
     with Image.open(folder/'input_rgb.png') as source:rgb=source.convert('RGB')
     x,y,width,height=validate_box(inputs['manual_bbox'],rgb.size)
     mask=np.zeros((rgb.height,rgb.width),np.uint8);mask[y:y+height,x:x+width]=255
@@ -35,7 +35,7 @@ def run(folder,inputs,update):
     (folder/'manual_selection.json').write_text(json.dumps({'type':'rectangle_mask','bbox':[x,y,width,height],'automatic_detection':False,'background_excluded':False},indent=2))
     (folder/'detections.json').write_text('[]')
     transform=np.eye(4);transform[:3,3]=-np.asarray(inputs['input_center_mm'])
-    update('FoundationPose: estimando pose desde la caja manual, sin SAM6D')
+    update('FoundationPose: estimating pose from the manual box, without SAM6D')
     pose_started=time.perf_counter()
     pose=foundationpose_run(folder,folder/'object_mm.obj',0,transform)
     result={'backend':'foundationpose','initialization':'manual_bbox','mode':'rgbd','device':'cuda',

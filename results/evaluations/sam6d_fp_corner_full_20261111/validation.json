@@ -1,0 +1,963 @@
+{
+  "parts": [
+    {
+      "key": "00_rear_mounting_plate",
+      "category_id": 1,
+      "mesh_sha256": "46e4d173f9b1e906def996ea06df63fa44d5788a4d82b1107bc1bcf5f1d730f8",
+      "mesh_bounds_mm": [
+        [
+          -110.0,
+          -74.0,
+          -125.0
+        ],
+        [
+          110.0,
+          74.0,
+          125.0
+        ]
+      ],
+      "rigid_transform_and_local_bounds": "passed",
+      "templates_checked": 84
+    },
+    {
+      "key": "01_front_housing",
+      "category_id": 2,
+      "mesh_sha256": "1cab83beed2282b2a138d4b193443f5754d3f5feb347ca5690efd545f09fcb5b",
+      "mesh_bounds_mm": [
+        [
+          -85.5,
+          -14.0,
+          -110.0
+        ],
+        [
+          85.5,
+          14.0,
+          110.0
+        ]
+      ],
+      "rigid_transform_and_local_bounds": "passed",
+      "templates_checked": 84
+    },
+    {
+      "key": "02_control_panel",
+      "category_id": 3,
+      "mesh_sha256": "16d51afd8d0cf613f0530e63116c31d05371e76ac110762fe569ce5125eff283",
+      "mesh_bounds_mm": [
+        [
+          -72.19999694824219,
+          -15.0,
+          -102.75
+        ],
+        [
+          72.19999694824219,
+          15.0,
+          102.75
+        ]
+      ],
+      "rigid_transform_and_local_bounds": "passed",
+      "templates_checked": 84
+    },
+    {
+      "key": "03_option_cassette",
+      "category_id": 4,
+      "mesh_sha256": "08b3c48f61380076653c79eddf2933d9769af953d1d3b86fbe6f3f42c6e9ebbb",
+      "mesh_bounds_mm": [
+        [
+          -52.20000076293945,
+          -15.0,
+          -80.75
+        ],
+        [
+          52.20000076293945,
+          15.0,
+          80.75
+        ]
+      ],
+      "rigid_transform_and_local_bounds": "passed",
+      "templates_checked": 84
+    },
+    {
+      "key": "03a_vertical_option_a",
+      "category_id": 5,
+      "mesh_sha256": "b6ba6307d6ba914db2b371ea1dd50257d4373a50d5e3c478de00d6b0736e6f3e",
+      "mesh_bounds_mm": [
+        [
+          -13.59999942779541,
+          -6.0,
+          -91.0999984741211
+        ],
+        [
+          13.59999942779541,
+          6.0,
+          91.0999984741211
+        ]
+      ],
+      "rigid_transform_and_local_bounds": "passed",
+      "templates_checked": 84
+    },
+    {
+      "key": "03b_vertical_option_b",
+      "category_id": 6,
+      "mesh_sha256": "4cff167f6ebe0585ab76511c3e5aeebc533e195a11a7b73d1bb18e5c101fe329",
+      "mesh_bounds_mm": [
+        [
+          -15.59999942779541,
+          -6.0,
+          -91.0999984741211
+        ],
+        [
+          15.59999942779541,
+          6.0,
+          91.0999984741211
+        ]
+      ],
+      "rigid_transform_and_local_bounds": "passed",
+      "templates_checked": 84
+    },
+    {
+      "key": "04_io_terminals",
+      "category_id": 7,
+      "mesh_sha256": "b6cf1c33ff94bea3d8d6d29e1d23f8a0aed9b9c628c0d6148aeb642d6e02f65c",
+      "mesh_bounds_mm": [
+        [
+          -56.0,
+          -15.0,
+          -86.0
+        ],
+        [
+          56.0,
+          15.0,
+          86.0
+        ]
+      ],
+      "rigid_transform_and_local_bounds": "passed",
+      "templates_checked": 84
+    },
+    {
+      "key": "05_control_board",
+      "category_id": 8,
+      "mesh_sha256": "d34684c63be1a2016bcd259acbb58dfc45864a2b96a0791d16e237be7a96c0e6",
+      "mesh_bounds_mm": [
+        [
+          -65.0,
+          -15.0,
+          -95.0
+        ],
+        [
+          65.0,
+          15.0,
+          95.0
+        ]
+      ],
+      "rigid_transform_and_local_bounds": "passed",
+      "templates_checked": 84
+    },
+    {
+      "key": "06_power_unit",
+      "category_id": 9,
+      "mesh_sha256": "deab6d82c8669b4c348027b62a9ea3148c13cbf50cf47848261d64fb447e9e81",
+      "mesh_bounds_mm": [
+        [
+          -72.0,
+          -16.0,
+          -102.0
+        ],
+        [
+          72.0,
+          16.0,
+          102.0
+        ]
+      ],
+      "rigid_transform_and_local_bounds": "passed",
+      "templates_checked": 84
+    },
+    {
+      "key": "07_thermal_core",
+      "category_id": 10,
+      "mesh_sha256": "327156c96f34681f7f4f131307364927d67d7b72935bfe5d7fb80db015bab84f",
+      "mesh_bounds_mm": [
+        [
+          -76.0,
+          -16.0,
+          -107.0
+        ],
+        [
+          76.0,
+          16.0,
+          107.0
+        ]
+      ],
+      "rigid_transform_and_local_bounds": "passed",
+      "templates_checked": 84
+    }
+  ],
+  "frames": [
+    {
+      "frame_id": 0,
+      "name": "cassette_far",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.803466796875,
+      "hashes": {
+        "rgb": "79468b4edded89e743dc804a2130439fdb8fdf8b1c747f88544e4a3117f83281",
+        "depth": "92ac7f36e35162a83c1cd778648891c742804acd497fe935e32b67ce9617869f",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 1,
+      "name": "cassette_rot_far",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.79806640625,
+      "hashes": {
+        "rgb": "aa4442438d9653a645cb33a357c41154b7e22897ba902a49e52f59875a409676",
+        "depth": "372a4ae6ae25fcb2477bbe1498e6bcbd06120e3906d22c442af43756389ae21d",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 2,
+      "name": "cassette_rot_side",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7320377604166667,
+      "hashes": {
+        "rgb": "e48e961675d911a077d8ad6481ee5ba824f86db27096e902f31f16a2b34c0ae6",
+        "depth": "f53df04cddea0be9f29707dd7c852ae3c88f2b7f2144b6ca1b4db3b49b3fad58",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 3,
+      "name": "cassette_side",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7327278645833334,
+      "hashes": {
+        "rgb": "72617d52e5c9313afa292d788ed87dcf32825778700cd46924cbd0dc467d6b9e",
+        "depth": "fa85be3c92a6d9e8413ce345ca0afd39e066d0a8650933a6ffab99c8334227c7",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 4,
+      "name": "control_far",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.788193359375,
+      "hashes": {
+        "rgb": "6015875ff7f97bb6c85f53c72003d8f4af6dd1323eb28cfc321d2b8f25a8787f",
+        "depth": "e0ab660b817c41ecfdb33fdac760f4b9f553036662b6dfd5cc8590a5a2c5259b",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 5,
+      "name": "control_far_ro",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.8017936197916666,
+      "hashes": {
+        "rgb": "0a8e1b74bc542ee57c536e3f0bf50cd5ebce5125231e1ab64b9005e1e31955ff",
+        "depth": "20799d719010d7cc55951d13cbc3db465d8af4ed5511ea861ce67773165d350f",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 6,
+      "name": "control_rot_side",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7360579427083334,
+      "hashes": {
+        "rgb": "6dcec2b072e7005434494ee485b7a5880f561ae07f97e978248597c62afce04d",
+        "depth": "9469ad4445fd5cc7f690a7ed263ecc9dfb979277f29aadd959654dd9c07554b3",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 7,
+      "name": "control_side",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.752880859375,
+      "hashes": {
+        "rgb": "dc93b63c0af495ec4674753d78c8550279e6592006f5c90092a8860501987056",
+        "depth": "dde19b1312186395efae89987dd918fca84999bfd90d3455273d6f421c0e1277",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 8,
+      "name": "front_far",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.8193489583333333,
+      "hashes": {
+        "rgb": "1d6da5953106e8495df2e3b90e1ebc1b51654ed43da034e34e70a7615260c947",
+        "depth": "31f11e6a2325233ccb996da1ac1ba002615bf2ce272092821bfd7136a3fc79cf",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 9,
+      "name": "front_far_rot",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.832109375,
+      "hashes": {
+        "rgb": "275202daa9ab97b48791509ff94950d57915aa90bf9344838633e365ce81515a",
+        "depth": "ed7c01f20caa41ab3fed927f92020efb6025e90b0fef65de209e0544067678f6",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 10,
+      "name": "front_rot_side",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.722197265625,
+      "hashes": {
+        "rgb": "2256fb0ff7c161867d38cd1b7829355c4de600814179cb8b6926f81757eb7301",
+        "depth": "81beaa4547e155060f925325c5f130e8717e4e61803d1c25aefabe7f1336790c",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 11,
+      "name": "front_side",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7700846354166667,
+      "hashes": {
+        "rgb": "4f350284bc4f3a1cca2cb83ab592f3976999b6cc7738bd4e842d16361e5fcd86",
+        "depth": "f3c79ce7edabee784b63cc610e60b3fefb440d4979b063168493e643542d1ac7",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 12,
+      "name": "hmi_far",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7877278645833333,
+      "hashes": {
+        "rgb": "9bb2981aa0299939a8f4416fef0bd36fba2f01cfe3023b590b1593379df0c9a1",
+        "depth": "817b083cb0c0b1f82f8225a72a37a72c88948ce62631a06afe3ddda11b2d6fc1",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 13,
+      "name": "hmi_far_rot",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7943033854166667,
+      "hashes": {
+        "rgb": "d8ac4581fbe1edac9a96ff0661a4547a7073266011bec7254070c92065f08ec7",
+        "depth": "e6c1edea8b1fda62e1cbe92533e270d25688f425aaef63ae4734d687b0003df4",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 14,
+      "name": "hmi_rot_side",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7118782552083334,
+      "hashes": {
+        "rgb": "3d01d4d4a4b32f11a43934a9a8fcfe54d092f6fda7cdefc4bc9f6cc11bc669ae",
+        "depth": "8d1ba094814e1a2338054e4a6f35782eef3150e42cd462a291439b5a3111ec6e",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 15,
+      "name": "hmi_side",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7280078125,
+      "hashes": {
+        "rgb": "c54f6dd4886f333016f5dbb63d9d857bcc8d928319c0c9fa3a001162f9244e92",
+        "depth": "4aa1014fa5188c83d9c309590a5c58cda0881d4df666cdd0db815b2722907c5d",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 16,
+      "name": "inverse_cassette",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.8014192708333333,
+      "hashes": {
+        "rgb": "87bf3fc4bf8c090f26c5903f2b5bb038f4c32d76ff0771b64b147668e836bc28",
+        "depth": "a15e5262749da21a300b428063218a50a9eab18f0c8627cf7e4488824c844768",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 17,
+      "name": "inverse_control",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.81900390625,
+      "hashes": {
+        "rgb": "b1c0f9ccc6e48e308440ab9f45b5d67ebb9bc6357a0cd32200a3842836ac1549",
+        "depth": "7c118ec39780b7e45a10a54dd3409560d22410af650605c1e5bdedabb0003d81",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 18,
+      "name": "inverse_front",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.80548828125,
+      "hashes": {
+        "rgb": "49209ad59dc4c68b8e80011c306403375cf0315f7d0c6da58ae7e2505c38db16",
+        "depth": "337e3ad38058a07541caef4b6d700ebc9331f80188ae08da90ac7f20d9b9e45a",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 19,
+      "name": "inverse_hmi",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.8154264322916667,
+      "hashes": {
+        "rgb": "39d01ff37bc6dc2597e8285fdf9c8608c5d7e50e08f6b1f84383890c1981516c",
+        "depth": "aa7b9c5b962abd4eeb159a41fa581feb4daa113809a290c9fb17404e1453454e",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 20,
+      "name": "inverse_io",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.8099479166666667,
+      "hashes": {
+        "rgb": "b289960971cd212669f5cf39b293cf15b5eab28e3d89ac1d6cfef38fc0a504a1",
+        "depth": "d7aa4a509fc361633fce4672c495470f30584f0ecb7b24542fd8f966d1bca686",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 21,
+      "name": "inverse_power",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.8115755208333333,
+      "hashes": {
+        "rgb": "c3a487aef2c9b4696eae9ef43a6002d289428121a086f164ae2eba8404e38e59",
+        "depth": "609483a31f68eda5df16bf1a038617e3fd1204dd79178742f6fe973b04dbe82f",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 22,
+      "name": "inverse_rear",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.65970703125,
+      "hashes": {
+        "rgb": "ea163b7c5e9de4019c4604682b07df41fdbf01cba5d7e83df5bab9f8361717da",
+        "depth": "33b3d916af5aecff2864c0dfee173552325541b4e7dbdd6095b0b935df4ad752",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 23,
+      "name": "inverse_sensor",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.8020670572916667,
+      "hashes": {
+        "rgb": "53ca3b0cf82ddce96b6caac31e9f668508f5635cd45ff91913182e57f3760f20",
+        "depth": "b5addecedaf36b721503ea27a1be6aa2a3d5039da66adb97ab2905634d8e57cb",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 24,
+      "name": "inverse_termal",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.824306640625,
+      "hashes": {
+        "rgb": "2c1199459a5a791d778a8d81eba932451b6e606cff047d5dbd9ce1b7ef87ce49",
+        "depth": "1a520318e62e6f8a57a3dccec70fbd801979c14b32707bb706b24bf6f9308bed",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 25,
+      "name": "io_far",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7871809895833334,
+      "hashes": {
+        "rgb": "9436c24609af57ff866e5665c725fe5ee6d8a3dae555586bf8ee8bf5653b346c",
+        "depth": "c4f6382f9aeafad72d39779553214bd5597320c7c42cb57497146f9b78e3510e",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 26,
+      "name": "io_rot_far",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7956087239583334,
+      "hashes": {
+        "rgb": "6fc3769857cb657a92990ea67d7b6f778571f224e7909fc0725fcece05d1e243",
+        "depth": "f4081bf1fab590b9eba769bb95a93151243cf53ddb816604b06373ce9521f9c9",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 27,
+      "name": "io_rot_side",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7301692708333334,
+      "hashes": {
+        "rgb": "1701f395e20805809584b7b9d015d6dd30678435e40b8145eb5fd96e6478b7b4",
+        "depth": "8ef040683a0447f5da45ce73e927dbd1a7c34628b53452b8efa0f62c514a6b46",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 28,
+      "name": "io_side",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7468522135416666,
+      "hashes": {
+        "rgb": "2d8dd7974e5fc2b2fe4251920556c79d43f0708b18d62e74436310afc91e5722",
+        "depth": "8c45614ca83e3773655bf45ad67faecbd720456517bb5f80d8145adbd484df66",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 29,
+      "name": "power_far",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.782197265625,
+      "hashes": {
+        "rgb": "cba04910db7848cf5232a4e22e5de1e736a04c64a701d2b147565d017e4a7316",
+        "depth": "2ab3bf342ca8f8c78f1e5a2a556475f269fbb0f2192897d90f8e6829b7a11447",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 30,
+      "name": "power_far_rot",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7874967447916666,
+      "hashes": {
+        "rgb": "5eb2187a52f396417fae0a8863589876be6693554abd0600ae19b8ad99cdbd79",
+        "depth": "0a24518f8cc37c4a7a3b31d5bff53b6986c09536b1aba0a7c8e87ab6a1130cab",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 31,
+      "name": "power_rot_side",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.734931640625,
+      "hashes": {
+        "rgb": "312033e5e64a22bf09427f177d42b309485583959b59e64a6fbf645e3cf1b325",
+        "depth": "cd9d9f6eaabe5474d98ed293c2c299f6fe40307cd496553eca3a022532312733",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 32,
+      "name": "power_side",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7415690104166667,
+      "hashes": {
+        "rgb": "2cec2ecdddbde7ab1dd7d0089b96b43189a03bd7fa2533c9af1e62ffe7aaafec",
+        "depth": "5f07701aa8dc546b9a1c64bc38a5dd2f874bc8550ad8dfa576d328a4a3e8653f",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 33,
+      "name": "rear_far",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7934342447916667,
+      "hashes": {
+        "rgb": "98be5595a3dd8d54d0f9c653a3a82465917a23acd998f6239e1373a6addb0dd9",
+        "depth": "38b13684bac63accb9256c30ef0b018b69522864c675bc15a575dd007a601b97",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 34,
+      "name": "rear_far_rot",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7905403645833333,
+      "hashes": {
+        "rgb": "7450d5e7a6dbea48fec1cc350e38bbde5cba95cb9a80dc0805f8e876e6d7dade",
+        "depth": "0a16872b5669ba51f9ae22bee51722db7a4009113a1309affe44872678356129",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 35,
+      "name": "rear_rot_side",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7310872395833333,
+      "hashes": {
+        "rgb": "2d47cf2ec2314e0d877492aca9bed7add7ce4db4df268cfd0ababaaa541925db",
+        "depth": "c60e57b91d4f1952051304faff57ca2954119608a84917c66ad046f0cfa56ce8",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 36,
+      "name": "rear_side",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7390885416666667,
+      "hashes": {
+        "rgb": "cdd98fa8a0d8df02b84abb470206ad03ec8ee4953f41003cb93306bf7c99c219",
+        "depth": "1df04bb9fa0e9f5a8dc4bd9403e36511ec44193e515b2898f2d8e77513fca17d",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 37,
+      "name": "sensor_module_far",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7908723958333334,
+      "hashes": {
+        "rgb": "3bfda35f4b08c33f7ad89a0ca5cf1fcdae43717d2604628f2c361904b36cd54d",
+        "depth": "075ec580b1391a8f2e0ef144b37185bcc62206fc94832b051b8cc212fba18b26",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 38,
+      "name": "sensor_rot_far",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.8030631510416667,
+      "hashes": {
+        "rgb": "d78a560c2a1970efd2709928776230e20ad35d3819877f527a06ba20bc420887",
+        "depth": "f391f5bbab6f87f3edcfc631e3884584978cd8e0088363d401b0979788c3fc3b",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 39,
+      "name": "sensor_rot_side",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7340266927083333,
+      "hashes": {
+        "rgb": "f9b5b8d8c6b5d343c8754177cfd4ac99054cf2581dd85f97433145c4578feb21",
+        "depth": "7191b84907ef888b4be616e15f6d26915793863dffd6b91b47ccb308921f8a1b",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 40,
+      "name": "sensor_side",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7293717447916667,
+      "hashes": {
+        "rgb": "1174a63ffa7d072a40b7dc59b4f312063797f1fd19429c3f3957cdd134a0e976",
+        "depth": "4bfc53d19583cc83192ef21cd46ef0076461f6fff81db6f8a260833855880f91",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 41,
+      "name": "termal_far",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.7888639322916666,
+      "hashes": {
+        "rgb": "c4163f2a3bd70d7363b4343ba4bbcf8e67adf0651029dba9d1b094d7404e6a42",
+        "depth": "d8024cadf7aa6cd11e7d22078bd744cd3de4ad483f8ec6b837fac78ca1330c3e",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 42,
+      "name": "termal_far_rot",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.8005729166666666,
+      "hashes": {
+        "rgb": "549e851112fbbc755aa18262e03f15fd7dae7652d62d1be8c7ee265b758768a2",
+        "depth": "3fcf54e0cc4f246ba437358d2ff8dda3aa9be717e91d3f8d70b6c50fa8464cf1",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 43,
+      "name": "termal_rot_side",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.735576171875,
+      "hashes": {
+        "rgb": "6bf3c9d90e284e28c10c937301dd6529a0e237f8d6dfd3c578b4904d394aa7ec",
+        "depth": "e11882ad19f2b476979a0dd508fc9a84e686a027c63d12a2a1337f35155e3ac8",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    },
+    {
+      "frame_id": 44,
+      "name": "termal_side",
+      "status": "valid",
+      "errors": [],
+      "shape": [
+        480,
+        640
+      ],
+      "depth_unit": "raw * depth_scale millimetres",
+      "valid_depth_fraction": 0.740263671875,
+      "hashes": {
+        "rgb": "b865581c0fa2576a88140b018b19e420c7c39145157ac7f8508206174092a8cc",
+        "depth": "c44ca15e3d9f7000473c0bb8aa09bbaaddb557341ae9729f738dd3a24691f786",
+        "camera": "a88ccccc2903c574f4668076168b366a5e46120d568bdce40b1b136212388ba6"
+      }
+    }
+  ],
+  "total": 45,
+  "valid": 45
+}

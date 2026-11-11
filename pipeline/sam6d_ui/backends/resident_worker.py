@@ -71,7 +71,7 @@ def main():
                     result=backend.estimate(args,runtime)
                 elif command=='start_tracking':
                     if str(Path(request['folder']).resolve())!=runtime.get('last_folder') or runtime['estimator'].pose_last is None:
-                        raise ValueError('Vuelve a estimar la pose inicial antes del seguimiento.')
+                        raise ValueError('Estimate the initial pose again before tracking.')
                     configure_tracking(runtime)
                     result={'ready':True}
                 elif command=='relocalize':
@@ -82,13 +82,13 @@ def main():
                         rgb=frame['rgb'];depth=frame['depth'].astype(np.float32)*float(frame['scale'])*.001;K=frame['K']
                     mask=np.load(scratch/'mask.npy',allow_pickle=False).astype(bool)
                     if mask.shape!=depth.shape or np.count_nonzero(mask & (depth>.001))<30:
-                        raise ValueError('La nueva detección no tiene suficiente profundidad válida.')
+                        raise ValueError('The new detection contains insufficient valid depth.')
                     metadata = scratch / 'tracking_model.json'
                     if metadata.is_file():
                         select_tracking_model(runtime, json.loads(metadata.read_text()), scratch)
                     estimator=runtime['estimator'];estimator.pose_last=None
                     with torch.inference_mode():pose=backend.valid_pose(estimator.register(K=K,rgb=rgb,depth=depth,ob_mask=mask,iteration=5))
-                    if estimator.pose_last is None:raise ValueError('No se pudo registrar la nueva detección.')
+                    if estimator.pose_last is None:raise ValueError('Could not register the new detection.')
                     torch.cuda.synchronize()
                     runtime['health'].reset()
                     timestamp_path=scratch/'timestamp.json'
@@ -96,7 +96,7 @@ def main():
                     quality=runtime['health'].evaluate(pose,depth,K,timestamp)
                     if not quality['ok']:
                         estimator.pose_last=None
-                        raise ValueError('La pose recuperada no concuerda con la profundidad: '+', '.join(quality['reasons']))
+                        raise ValueError('The recovered pose does not agree with depth: '+', '.join(quality['reasons']))
                     result={'seconds':time.perf_counter()-started,'quality':quality}
                 elif command=='track':
                     import cv2
@@ -108,7 +108,7 @@ def main():
                     started=time.perf_counter();scratch=Path(request['scratch'])
                     with np.load(scratch/'frame.npz',allow_pickle=False) as frame:
                         rgb=frame['rgb'];depth=frame['depth'].astype(np.float32)*float(frame['scale'])*.001;K=frame['K']
-                    if np.count_nonzero(depth>.001)<30:raise ValueError('No hay profundidad suficiente para seguir la pieza.')
+                    if np.count_nonzero(depth>.001)<30:raise ValueError('Insufficient depth to track the part.')
                     estimator=runtime['estimator'];accepted_pose=estimator.pose_last.clone()
                     with torch.inference_mode():pose=backend.valid_pose(estimator.track_one(rgb=rgb,depth=depth,K=K,iteration=2))
                     timestamp_path=scratch/'timestamp.json'
@@ -121,7 +121,7 @@ def main():
                     image=draw_reference_axes(image,pose,K,min(float(mesh.extents.max())/2,.1))
                     if image.shape[1]>640:image=cv2.resize(image,(640,round(image.shape[0]*640/image.shape[1])),interpolation=cv2.INTER_AREA)
                     ok,jpeg=cv2.imencode('.jpg',cv2.cvtColor(image,cv2.COLOR_RGB2BGR),[cv2.IMWRITE_JPEG_QUALITY,70])
-                    if not ok:raise RuntimeError('Error al codificar el visor.')
+                    if not ok:raise RuntimeError('Failed to encode the viewer.')
                     (scratch/'preview.jpg').write_bytes(jpeg.tobytes())
                     cad_path = scratch/'cad_preview.jpg'
                     cad_path.unlink(missing_ok=True)
@@ -136,7 +136,7 @@ def main():
                     transform=pose.copy();transform[:3,3]*=1000
                     result={'seconds':time.perf_counter()-started,'quality':quality,'bbox_xyxy':projected_bbox(mesh.bounds,pose,K,rgb.shape),'T_camera_from_input_cad_mm':(transform@runtime['model_from_input']).tolist(),
                             'cad_view_error':cad_error, 'cad_render_s':time.perf_counter()-cad_started}
-                else:raise ValueError('Operación de pose no válida.')
+                else:raise ValueError('Invalid pose operation.')
             reply(rid,status='ok',result=result)
         except Exception as error:
             traceback.print_exc(file=sys.stderr);reply(rid,status='error',error=str(error))

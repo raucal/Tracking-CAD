@@ -1,0 +1,15 @@
+{
+  "first_suite": "/home/raca/projects/CADTracking/results/reports/sam6d_suite_20261102T150131Z",
+  "old_cases": 22,
+  "new_cases": 45,
+  "old_expected_labels": 0,
+  "common_exact_rgb_bytes": 0,
+  "common": [],
+  "direct_protocol_comparison_valid": false,
+  "reasons": [
+    "First suite uses PEM, new uses FoundationPose",
+    "First table contains assigned-detection maxima; new all-CAD hypotheses share one mask",
+    "New IoU is per row; historical IoU can zero whole batch",
+    "Different capture sets; no original ground truth labels"
+  ]
+}

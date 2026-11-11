@@ -19,7 +19,7 @@ from settings import profile
 
 def validate_interval(value):
     if isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value) or value!=0 and not 1<=value<=3600:
-        raise ValueError('El intervalo SAM debe ser 0 (desactivado) o entre 1 y 3600 segundos.')
+        raise ValueError('The SAM interval must be 0 (disabled) or between 1 and 3600 seconds.')
     return float(value)
 
 
@@ -42,8 +42,8 @@ class LivePoseTracker:
     def configure(self,interval):
         interval=validate_interval(interval)
         with self.lock:
-            if not self.busy():raise ValueError('Primero inicia el seguimiento.')
-            if interval and self.redetect is None:raise ValueError('Este seguimiento no tiene detector SAM. Vuelve a iniciarlo en modo automático.')
+            if not self.busy():raise ValueError('Start tracking first.')
+            if interval and self.redetect is None:raise ValueError('Tracking has no SAM detector. Restart in automatic mode.')
             if self.detector_cancel is not None:self.detector_cancel.set()
             self.redetect_interval_s=interval;self.config_revision+=1
             self.details['redetect_interval_s']=interval
@@ -51,9 +51,9 @@ class LivePoseTracker:
 
     def start(self,folder,redetect_interval_s=0,redetect=None):
         interval=validate_interval(redetect_interval_s)
-        if (interval and redetect is None) or (redetect is not None and self.resident_factory is None):raise ValueError('Se requiere el detector SAM y el trabajador residente para el refresco.')
+        if (interval and redetect is None) or (redetect is not None and self.resident_factory is None):raise ValueError('SAM detector and resident worker are required for refresh.')
         with self.lock:
-            if self.busy():raise ValueError('El seguimiento ya está activo o cerrándose.')
+            if self.busy():raise ValueError('Tracking is already active or closing.')
             self.camera.frame()
             self.stop_event.clear();self.jpeg=None;self.cad_jpeg=None;self.sequence=0
             self.redetect=redetect;self.redetect_interval_s=interval;self.config_revision+=1
@@ -99,10 +99,10 @@ class LivePoseTracker:
             while not self.stop_event.is_set():
                 try:result=messages.get(timeout=min(.2,max(.01,deadline-time.monotonic())))
                 except Empty:
-                    if time.monotonic()>deadline:raise RuntimeError('El trabajador no respondió a tiempo.')
+                    if time.monotonic()>deadline:raise RuntimeError('The worker did not respond in time.')
                     continue
-                if result is None:raise RuntimeError('El trabajador de seguimiento se cerró. Consulta worker.log.')
-                if result.get('status')=='error':raise RuntimeError(result.get('error','Error de seguimiento.'))
+                if result is None:raise RuntimeError('The tracking worker closed. See worker.log.')
+                if result.get('status')=='error':raise RuntimeError(result.get('error','Tracking error.'))
                 return result
             return None
         try:
@@ -130,7 +130,7 @@ class LivePoseTracker:
                 if identity==previous:
                     self.stop_event.wait(.01);continue
                 if not np.allclose(K,np.asarray(frame['camera']['cam_K']).reshape(3,3)) or not np.isclose(calibration['depth_scale'],frame['camera']['depth_scale']):
-                    raise RuntimeError('Cambió la calibración. Reinicia la detección inicial.')
+                    raise RuntimeError('Calibration changed. Restart initial detection.')
                 previous=identity;started=time.perf_counter()
                 np.savez(scratch/'frame.npz',rgb=frame['rgb'],depth=frame['depth'],K=K,scale=calibration['depth_scale'])
                 process.stdin.write('{}\n');process.stdin.flush()
@@ -201,7 +201,7 @@ class LivePoseTracker:
 
             def check_camera(frame):
                 if not np.allclose(K, np.asarray(frame['camera']['cam_K']).reshape(3, 3)) or not np.isclose(calibration['depth_scale'], frame['camera']['depth_scale']):
-                    raise RuntimeError('Cambió la calibración. Reinicia la detección inicial.')
+                    raise RuntimeError('Calibration changed. Restart initial detection.')
 
             def mark_lost(message, frame_number):
                 nonlocal lost, lost_after_frame, force_fresh
@@ -268,14 +268,14 @@ class LivePoseTracker:
                         with self.lock: self.details['sam_discarded'] += 1
                     elif error:
                         entry.update(status='detection_error', error=error)
-                        with self.lock: self.details['redetect_error'] = 'Error de comprobación SAM: '+error
+                        with self.lock: self.details['redetect_error'] = 'SAM verification error: '+error
                     else:
                         with self.lock: self.details['sam_checks'] += 1
                         if detection is None:
                             misses += 1; disagreements = 0
-                            warning = 'SAM no encuentra la pieza ('+str(misses)+'/2).'
+                            warning = 'SAM cannot find the part ('+str(misses)+'/2).'
                             with self.lock: self.details.update(sam_misses=misses, sam_disagreements=0, redetect_error=warning)
-                            if misses >= 2: mark_lost(warning+' Esperando una detección nueva.', frame['number'])
+                            if misses >= 2: mark_lost(warning+' Waiting for a new detection.', frame['number'])
                             entry.update(status='not_detected', misses=misses)
                         else:
                             misses = 0
@@ -297,12 +297,12 @@ class LivePoseTracker:
                             if needs_registration and not lost:
                                 # A backup result can confirm drift, but registration must use
                                 # a new snapshot captured after declaring tracking lost.
-                                mark_lost('SAM identifica otra pieza. Confirmando el CAD con una imagen nueva…' if component_changed else
-                                          'SAM confirma un desvío. Buscando una detección nueva…', frame['number'])
+                                mark_lost('SAM identified another part. Confirming the CAD with a new image…' if component_changed else
+                                          'SAM confirmed a drift. Looking for a new detection…', frame['number'])
                                 needs_registration = False
                                 entry.update(status='tracking_loss_confirmed')
                             if needs_registration:
-                                mark_lost('Recuperando pose con una detección SAM reciente…', frame['number'])
+                                mark_lost('Recovering pose with a recent SAM detection…', frame['number'])
                                 with self.lock: self.details['state'] = 'redetecting'
                                 try:
                                     check_camera(self.camera.frame())
@@ -338,7 +338,7 @@ class LivePoseTracker:
 
                 if lost:
                     if self.redetect is None:
-                        raise RuntimeError(self.details.get('redetect_error') or 'Se perdió la pose. Vuelve a localizar la pieza.')
+                        raise RuntimeError(self.details.get('redetect_error') or 'Pose lost. Locate the part again.')
                     if future is None and (force_fresh or time.monotonic() >= retry_due):
                         submit_detection(frame, None, current_revision, 'recovery')
                     self.stop_event.wait(.01)
@@ -352,19 +352,19 @@ class LivePoseTracker:
                 (scratch/'timestamp.json').write_text(json.dumps(frame['timestamp']))
                 try: result = worker.track(scratch)
                 except Exception as exception:
-                    mark_lost('Falló el seguimiento: '+str(exception)+'. Esperando una detección SAM nueva.', frame['number'])
+                    mark_lost('Tracking failed: '+str(exception)+'. Waiting for a new SAM detection.', frame['number'])
                     continue
                 if self.stop_event.is_set(): break
                 quality = result.get('quality', {'ok':True, 'enabled':False})
                 if not quality['ok']:
                     bad_frames += 1
-                    labels = {'depth_mismatch':'pose incoherente con la profundidad', 'occluded':'pieza ocluida', 'outside_image':'pieza fuera de imagen', 'insufficient_object_depth':'profundidad insuficiente sobre la pieza', 'no_visible_surface':'CAD sin superficie visible', 'translation_jump':'salto brusco de posición', 'rotation_jump':'salto brusco de orientación', 'invalid_pose':'pose no válida'}
+                    labels = {'depth_mismatch':'pose inconsistent with depth', 'occluded':'part occluded', 'outside_image':'part outside the image', 'insufficient_object_depth':'insufficient depth on the part', 'no_visible_surface':'CAD has no visible surface', 'translation_jump':'abrupt position change', 'rotation_jump':'abrupt orientation change', 'invalid_pose':'invalid pose'}
                     reason = ', '.join(labels.get(key,key) for key in quality['reasons'])
                     with self.condition:
                         self.jpeg = None
                         self.details.update(state='checking', pose=None, pose_quality=quality, consecutive_quality_failures=bad_frames, redetect_error=reason)
                         self.condition.notify_all()
-                    if bad_frames >= failure_limit: mark_lost('Pérdida de seguimiento: '+reason, frame['number'])
+                    if bad_frames >= failure_limit: mark_lost('Tracking lost: '+reason, frame['number'])
                     continue
                 was_checking = bad_frames > 0
                 bad_frames = 0

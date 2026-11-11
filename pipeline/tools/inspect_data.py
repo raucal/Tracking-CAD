@@ -25,7 +25,7 @@ def audit(manifest_path):
         with Image.open(base / frame["depth"]) as source:
             converted = np.array(source)
         if not np.array_equal(original, converted):
-            raise ValueError(f"La conversión altera la profundidad de {frame['name']}")
+            raise ValueError(f"Conversion changes depth for {frame['name']}")
         with Image.open(base / frame["source_rgb"]) as source:
             original_rgb = np.array(source.convert("RGB"))
         with Image.open(base / frame["rgb"]) as source:
@@ -33,7 +33,7 @@ def audit(manifest_path):
         rgb_hashes=frame.get('source_rgb_sha256') and frame.get('prepared_rgb_sha256')
         if rgb_hashes:
             if sha256(base/frame['source_rgb'])!=frame['source_rgb_sha256'] or sha256(base/frame['rgb'])!=frame['prepared_rgb_sha256']:
-                raise ValueError('Los bytes RGB han cambiado: '+frame['name'])
+                raise ValueError('RGB bytes have changed: '+frame['name'])
         elif not np.array_equal(original_rgb,converted_rgb):
             # Legacy PNGs were prepared with another JPEG decoder. Preserve them;
             # they are the exact images used by the saved benchmarks.
@@ -42,13 +42,13 @@ def audit(manifest_path):
                                  'mean_pixel_difference':float(delta.mean()),'reason':'legacy input without RGB byte hashes; decoder-dependent equality cannot establish source preservation'})
     for part in data['parts']:
         if sha256(base/part['source_stl']) != part['source_sha256']:
-            raise ValueError('El original ha cambiado: '+part['key'])
+            raise ValueError('The original has changed: '+part['key'])
         model=trimesh.load_mesh(base/part['sam_ply'],process=False)
         if not np.allclose(model.bounds.mean(axis=0),0,atol=1e-5):
             raise ValueError('CAD no centrado: '+part['key'])
         restored=model.copy();restored.apply_transform(np.asarray(part['T_local_from_sam_mm']))
         if not np.allclose(restored.bounds,part['bounds_local_mm'],atol=1e-5):
-            raise ValueError('La transformación altera el marco CAD original: '+part['key'])
+            raise ValueError('The transformation changes the original CAD frame: '+part['key'])
     return {'status':'data_checks_passed_with_rgb_warnings' if rgb_warnings else 'data_checks_passed','parts':len(data['parts']),
             'rgbd_frames':len(data['frames']),'unpaired_rgb':data['unpaired_rgb'],
             'depth_preserved':True,'depth_and_rgb_preserved':not rgb_warnings,'rgb_warnings':rgb_warnings,'cad_frames_checked':True,
@@ -68,7 +68,7 @@ def preview(manifest_path, output):
     ax = fig.add_subplot(221)
     with Image.open(base / frame["rgb"]) as source:
         ax.imshow(source)
-    ax.set_title("Captura real RGB (sin segmentación)")
+    ax.set_title("Real RGB capture (without segmentation)")
     ax.axis("off")
     ax = fig.add_subplot(222)
     with Image.open(base / frame["depth"]) as source:
@@ -76,13 +76,13 @@ def preview(manifest_path, output):
     camera = json.loads((base / frame["camera"]).read_text())
     depth *= camera["depth_scale"]
     im = ax.imshow(np.ma.masked_equal(depth, 0), cmap="viridis", vmin=350, vmax=650)
-    fig.colorbar(im, ax=ax, label="Profundidad (mm)")
-    ax.set_title("Profundidad alineada al color")
+    fig.colorbar(im, ax=ax, label="Depth (mm)")
+    ax.set_title("Depth aligned to colour")
     ax.axis("off")
     ax=fig.add_subplot(212)
     names=[p['key'] for p in data['parts']]
     ax.barh(names,[p['mesh_quality']['faces'] for p in data['parts']])
-    ax.set_xlabel('Triángulos del CAD');ax.set_title('Modelos preparados para visión')
+    ax.set_xlabel('CAD triangles');ax.set_title('Models prepared for vision')
     fig.suptitle('CAD Tracking · Entradas RGB-D y modelos CAD',fontsize=16)
     fig.savefig(output, dpi=150, bbox_inches="tight", pad_inches=0.3)
     plt.close(fig)
@@ -92,7 +92,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, default=PREPARED / "manifest.json")
     parser.add_argument("--preview", action="store_true")
-    parser.add_argument("--output", type=Path, help="Guardar auditoría JSON solo si se solicita")
+    parser.add_argument("--output", type=Path, help="Save audit JSON only when requested")
     args = parser.parse_args()
     path = args.manifest.resolve()
     report = audit(path)

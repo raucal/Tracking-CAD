@@ -1,0 +1,19 @@
+{
+  "updated_utc": "2026-11-11T09:52:41.342071+00:00",
+  "scope": "HTML presentation only",
+  "score": "ISM composite score",
+  "orange_rule": "abs(candidate_score - chosen_score) < 0.10",
+  "green_rule": "candidate CAD key equals predicted_cad, regardless of correctness",
+  "threshold_inclusive": false,
+  "image_rows": 45,
+  "cell_colors": {
+    "score-near": 67,
+    "neutral": 338,
+    "score-selected": 45
+  },
+  "run_sha256": "d392af4f3761dcc6cea5c9be56c9e8467cbb922d4b3800497e2c63edf23460ef",
+  "run_json_unchanged": true,
+  "previous_html_sha256": "2594340be71786819b590f70f886d0c481ef46e911e8baf0366de288b042ef22",
+  "new_html_sha256": "54a911487685e6a36f2684add0bfd27d454baf7ce5b2c61cc6d6227a618869a2",
+  "report_generator_sha256": "50f5454aeb3211a3de5b413884fc65f2466402bb2b9af67471acec9a76c66a3a"
+}

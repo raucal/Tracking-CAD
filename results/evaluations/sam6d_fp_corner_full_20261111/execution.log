@@ -1,0 +1,101 @@
+/home/raca/projects/.venvs/assembly-runtime/lib/python3.10/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/home/raca/projects/CADTracking/models/SAM-6D/SAM-6D/Instance_Segmentation_Model/segment_anything/build_sam.py:105: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  state_dict = torch.load(f)
+WARNING:dinov2:xFormers not available
+WARNING:dinov2:xFormers not available
+/home/raca/projects/CADTracking/models/SAM-6D/SAM-6D/Instance_Segmentation_Model/model/dinov2.py:107: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  self.model.load_state_dict(torch.load(osp.join(checkpoint_dir, f"{model_name}_pretrain.pth")))
+[1/45] frame_id=0
+/home/raca/projects/.venvs/assembly-runtime/lib/python3.10/site-packages/torchvision/transforms/functional.py:154: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  img = torch.from_numpy(pic.transpose((2, 0, 1))).contiguous()
+{"name": "cassette_far", "status": "predicted", "predicted_cad": "05_control_board", "expected_cad": "03_option_cassette", "correct": false, "margin": 0.025578737258911133, "error": null}
+[2/45] frame_id=1
+{"name": "cassette_rot_far", "status": "predicted", "predicted_cad": "03_option_cassette", "expected_cad": "03_option_cassette", "correct": true, "margin": 0.037675291299819946, "error": null}
+[3/45] frame_id=2
+{"name": "cassette_rot_side", "status": "predicted", "predicted_cad": "03_option_cassette", "expected_cad": "03_option_cassette", "correct": true, "margin": 0.013972312211990356, "error": null}
+[4/45] frame_id=3
+{"name": "cassette_side", "status": "predicted", "predicted_cad": "03a_vertical_option_a", "expected_cad": "03_option_cassette", "correct": false, "margin": 0.07523703575134277, "error": null}
+[5/45] frame_id=4
+{"name": "control_far", "status": "predicted", "predicted_cad": "05_control_board", "expected_cad": "05_control_board", "correct": true, "margin": 0.07501846551895142, "error": null}
+[6/45] frame_id=5
+{"name": "control_far_ro", "status": "predicted", "predicted_cad": "05_control_board", "expected_cad": "05_control_board", "correct": true, "margin": 0.029202908277511597, "error": null}
+[7/45] frame_id=6
+{"name": "control_rot_side", "status": "predicted", "predicted_cad": "05_control_board", "expected_cad": "05_control_board", "correct": true, "margin": 0.01784452795982361, "error": null}
+[8/45] frame_id=7
+{"name": "control_side", "status": "predicted", "predicted_cad": "05_control_board", "expected_cad": "05_control_board", "correct": true, "margin": 0.05447840690612793, "error": null}
+[9/45] frame_id=8
+{"name": "front_far", "status": "predicted", "predicted_cad": "01_front_housing", "expected_cad": "01_front_housing", "correct": true, "margin": 0.08943313360214233, "error": null}
+[10/45] frame_id=9
+{"name": "front_far_rot", "status": "predicted", "predicted_cad": "01_front_housing", "expected_cad": "01_front_housing", "correct": true, "margin": 0.07900172472000122, "error": null}
+[11/45] frame_id=10
+{"name": "front_rot_side", "status": "predicted", "predicted_cad": "03b_vertical_option_b", "expected_cad": "01_front_housing", "correct": false, "margin": 0.004908144474029541, "error": null}
+[12/45] frame_id=11
+{"name": "front_side", "status": "predicted", "predicted_cad": "01_front_housing", "expected_cad": "01_front_housing", "correct": true, "margin": 0.12268704175949097, "error": null}
+[13/45] frame_id=12
+{"name": "hmi_far", "status": "predicted", "predicted_cad": "02_control_panel", "expected_cad": "02_control_panel", "correct": true, "margin": 0.15593057870864868, "error": null}
+[14/45] frame_id=13
+{"name": "hmi_far_rot", "status": "predicted", "predicted_cad": "02_control_panel", "expected_cad": "02_control_panel", "correct": true, "margin": 0.041050732135772705, "error": null}
+[15/45] frame_id=14
+{"name": "hmi_rot_side", "status": "predicted", "predicted_cad": "02_control_panel", "expected_cad": "02_control_panel", "correct": true, "margin": 0.02114427089691162, "error": null}
+[16/45] frame_id=15
+{"name": "hmi_side", "status": "predicted", "predicted_cad": "02_control_panel", "expected_cad": "02_control_panel", "correct": true, "margin": 0.10788297653198242, "error": null}
+[17/45] frame_id=16
+{"name": "inverse_cassette", "status": "predicted", "predicted_cad": "03_option_cassette", "expected_cad": "03_option_cassette", "correct": true, "margin": 0.1741480827331543, "error": null}
+[18/45] frame_id=17
+{"name": "inverse_control", "status": "predicted", "predicted_cad": "05_control_board", "expected_cad": "05_control_board", "correct": true, "margin": 0.13043951988220215, "error": null}
+[19/45] frame_id=18
+{"name": "inverse_front", "status": "predicted", "predicted_cad": "01_front_housing", "expected_cad": "01_front_housing", "correct": true, "margin": 0.12394744157791138, "error": null}
+[20/45] frame_id=19
+{"name": "inverse_hmi", "status": "predicted", "predicted_cad": "02_control_panel", "expected_cad": "02_control_panel", "correct": true, "margin": 0.1330397129058838, "error": null}
+[21/45] frame_id=20
+{"name": "inverse_io", "status": "predicted", "predicted_cad": "04_io_terminals", "expected_cad": "04_io_terminals", "correct": true, "margin": 0.015010058879852295, "error": null}
+[22/45] frame_id=21
+{"name": "inverse_power", "status": "predicted", "predicted_cad": "06_power_unit", "expected_cad": "06_power_unit", "correct": true, "margin": 0.1183062195777893, "error": null}
+[23/45] frame_id=22
+{"name": "inverse_rear", "status": "predicted", "predicted_cad": "00_rear_mounting_plate", "expected_cad": "00_rear_mounting_plate", "correct": true, "margin": 0.2218543291091919, "error": null}
+[24/45] frame_id=23
+{"name": "inverse_sensor", "status": "predicted", "predicted_cad": "03a_vertical_option_a", "expected_cad": "03a_vertical_option_a", "correct": true, "margin": 0.12863528728485107, "error": null}
+[25/45] frame_id=24
+{"name": "inverse_termal", "status": "predicted", "predicted_cad": "07_thermal_core", "expected_cad": "07_thermal_core", "correct": true, "margin": 0.11584293842315674, "error": null}
+[26/45] frame_id=25
+{"name": "io_far", "status": "predicted", "predicted_cad": "03b_vertical_option_b", "expected_cad": "04_io_terminals", "correct": false, "margin": 0.03617125749588013, "error": null}
+[27/45] frame_id=26
+{"name": "io_rot_far", "status": "predicted", "predicted_cad": "06_power_unit", "expected_cad": "04_io_terminals", "correct": false, "margin": 0.013402849435806274, "error": null}
+[28/45] frame_id=27
+{"name": "io_rot_side", "status": "predicted", "predicted_cad": "04_io_terminals", "expected_cad": "04_io_terminals", "correct": true, "margin": 0.02250891923904419, "error": null}
+[29/45] frame_id=28
+{"name": "io_side", "status": "predicted", "predicted_cad": "04_io_terminals", "expected_cad": "04_io_terminals", "correct": true, "margin": 0.02723318338394165, "error": null}
+[30/45] frame_id=29
+{"name": "power_far", "status": "predicted", "predicted_cad": "06_power_unit", "expected_cad": "06_power_unit", "correct": true, "margin": 0.10676631331443787, "error": null}
+[31/45] frame_id=30
+{"name": "power_far_rot", "status": "predicted", "predicted_cad": "06_power_unit", "expected_cad": "06_power_unit", "correct": true, "margin": 0.0356956422328949, "error": null}
+[32/45] frame_id=31
+{"name": "power_rot_side", "status": "predicted", "predicted_cad": "06_power_unit", "expected_cad": "06_power_unit", "correct": true, "margin": 0.036907702684402466, "error": null}
+[33/45] frame_id=32
+{"name": "power_side", "status": "predicted", "predicted_cad": "06_power_unit", "expected_cad": "06_power_unit", "correct": true, "margin": 0.10738781094551086, "error": null}
+[34/45] frame_id=33
+{"name": "rear_far", "status": "predicted", "predicted_cad": "00_rear_mounting_plate", "expected_cad": "00_rear_mounting_plate", "correct": true, "margin": 0.21986129879951477, "error": null}
+[35/45] frame_id=34
+{"name": "rear_far_rot", "status": "predicted", "predicted_cad": "00_rear_mounting_plate", "expected_cad": "00_rear_mounting_plate", "correct": true, "margin": 0.16859567165374756, "error": null}
+[36/45] frame_id=35
+{"name": "rear_rot_side", "status": "predicted", "predicted_cad": "03a_vertical_option_a", "expected_cad": "00_rear_mounting_plate", "correct": false, "margin": 0.01564854383468628, "error": null}
+[37/45] frame_id=36
+{"name": "rear_side", "status": "predicted", "predicted_cad": "00_rear_mounting_plate", "expected_cad": "00_rear_mounting_plate", "correct": true, "margin": 0.250879168510437, "error": null}
+[38/45] frame_id=37
+{"name": "sensor_module_far", "status": "predicted", "predicted_cad": "03a_vertical_option_a", "expected_cad": "03a_vertical_option_a", "correct": true, "margin": 0.08139470219612122, "error": null}
+[39/45] frame_id=38
+{"name": "sensor_rot_far", "status": "predicted", "predicted_cad": "03b_vertical_option_b", "expected_cad": "03a_vertical_option_a", "correct": false, "margin": 0.003152608871459961, "error": null}
+[40/45] frame_id=39
+{"name": "sensor_rot_side", "status": "predicted", "predicted_cad": "05_control_board", "expected_cad": "03a_vertical_option_a", "correct": false, "margin": 0.001695185899734497, "error": null}
+[41/45] frame_id=40
+{"name": "sensor_side", "status": "predicted", "predicted_cad": "00_rear_mounting_plate", "expected_cad": "03a_vertical_option_a", "correct": false, "margin": 0.0340552031993866, "error": null}
+[42/45] frame_id=41
+{"name": "termal_far", "status": "predicted", "predicted_cad": "07_thermal_core", "expected_cad": "07_thermal_core", "correct": true, "margin": 0.17159733176231384, "error": null}
+[43/45] frame_id=42
+{"name": "termal_far_rot", "status": "predicted", "predicted_cad": "07_thermal_core", "expected_cad": "07_thermal_core", "correct": true, "margin": 0.1311967670917511, "error": null}
+[44/45] frame_id=43
+{"name": "termal_rot_side", "status": "predicted", "predicted_cad": "07_thermal_core", "expected_cad": "07_thermal_core", "correct": true, "margin": 0.16886672377586365, "error": null}
+[45/45] frame_id=44
+{"name": "termal_side", "status": "predicted", "predicted_cad": "07_thermal_core", "expected_cad": "07_thermal_core", "correct": true, "margin": 0.1350972056388855, "error": null}
+{"total_manifest": 45, "valid_manifest": 45, "selected": 45, "processed_identification": 45, "complete_with_pose": 45, "failed_identification": 0, "failed_pose": 0, "invalid": 0, "omitted": 0, "matches": 36, "top1_on_predictions": 0.8, "top1_on_selected": 0.8, "failure_reasons": [], "topk": {"1": {"matches": 36, "denominator_predictions": 45, "accuracy": 0.8}, "3": {"matches": 40, "denominator_predictions": 45, "accuracy": 0.8888888888888888}, "5": {"matches": 41, "denominator_predictions": 45, "accuracy": 0.9111111111111111}}, "latency": {"appearance_s": {"count": 45, "mean": 0.00019809766155150203, "median": 0.0001967529533430934, "p95": 0.0002120202174410224, "sum": 0.00891439476981759}, "assignment_s": {"count": 45, "mean": 0.00016785610932856798, "median": 0.00016069202683866024, "p95": 0.00020636820700019597, "sum": 0.007553524919785559}, "comparison_export_s": {"count": 45, "mean": 7.232359558757808e-05, "median": 6.999308243393898e-05, "p95": 9.523318149149417e-05, "sum": 0.003254561801441014}, "dino_s": {"count": 45, "mean": 0.08376830050773505, "median": 0.08186784200370312, "p95": 0.12274130312725902, "sum": 3.769573522848077}, "foundationpose_pipeline_s": {"count": 45, "mean": 1.0458713037763825, "median": 0.9744714320404455, "p95": 1.4970755449030542, "sum": 47.064208669937216}, "geometry_s": {"count": 45, "mean": 0.006303079224502047, "median": 0.00023945595603436232, "p95": 0.0002965362044051288, "sum": 0.2836385651025921}, "input_s": {"count": 45, "mean": 0.008380830225845178, "median": 0.008669941918924451, "p95": 0.009223042754456401, "sum": 0.377137360163033}, "postprocess_s": {"count": 45, "mean": 1.2247596924529514, "median": 1.2336627850309014, "p95": 1.8735126741928976, "sum": 55.114186160382815}, "processing_s": {"count": 45, "mean": 2.3612155732595257, "median": 2.366990206995979, "p95": 3.0316523247864096, "sum": 106.25470079667866}, "projection_s": {"count": 45, "mean": 0.0012013777366114988, "median": 0.0011680269381031394, "p95": 0.0014268919359892605, "sum": 0.05406199814751744}, "proposal_filter_s": {"count": 45, "mean": 0.0005400065099820494, "median": 0.0005290090339258313, "p95": 0.0006435254123061896, "sum": 0.024300292949192226}, "ranking_all_cads_s": {"count": 45, "mean": 0.0030154910197274553, "median": 0.002987446030601859, "p95": 0.0032278437865898013, "sum": 0.13569709588773549}, "ranking_query_features_s": {"count": 45, "mean": 0.010821597531644835, "median": 0.010755933006294072, "p95": 0.010960633982904255, "sum": 0.48697188892401755}, "sam_s": {"count": 45, "mean": 1.0340130026374632, "median": 1.0344708079937845, "p95": 1.0493206548504532, "sum": 46.53058511868585}, "semantic_s": {"count": 45, "mean": 0.001647859728998608, "median": 0.00156739994417876, "p95": 0.0016686962451785802, "sum": 0.07415368780493736}, "total_s": {"count": 45, "mean": 3.5523598274112578, "median": 3.4770580830518156, "p95": 4.412149821571075, "sum": 159.8561922335066}}, "pose_accuracy_measured": false, "pose_accuracy_limitation": "No pose ground truth or symmetry annotations in manifest; registration success is not accuracy.", "wall_s": 175.45636599394493, "semantic_to_final_changed": 6, "assignment_to_final_changed": 6, "semantic_correct": 38, "per_cad": [{"cad_key": "00_rear_mounting_plate", "support": 5, "predictions": 5, "correct": 4, "recall_on_selected": 0.8, "precision": 0.8}, {"cad_key": "01_front_housing", "support": 5, "predictions": 4, "correct": 4, "recall_on_selected": 0.8, "precision": 1.0}, {"cad_key": "02_control_panel", "support": 5, "predictions": 5, "correct": 5, "recall_on_selected": 1.0, "precision": 1.0}, {"cad_key": "03_option_cassette", "support": 5, "predictions": 3, "correct": 3, "recall_on_selected": 0.6, "precision": 1.0}, {"cad_key": "03a_vertical_option_a", "support": 5, "predictions": 4, "correct": 2, "recall_on_selected": 0.4, "precision": 0.5}, {"cad_key": "03b_vertical_option_b", "support": 0, "predictions": 3, "correct": 0, "recall_on_selected": null, "precision": 0.0}, {"cad_key": "04_io_terminals", "support": 5, "predictions": 3, "correct": 3, "recall_on_selected": 0.6, "precision": 1.0}, {"cad_key": "05_control_board", "support": 5, "predictions": 7, "correct": 5, "recall_on_selected": 1.0, "precision": 0.7142857142857143}, {"cad_key": "06_power_unit", "support": 5, "predictions": 6, "correct": 5, "recall_on_selected": 1.0, "precision": 0.8333333333333334}, {"cad_key": "07_thermal_core", "support": 5, "predictions": 5, "correct": 5, "recall_on_selected": 1.0, "precision": 1.0}], "confused_pairs": [{"expected": "00_rear_mounting_plate", "predicted": "03a_vertical_option_a", "count": 1}, {"expected": "01_front_housing", "predicted": "03b_vertical_option_b", "count": 1}, {"expected": "03_option_cassette", "predicted": "03a_vertical_option_a", "count": 1}, {"expected": "03_option_cassette", "predicted": "05_control_board", "count": 1}, {"expected": "03a_vertical_option_a", "predicted": "00_rear_mounting_plate", "count": 1}, {"expected": "03a_vertical_option_a", "predicted": "03b_vertical_option_b", "count": 1}, {"expected": "03a_vertical_option_a", "predicted": "05_control_board", "count": 1}, {"expected": "04_io_terminals", "predicted": "03b_vertical_option_b", "count": 1}, {"expected": "04_io_terminals", "predicted": "06_power_unit", "count": 1}], "wrong_high_scores": [{"name": "sensor_side", "expected": "03a_vertical_option_a", "predicted": "00_rear_mounting_plate", "score": 0.4925619661808014, "margin": 0.0340552031993866}, {"name": "sensor_rot_side", "expected": "03a_vertical_option_a", "predicted": "05_control_board", "score": 0.46993914246559143, "margin": 0.001695185899734497}, {"name": "cassette_side", "expected": "03_option_cassette", "predicted": "03a_vertical_option_a", "score": 0.46315574645996094, "margin": 0.07523703575134277}, {"name": "io_far", "expected": "04_io_terminals", "predicted": "03b_vertical_option_b", "score": 0.45131194591522217, "margin": 0.03617125749588013}, {"name": "cassette_far", "expected": "03_option_cassette", "predicted": "05_control_board", "score": 0.45011407136917114, "margin": 0.025578737258911133}, {"name": "io_rot_far", "expected": "04_io_terminals", "predicted": "06_power_unit", "score": 0.41911253333091736, "margin": 0.013402849435806274}, {"name": "front_rot_side", "expected": "01_front_housing", "predicted": "03b_vertical_option_b", "score": 0.4028916656970978, "margin": 0.004908144474029541}, {"name": "sensor_rot_far", "expected": "03a_vertical_option_a", "predicted": "03b_vertical_option_b", "score": 0.3683335781097412, "margin": 0.003152608871459961}, {"name": "rear_rot_side", "expected": "00_rear_mounting_plate", "predicted": "03a_vertical_option_a", "score": 0.3323538899421692, "margin": 0.01564854383468628}], "margins_correct": {"count": 36, "mean": 0.10195928894811207, "median": 0.10763539373874664, "p95": 0.22035955637693405, "sum": 3.6705344021320343}, "margins_wrong": {"count": 9, "mean": 0.023316618469026353, "median": 0.01564854383468628, "p95": 0.0596107244491577, "sum": 0.20984956622123718}}

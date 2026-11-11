@@ -1,0 +1,9 @@
+{
+  "resident_worker": {
+    "ready": true,
+    "pid": 1332968,
+    "load_s": 3.6185620879987255
+  },
+  "log": "/home/raca/projects/CADTracking/results/evaluations/sam6d_fp_corner_full_20261111/foundationpose_worker.log",
+  "elapsed_s": 0.7928379779914394
+}

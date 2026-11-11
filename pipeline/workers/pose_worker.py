@@ -24,7 +24,7 @@ def main():
     p.add_argument('--model-from-input',type=Path,help='Rigid transform from input CAD in mm to PEM model coordinates')
     p.add_argument('--min-score',type=float,default=0.5)
     a=p.parse_args()
-    if not torch.cuda.is_available():raise RuntimeError('PEM necesita CUDA en esta implementación.')
+    if not torch.cuda.is_available():raise RuntimeError('PEM requires CUDA in this implementation.')
     random.seed(1);np.random.seed(1);torch.manual_seed(1);torch.set_num_threads(8)
     start=time.perf_counter();os.chdir(PEM)
     # All trained backbone weights are loaded from the full PEM checkpoint below.
@@ -63,7 +63,7 @@ def main():
             R=out['pred_R'][0].cpu().numpy();t=out['pred_t'][0].cpu().numpy()*1000
             T=np.eye(4);T[:3,:3]=R;T[:3,3]=t
             if not np.isfinite(T).all() or not np.allclose(R.T@R,np.eye(3),atol=1e-3) or not np.isclose(np.linalg.det(R),1,atol=1e-3):
-                raise ValueError('PEM devolvió una transformación no válida.')
+                raise ValueError('PEM returned an invalid transformation.')
             pose_score=float((out.get('pred_pose_score',out['score']*0+1)*out['score'])[0].cpu())
             poses.append({'segmentation_score':det['score'],'pose_score':pose_score,'detection_index':det.get('detection_index'),'R':R.tolist(),'t_mm':t.tolist(),'T_camera_from_model_mm':T.tolist(),'T_camera_from_input_cad_mm':(T@model_from_input).tolist(),'translation_unit':'mm','frame':'OpenCV camera: X right, Y down, Z forward'})
         torch.cuda.synchronize();finished=time.perf_counter()

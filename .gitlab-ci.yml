@@ -1,0 +1,23 @@
+stages: [test]
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONUTF8: "1"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  MPLCONFIGDIR: "/tmp/cadtracking-matplotlib"
+
+cpu-tests:
+  image: python:3.10-slim
+  stage: test
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends git libgomp1 && rm -rf /var/lib/apt/lists/*
+    - python -m pip install torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorch.org/whl/cpu
+    - python -m pip install -r requirements-dev.txt
+  script:
+    - PYTHONPATH=pipeline python -B -m pytest -p no:cacheprovider pipeline/tests alignment_pose_cad/tests --junitxml=test-results.xml
+  artifacts:
+    when: always
+    reports:
+      junit: test-results.xml
+    expire_in: 1 week

@@ -1,6 +1,6 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Visor de pose en directo</title><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Live pose viewer</title><style>
 *{box-sizing:border-box}body{margin:0;background:#141b21;color:#edf3f6;font:14px system-ui}header{display:flex;gap:12px;align-items:center;padding:12px}select,a{color:inherit;background:#26333d;padding:6px;border-radius:5px}main{height:calc(100vh - 140px);display:grid;place-items:center}img{max-width:100%;max-height:100%;object-fit:contain}p{padding:0 12px}#empty{color:#aab9c4}#state{min-height:32px}
-</style></head><body><header><strong>Visor 6D</strong><select id="mode" aria-label="Imagen mostrada"><option value="result">Pose / detección</option><option value="camera">Cámara original</option><option value="cad">CAD + triedro · fondo negro</option></select><a href="/" target="vision-controls">Controles</a></header><main><img id="image" hidden alt="Última pose o imagen en directo"><span id="empty">Esperando una imagen…</span></main><p id="state" role="status">Consultando servidor…</p><p id="video-status" role="status"></p><script src="/video.js"></script><script>
+</style></head><body><header><strong>6D viewer</strong><select id="mode" aria-label="Displayed image"><option value="result">Pose / detection</option><option value="camera">Original camera</option><option value="cad">CAD + axes · black background</option></select><a href="/" target="vision-controls">Controls</a></header><main><img id="image" hidden alt="Latest pose or live image"><span id="empty">Waiting for an image…</span></main><p id="state" role="status">Querying server…</p><p id="video-status" role="status"></p><script src="/video.js"></script><script>
 'use strict';const image=document.getElementById('image'),empty=document.getElementById('empty'),state=document.getElementById('state'),mode=document.getElementById('mode');let source='',busy=false;
 function display(url){
  const live=url.includes('/stream')||url==='/api/cad/frame.jpg';
@@ -9,27 +9,27 @@ function display(url){
  if(live)window.VisionVideo.play(image,url.includes('/cad/')?'cad':url.includes('/tracking/')?'tracking':'camera');
  else{window.VisionVideo.stop(image);if(url)image.src=url;else image.removeAttribute('src');document.getElementById('video-status').textContent='';}
 }
-image.addEventListener('vision-frame',event=>{const d=event.detail;document.getElementById('video-status').textContent='Vídeo recibido: '+(d.fps===null?'…':d.fps.toFixed(1)+' FPS')+' · antigüedad estimada '+Math.round(d.ageMs)+' ms';});
+image.addEventListener('vision-frame',event=>{const d=event.detail;document.getElementById('video-status').textContent='Received video: '+(d.fps===null?'…':d.fps.toFixed(1)+' FPS')+' · antigüedad estimada '+Math.round(d.ageMs)+' ms';});
 image.addEventListener('vision-video-error',event=>{document.getElementById('video-status').textContent=event.detail.message;});
 
 async function refresh(){
  if(busy)return;busy=true;
  try{
-  const r=await fetch('/api/viewer/status');if(!r.ok)throw Error('Servidor no disponible');
+  const r=await fetch('/api/viewer/status');if(!r.ok)throw Error('Server unavailable');
   const d=await r.json(),t=d.tracking,raw=mode.value==='camera',cad=mode.value==='cad';
   document.querySelector('main').style.background=cad?'#000':'';
   if(cad)display(t.running&&t.state==='tracking'&&!t.cad_view_error?'/api/cad/frame.jpg':'');
   else if(raw)display(d.camera.running?'/api/camera/stream':'');
   else if(t.running)display(t.state==='tracking'?'/api/tracking/stream':d.camera.running?'/api/camera/stream':'');
   else display(d.job?'/files/'+d.job.id+'/'+(d.job.pose?'pose_overlay.png':'overlay.png'):'');
-  state.textContent=t.running&&!raw?(t.state==='tracking'?t.fps.toFixed(1)+' FPS · latencia '+Math.round(t.latency_s*1000)+' ms':t.state==='checking'?'Comprobando profundidad y estabilidad de la pose…':t.state==='redetecting'?'Recuperando pose FoundationPose…':t.state==='recovering'?(t.redetect_error||'Esperando nueva detección SAM…'):'Preparando seguimiento…'):d.message;
+  state.textContent=t.running&&!raw?(t.state==='tracking'?t.fps.toFixed(1)+' FPS · latency '+Math.round(t.latency_s*1000)+' ms':t.state==='checking'?'Checking depth and pose stability…':t.state==='redetecting'?'Recovering FoundationPose pose…':t.state==='recovering'?(t.redetect_error||'Waiting for a new SAM detection…'):'Preparing tracking…'):d.message;
   if(cad){
-   empty.textContent='Esperando una pose válida. Inicia el seguimiento rápido con FoundationPose.';
-   if(!t.running)state.textContent='Inicia el seguimiento rápido para ver el CAD y su triedro en tiempo real.';
-   else if(t.cad_view_error)state.textContent='No se pudo renderizar el CAD: '+t.cad_view_error;
-   else if(t.state==='tracking')state.textContent+=' · Centro del CAD: X rojo · Y verde · Z azul';
-  }else empty.textContent='Esperando una imagen…';
-  if(t.running&&t.state==='tracking'&&!raw&&t.redetect_interval_s)state.textContent+=' · respaldo SAM cada '+t.redetect_interval_s+' s'+(t.sam_running?' · comprobando en segundo plano':'');
+   empty.textContent='Waiting for a valid pose. Start fast tracking with FoundationPose.';
+   if(!t.running)state.textContent='Start fast tracking to view the CAD and its axes in real time.';
+   else if(t.cad_view_error)state.textContent='Failed to render the CAD: '+t.cad_view_error;
+   else if(t.state==='tracking')state.textContent+=' · CAD centre: X red · Y green · Z blue';
+  }else empty.textContent='Waiting for an image…';
+  if(t.running&&t.state==='tracking'&&!raw&&t.redetect_interval_s)state.textContent+=' · SAM backup every '+t.redetect_interval_s+' s'+(t.sam_running?' · checking in the background':'');
   if(t.error&&!raw)state.textContent=t.error;
  }catch(error){state.textContent=error.message;display('');}
  finally{busy=false;setTimeout(refresh,200);}

@@ -31,7 +31,7 @@ def main():
     import nvdiffrast.torch as dr
     from Utils import draw_posed_3d_box, draw_xyz_axis, set_seed
     logging.getLogger().setLevel(logging.ERROR)
-    if not torch.cuda.is_available():raise RuntimeError('El seguimiento requiere CUDA.')
+    if not torch.cuda.is_available():raise RuntimeError('Tracking requires CUDA.')
     torch.set_num_threads(4);set_seed(0)
     mesh=trimesh.load(args.seed/'object_mm.obj',force='mesh');mesh.apply_scale(.001)
     inputs=json.loads((args.seed/'inputs.json').read_text())
@@ -62,14 +62,14 @@ def main():
             started=time.perf_counter()
             with np.load(args.scratch/'frame.npz',allow_pickle=False) as frame:
                 rgb=frame['rgb'];depth=frame['depth'].astype(np.float32)*float(frame['scale'])*.001;K=frame['K']
-            if np.count_nonzero(depth>.001)<30:raise ValueError('Sin profundidad suficiente para seguir la pieza.')
+            if np.count_nonzero(depth>.001)<30:raise ValueError('Insufficient depth to track the part.')
             with torch.inference_mode():
                 pose=valid_pose(estimator.track_one(rgb=rgb,depth=depth,K=K,iteration=2))
             torch.cuda.synchronize()
             image=draw_posed_3d_box(K,img=rgb.copy(),ob_in_cam=pose@np.linalg.inv(to_origin),bbox=bounds)
             image=draw_xyz_axis(image,ob_in_cam=pose,scale=min(float(mesh.extents.max())/2,.1),K=K,thickness=2,is_input_rgb=True)
             ok,encoded=cv2.imencode('.jpg',cv2.cvtColor(image,cv2.COLOR_RGB2BGR),[cv2.IMWRITE_JPEG_QUALITY,85])
-            if not ok:raise RuntimeError('No se pudo codificar el visor de seguimiento.')
+            if not ok:raise RuntimeError('Failed to encode the tracking viewer.')
             (args.scratch/'preview.jpg').write_bytes(encoded.tobytes())
             transform=pose.copy();transform[:3,3]*=1000
             emit({'status':'frame','seconds':time.perf_counter()-started,

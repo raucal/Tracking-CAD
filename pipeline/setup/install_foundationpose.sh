@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Instala FoundationPose sin cambiar el entorno de SAM-6D ni el repositorio del modelo.
+# Install FoundationPose without changing the SAM-6D environment or model checkout.
 set -euo pipefail
 cad_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
 shared_python="${CAD_TRACKING_PYTHON}"
@@ -15,8 +15,8 @@ import site, sys
 Path(site.getsitepackages()[0], 'assembly_runtime.pth').write_text(sys.argv[1] + '\n')
 PY
 "$target/bin/python" -m pip install --no-cache-dir --constraint "$cad_root/pipeline/setup/constraints-foundationpose.txt" -r "$cad_root/pipeline/setup/requirements-foundationpose.txt"
-# FoundationPose utiliza las transformaciones de PyTorch3D y renderiza con nvdiffrast.
-# No necesita sus rasterizadores CUDA: la extensión CPU evita duplicar kernels.
+# FoundationPose uses PyTorch3D transforms and nvdiffrast rendering.
+# Its CUDA rasterizers are not required: the CPU extension avoids duplicate kernels.
 PYTORCH3D_FORCE_NO_CUDA=1 MAX_JOBS=2 CFLAGS=-g0 CXXFLAGS=-g0 \
     "$target/bin/python" -m pip install --no-cache-dir --constraint "$cad_root/pipeline/setup/constraints-foundationpose.txt" --no-build-isolation --no-deps \
     git+https://github.com/facebookresearch/pytorch3d.git@v0.7.9
@@ -29,4 +29,4 @@ cmake -S "${FOUNDATIONPOSE_ROOT}/mycpp" -B "$native/build-cadtracking" \
     '-DCMAKE_CXX_FLAGS_RELEASE=-O2 -DNDEBUG -g0'
 cmake --build "$native/build-cadtracking" --parallel 2
 cp "$native"/build-cadtracking/mycpp*.so "$native/"
-echo "FoundationPose instalado en $target. Se conservan los pesos existentes en FoundationPose/weights/."
+echo "FoundationPose installed in $target. Existing weights in FoundationPose/weights/ are preserved."

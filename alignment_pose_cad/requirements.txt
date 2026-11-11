@@ -1,0 +1,5 @@
+# Install in the configured SAM6D/UI environment, after its base requirements.
+# numpy/scipy are already supplied and constrained by the base runtime.
+ur-rtde==1.6.5
+numpy==1.26.4
+scipy==1.15.3

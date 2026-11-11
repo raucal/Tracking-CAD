@@ -11,7 +11,7 @@ import numpy as np
 from PIL import Image
 import torch
 
-ISM = Path(__file__).resolve().parents[3] / "CADTracking/models/SAM-6D/SAM-6D/Instance_Segmentation_Model"
+ISM = Path(__file__).resolve().parents[2] / "models/SAM-6D/SAM-6D/Instance_Segmentation_Model"
 sys.path.insert(0, str(ISM))
 from model.detector import Instance_Segmentation_Model  # noqa: E402
 from model.loss import PairwiseSimilarity  # noqa: E402

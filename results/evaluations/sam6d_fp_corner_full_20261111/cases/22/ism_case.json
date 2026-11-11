@@ -1,0 +1,358 @@
+{
+  "name": "22",
+  "frame_id": 22,
+  "status": "ok",
+  "device": "cuda",
+  "recognized": true,
+  "candidate": {
+    "scene_id": 0,
+    "image_id": 22,
+    "category_id": 1,
+    "part_key": "00_rear_mounting_plate",
+    "part_name": "rear_mounting",
+    "proposal_id": 0,
+    "score": 0.6194554567337036,
+    "semantic_score": 0.5271833539009094,
+    "appearance_score": 0.6040341854095459,
+    "geometry_score": 0.7848419547080994,
+    "visible_ratio": 0.6511628031730652,
+    "bbox": [
+      97,
+      44,
+      323,
+      412
+    ],
+    "time": 1.861314121983014
+  },
+  "visible_components": [
+    "00_rear_mounting_plate",
+    "03a_vertical_option_a",
+    "03b_vertical_option_b",
+    "05_control_board"
+  ],
+  "proposal_counts": {
+    "sam": 70,
+    "valid_depth_and_size": 8,
+    "semantic_selected": 8
+  },
+  "detections": 6,
+  "timing": {
+    "input_s": 0.007437023101374507,
+    "sam_s": 1.0290571260266006,
+    "proposal_filter_s": 0.0003816330572590232,
+    "dino_s": 0.04846102499868721,
+    "semantic_s": 0.0015715600457042456,
+    "assignment_s": 0.00013660592958331108,
+    "appearance_s": 0.00019315804820507765,
+    "projection_s": 0.0011140359565615654,
+    "geometry_s": 0.00023780297487974167,
+    "postprocess_s": 0.7725168970646337,
+    "comparison_export_s": 5.253904964774847e-05,
+    "processing_s": 1.861314121983014
+  },
+  "comparison_region_proposal_id": 0,
+  "comparison_scope": "primary_detection",
+  "comparisons": [
+    {
+      "part_key": "00_rear_mounting_plate",
+      "part_name": "rear_mounting",
+      "category_id": 1,
+      "semantic_score": 0.5271833539009094,
+      "best_template": 12,
+      "semantic_comparison_s": 0.00024435704108327627,
+      "compared_proposals": 8
+    },
+    {
+      "part_key": "01_front_housing",
+      "part_name": "front_housing",
+      "category_id": 2,
+      "semantic_score": 0.2135830968618393,
+      "best_template": 40,
+      "semantic_comparison_s": 0.00015598000027239323,
+      "compared_proposals": 8
+    },
+    {
+      "part_key": "02_control_panel",
+      "part_name": "hmi_panel",
+      "category_id": 3,
+      "semantic_score": 0.23852777481079102,
+      "best_template": 1,
+      "semantic_comparison_s": 0.00013359298463910818,
+      "compared_proposals": 8
+    },
+    {
+      "part_key": "03_option_cassette",
+      "part_name": "option_cassette",
+      "category_id": 4,
+      "semantic_score": 0.3547980785369873,
+      "best_template": 35,
+      "semantic_comparison_s": 0.00013525900430977345,
+      "compared_proposals": 8
+    },
+    {
+      "part_key": "03a_vertical_option_a",
+      "part_name": "sensor_module",
+      "category_id": 5,
+      "semantic_score": 0.18012289702892303,
+      "best_template": 2,
+      "semantic_comparison_s": 0.0001286909682676196,
+      "compared_proposals": 8
+    },
+    {
+      "part_key": "03b_vertical_option_b",
+      "part_name": "communications_module",
+      "category_id": 6,
+      "semantic_score": 0.16122256219387054,
+      "best_template": 1,
+      "semantic_comparison_s": 0.00015643599908798933,
+      "compared_proposals": 8
+    },
+    {
+      "part_key": "04_io_terminals",
+      "part_name": "io_terminals",
+      "category_id": 7,
+      "semantic_score": 0.2953905165195465,
+      "best_template": 12,
+      "semantic_comparison_s": 0.00013112009037286043,
+      "compared_proposals": 8
+    },
+    {
+      "part_key": "05_control_board",
+      "part_name": "control_board",
+      "category_id": 8,
+      "semantic_score": 0.38603806495666504,
+      "best_template": 21,
+      "semantic_comparison_s": 0.0001298630377277732,
+      "compared_proposals": 8
+    },
+    {
+      "part_key": "06_power_unit",
+      "part_name": "power_unit",
+      "category_id": 9,
+      "semantic_score": 0.26605215668678284,
+      "best_template": 12,
+      "semantic_comparison_s": 0.00012465601321309805,
+      "compared_proposals": 8
+    },
+    {
+      "part_key": "07_thermal_core",
+      "part_name": "thermal_core",
+      "category_id": 10,
+      "semantic_score": 0.23926441371440887,
+      "best_template": 40,
+      "semantic_comparison_s": 0.0001285279868170619,
+      "compared_proposals": 8
+    }
+  ],
+  "proposal_semantic_scores": [
+    [
+      0.5271833539009094,
+      0.2135830968618393,
+      0.23852777481079102,
+      0.3547980785369873,
+      0.18012289702892303,
+      0.16122256219387054,
+      0.2953905165195465,
+      0.38603806495666504,
+      0.26605215668678284,
+      0.23926441371440887
+    ],
+    [
+      0.12093716859817505,
+      0.24736681580543518,
+      0.19748711585998535,
+      0.19773165881633759,
+      0.2752869129180908,
+      0.2667117416858673,
+      0.18161556124687195,
+      0.1940256506204605,
+      0.1971256285905838,
+      0.21419969201087952
+    ],
+    [
+      0.1894557774066925,
+      0.1983398199081421,
+      0.21788203716278076,
+      0.2535801827907562,
+      0.28678566217422485,
+      0.2296253740787506,
+      0.23950813710689545,
+      0.229220911860466,
+      0.20468023419380188,
+      0.2052161991596222
+    ],
+    [
+      0.2442103624343872,
+      0.3691958785057068,
+      0.3320519030094147,
+      0.3210683763027191,
+      0.4586315155029297,
+      0.43837377429008484,
+      0.31773239374160767,
+      0.3421596884727478,
+      0.34892556071281433,
+      0.350935161113739
+    ],
+    [
+      0.16888701915740967,
+      0.1566086858510971,
+      0.1600601226091385,
+      0.18662594258785248,
+      0.22218525409698486,
+      0.2276630848646164,
+      0.16714991629123688,
+      0.16926681995391846,
+      0.17484843730926514,
+      0.21951310336589813
+    ],
+    [
+      0.19909368455410004,
+      0.21461443603038788,
+      0.330533504486084,
+      0.34484538435935974,
+      0.2440071403980255,
+      0.22845903038978577,
+      0.41416797041893005,
+      0.43818655610084534,
+      0.40401917695999146,
+      0.425312340259552
+    ],
+    [
+      0.20438061654567719,
+      0.34163421392440796,
+      0.3169266879558563,
+      0.33549997210502625,
+      0.3916653096675873,
+      0.36292409896850586,
+      0.3091995120048523,
+      0.324031263589859,
+      0.3232009708881378,
+      0.326890766620636
+    ],
+    [
+      0.20619384944438934,
+      0.33770522475242615,
+      0.31081804633140564,
+      0.2755506932735443,
+      0.4851747453212738,
+      0.44779855012893677,
+      0.2700953483581543,
+      0.2966248691082001,
+      0.3051871955394745,
+      0.3085396885871887
+    ]
+  ],
+  "proposal_best_templates": [
+    [
+      12,
+      40,
+      1,
+      35,
+      2,
+      1,
+      12,
+      21,
+      12,
+      40
+    ],
+    [
+      41,
+      5,
+      15,
+      5,
+      5,
+      0,
+      5,
+      26,
+      5,
+      5
+    ],
+    [
+      25,
+      13,
+      4,
+      7,
+      0,
+      4,
+      23,
+      17,
+      37,
+      4
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      41,
+      0,
+      41,
+      0,
+      0
+    ],
+    [
+      1,
+      36,
+      4,
+      38,
+      0,
+      0,
+      2,
+      3,
+      37,
+      37
+    ],
+    [
+      25,
+      36,
+      4,
+      11,
+      4,
+      4,
+      11,
+      7,
+      11,
+      7
+    ],
+    [
+      0,
+      41,
+      0,
+      15,
+      0,
+      0,
+      41,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      41,
+      0,
+      0,
+      0,
+      41,
+      41,
+      41,
+      0,
+      0
+    ]
+  ],
+  "region_filter": {
+    "enabled": true,
+    "rejected_detections": [
+      {
+        "cad_key": "03a_vertical_option_a",
+        "bbox": [
+          542,
+          470,
+          97,
+          9
+        ],
+        "reason": "vertical_option_a_lower_right_corner"
+      }
+    ]
+  }
+}

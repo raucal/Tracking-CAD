@@ -7,12 +7,18 @@
 /.cache/
 /.runtime/
 
-# Keep suite evidence, exported reports, and the latest-report symlink.
-# Individual analyses, interface sessions, and auxiliary diagnostics stay local.
+# Version only the two explicitly retained, self-contained evidence bundles.
+# All newly generated evaluations and exports remain local by default.
 /results/*
-!/results/suites/
-!/results/reports/
+!/results/index.html
 !/results/dashboard
+!/results/reports/
+/results/reports/*
+!/results/reports/sam6d_suite_20261102T150131Z/
+!/results/evaluations/
+/results/evaluations/*
+!/results/evaluations/sam6d_fp_corner_full_20261111/
+/results/evaluations/sam6d_fp_corner_full_20261111/runtime/
 
 # Compiled extensions and local build products; rebuild for the target runtime.
 /pipeline/native/
@@ -56,10 +62,10 @@ htmlcov/
 /config/*.local.json
 /config/*.local.json.*
 
-# Local logs; suite/report logs remain eligible as result evidence.
+# Local logs; only selected evidence-bundle logs are retained.
 *.log
-!/results/suites/**/*.log
-!/results/reports/**/*.log
+!/results/reports/sam6d_suite_20261102T150131Z/**/*.log
+!/results/evaluations/sam6d_fp_corner_full_20261111/**/*.log
 
 # Editor/OS files.
 .vscode/
@@ -72,3 +78,9 @@ Thumbs.db
 
 # Protected legacy SDU checkout; the official submodule is used instead.
 /models/FoundationPose/
+
+# Temporary presentation backups and test artifacts.
+*.before-*.html
+*.bak
+*.tmp
+/test-results.xml

@@ -38,7 +38,7 @@ def score_hypotheses(model, detections, patches, batch, semantic, views):
     geometry = torch.as_tensor(geometry, device=appearance.device).expand_as(appearance)
     final = (semantic[0] + appearance + geometry * visible) / (2 + visible)
     if not torch.isfinite(final).all():
-        raise ValueError("Una hipótesis produjo un score no finito; no se sustituirá por cero.")
+        raise ValueError("A hypothesis produced a non-finite score; it will not be replaced with zero.")
     return {"score": final, "semantic": semantic[0], "appearance": appearance,
             "geometry": geometry, "visible_ratio": visible}
 
@@ -85,18 +85,18 @@ def main():
     parser.add_argument("--reference-cache", type=Path, default=path("reference_cache"))
     args = parser.parse_args()
     if args.allow_score_drift and not args.view_details:
-        parser.error("--allow-score-drift requiere --view-details")
+        parser.error("--allow-score-drift requires --view-details")
     source = args.run.resolve()
     original = json.loads((source / "run.json").read_text())
     manifest_path, manifest_base = run_dataset(original, source)
     if hash_files([manifest_path]) != original["manifest_sha256"]:
-        raise ValueError("El manifest cambió desde la inferencia original.")
+        raise ValueError("The manifest changed after the original inference.")
     manifest = json.loads(manifest_path.read_text())
     by_name = {f["name"]: f for f in manifest["frames"]}
     corrections = display_names()
     target = source / ("ism_view_details.json" if args.view_details else "all_cad_primary_region.json")
     if target.exists():
-        raise ValueError("El diagnóstico ya existe; se preserva el resultado anterior.")
+        raise ValueError("The diagnostic already exists; the previous result is preserved.")
     device = choose_device(args.device)
     torch.set_num_threads(args.threads)
     torch.manual_seed(0)
@@ -124,7 +124,7 @@ def main():
         with measured(report["setup_timing"], "references_s", device):
             report["references"] = load_references(model, manifest["parts"], manifest_base, device, args.reference_cache)
         for number, frame in enumerate(original["frames"], 1):
-            print(f"[{number}/{len(original['frames'])}] Scores de los diez CAD: {frame['name']}", flush=True)
+            print(f"[{number}/{len(original['frames'])}] All ten CAD scores: {frame['name']}", flush=True)
             folder = source / "cases" / frame["name"]
             saved = json.loads((folder / "detection_ism.json").read_text())
             candidate = frame["candidate"]
@@ -132,7 +132,7 @@ def main():
                 report["frames"].append({"name": frame["name"], "status": "no_saved_region", "scores": []})
                 continue
             if not saved or saved[0]["part_key"] != candidate["part_key"] or saved[0]["score"] != candidate["score"]:
-                raise ValueError("La región primaria guardada no coincide con la predicción original.")
+                raise ValueError("The saved primary region does not match the original prediction.")
             image_start = time.perf_counter()
             with Image.open(folder / "rgb.png") as source_rgb:
                 rgb = source_rgb.convert("RGB")
@@ -173,7 +173,7 @@ def main():
             original_hypothesis = next(s["score"] for s in scores if s["part_key"] == candidate["part_key"])
             delta = abs(original_hypothesis - candidate["score"])
             if delta > 0.001 and not args.allow_score_drift:
-                raise ValueError(f"El score de la clase original cambió {delta:.6f}; revisar referencias antes de publicar.")
+                raise ValueError(f"The original class score changed by {delta:.6f}; review references before publishing.")
             rgb.crop((int(x), int(y), int(x + w), int(y + h))).save(folder / "primary_region.png")
             timing["total_s"] = time.perf_counter() - image_start
             report["frames"].append({"name": frame["name"], "status": "scored", "bbox": candidate["bbox"],

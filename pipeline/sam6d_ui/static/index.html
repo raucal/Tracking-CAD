@@ -1,104 +1,104 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CAD Tracking · Visión 6D · SAM6D y FoundationPose</title><link rel="stylesheet" href="style.css"><script src="identification.js"></script></head><body>
-<header><div class="brand">V<span>Visión 6D <small>SAM6D · FoundationPose · RealSense</small></span></div><span id="device">Comprobando entorno…</span></header>
-<main><p id="startup-state" class="note" role="status">Consultando precarga de modelos…</p><button type="button" class="secondary" id="open-viewer">Abrir visor compacto</button><div class="heading"><div><span class="eyebrow">PRUEBA INTERACTIVA LOCAL</span><h1>Imagen, vídeo y pose 6D.</h1><p>Localiza tu CAD, estima su pose y captura RGB-D desde la RealSense.</p></div><span class="badge">SAM / FastSAM · PEM / FoundationPose</span></div>
-<div class="layout"><section class="panel"><h2>1. Introduce los archivos</h2>
-<form id="form"><label>Ubicación de los archivos<select id="file-source"><option value="server">Archivos del servidor</option><option value="upload">Subir archivos desde el navegador</option><option value="realsense">Intel RealSense en directo</option></select></label><p id="source-note" class="note">Explora las carpetas del servidor. Los archivos se leen y procesan en ese servidor.</p>
-<p class="note">Para grabar vídeo o exportar una imagen de la cámara, selecciona «Intel RealSense en directo» y pulsa «Abrir cámara».</p>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CAD Tracking · 6D vision · SAM6D and FoundationPose</title><link rel="stylesheet" href="style.css"><script src="identification.js"></script></head><body>
+<header><div class="brand">V<span>6D vision <small>SAM6D · FoundationPose · RealSense</small></span></div><span id="device">Checking environment…</span></header>
+<main><p id="startup-state" class="note" role="status">Checking model preload…</p><button type="button" class="secondary" id="open-viewer">Open compact viewer</button><div class="heading"><div><span class="eyebrow">LOCAL INTERACTIVE TEST</span><h1>Image, video and 6D pose.</h1><p>Locate your CAD, estimate its pose and capture RGB-D with RealSense.</p></div><span class="badge">SAM / FastSAM · PEM / FoundationPose</span></div>
+<div class="layout"><section class="panel"><h2>1. Select input files</h2>
+<form id="form"><label>File location<select id="file-source"><option value="server">Server files</option><option value="upload">Upload files from browser</option><option value="realsense">Live Intel RealSense</option></select></label><p id="source-note" class="note">Browse server directories. Files are read and processed on that server.</p>
+<p class="note">To record video or export a camera image, select Live Intel RealSense and click Open camera.</p>
 <section id="live-camera" hidden aria-labelledby="live-title">
-  <h3 id="live-title">Intel RealSense · RGB-D en directo</h3>
-  <div class="row"><label>Cámara<select id="camera-device"><option value="">Buscar cámaras…</option></select></label>
-    <label>Resolución<select id="camera-resolution"><option value="640x480">640 × 480</option><option value="1280x720">1280 × 720</option></select></label></div>
-  <div class="row"><label>Fotogramas por segundo<select id="camera-fps"><option value="15">15 FPS</option><option value="30">30 FPS</option></select></label>
-    <label>Origen del CAD<select id="camera-cad-source"><option value="server">Archivo del servidor</option><option value="upload">Subir desde el navegador</option><option value="assembly">Identificar pieza del ensamblaje</option></select></label></div>
-  <p id="assembly-identification-note" class="note" hidden>Selecciona el ensamblaje. SAM6D compara sus piezas y acepta la mejor coincidencia que supere el umbral. En seguimiento rápido vuelve a identificar en cada intervalo SAM y cambia de CAD al confirmar otra pieza. Requiere plantillas preparadas, RGB-D y milímetros.</p>
+  <h3 id="live-title">Intel RealSense · live RGB-D</h3>
+  <div class="row"><label>Camera<select id="camera-device"><option value="">Discover cameras…</option></select></label>
+    <label>Resolution<select id="camera-resolution"><option value="640x480">640 × 480</option><option value="1280x720">1280 × 720</option></select></label></div>
+  <div class="row"><label>Frames per second<select id="camera-fps"><option value="15">15 FPS</option><option value="30">30 FPS</option></select></label>
+    <label>CAD source<select id="camera-cad-source"><option value="server">Server file</option><option value="upload">Upload from browser</option><option value="assembly">Identify assembly part</option></select></label></div>
+  <p id="assembly-identification-note" class="note" hidden>Select an assembly. SAM6D compares its parts and accepts the best match above threshold. Fast tracking re-identifies at each SAM interval and changes CAD after confirming another part. Requires prepared templates, RGB-D and millimetres.</p>
   <section id="identified-component" hidden role="status" aria-live="polite" aria-atomic="true">
-    <small id="identified-component-title">Identificación del ensamblaje</small>
-    <strong id="identified-component-name">Pendiente de identificar</strong>
+    <small id="identified-component-title">Assembly identification</small>
+    <strong id="identified-component-name">Awaiting identification</strong>
     <div id="identified-component-meta"></div>
-    <p id="identified-component-detail" class="note">Abre la cámara e inicia la identificación.</p>
+    <p id="identified-component-detail" class="note">Open the camera and start identification.</p>
   </section>
-  <div class="camera-actions"><button type="button" class="secondary" id="camera-start">Abrir cámara</button>
-    <button type="button" class="secondary" id="camera-stop" disabled>Cerrar cámara</button>
-    <button type="button" class="secondary" id="camera-capture" disabled>Guardar captura RGB-D</button>
-    <button type="button" class="secondary" id="camera-export" disabled>Exportar imagen PNG</button>
-    <button type="button" class="secondary" id="record-start" disabled>Grabar vídeo</button>
-    <button type="button" class="secondary" id="record-stop" disabled>Detener grabación</button></div>
-  <p id="camera-status" class="note" role="status">La cámara se abre únicamente al pulsar Abrir cámara.</p>
-  <img id="camera-preview" hidden alt="Imagen en directo de la Intel RealSense"><p id="camera-video-status" class="note" role="status"></p>
-  <div class="camera-actions"><button type="button" class="primary" id="live-detection-start" disabled>Iniciar detección en directo</button>
-    <button type="button" class="secondary" id="live-detection-stop" disabled>Detener detección</button></div>
-  <p id="live-detection-status" class="note" role="status">Analiza imágenes actuales de la cámara, una cada vez. La frecuencia depende del modelo.</p>
-  <p class="note">Elige un CAD o activa la identificación de pieza del ensamblaje antes de iniciar. El último resultado permanece visible durante el siguiente análisis.
-    Si activas pose 6D, se estima también en cada ciclo. Cada análisis guarda un trabajo en resultados.</p>
-  <h3>Seguimiento rápido de pose · FoundationPose</h3>
-  <label>Comprobación SAM de respaldo (segundos; 0 desactiva el respaldo)<input id="sam-refresh" type="number" min="0" max="3600" step="0.5" value="10"></label>
-  <p id="sam-refresh-note" class="note">SAM/FastSAM se ejecuta al perder el seguimiento y, por defecto, cada 10 segundos como respaldo. FoundationPose sigue continuamente; solo hay una detección SAM pendiente.</p>
-  <div class="camera-actions"><button type="button" class="primary" id="fast-start" disabled>Localizar e iniciar seguimiento rápido</button><button type="button" class="secondary" id="fast-stop" disabled>Detener seguimiento</button></div>
-  <p id="fast-status" class="note" role="status">Selecciona FoundationPose. Se localiza la pieza una vez y después se sigue su pose con modelos persistentes en GPU.</p>
-  <img id="fast-preview" hidden alt="Pose seguida sobre el fotograma actual de la RealSense" style="width:100%;border-radius:8px">
+  <div class="camera-actions"><button type="button" class="secondary" id="camera-start">Open camera</button>
+    <button type="button" class="secondary" id="camera-stop" disabled>Close camera</button>
+    <button type="button" class="secondary" id="camera-capture" disabled>Save RGB-D capture</button>
+    <button type="button" class="secondary" id="camera-export" disabled>Export PNG image</button>
+    <button type="button" class="secondary" id="record-start" disabled>Record video</button>
+    <button type="button" class="secondary" id="record-stop" disabled>Stop recording</button></div>
+  <p id="camera-status" class="note" role="status">The camera opens only when Open camera is clicked.</p>
+  <img id="camera-preview" hidden alt="Live image from Intel RealSense"><p id="camera-video-status" class="note" role="status"></p>
+  <div class="camera-actions"><button type="button" class="primary" id="live-detection-start" disabled>Start live detection</button>
+    <button type="button" class="secondary" id="live-detection-stop" disabled>Stop detection</button></div>
+  <p id="live-detection-status" class="note" role="status">Analyse current camera images one at a time. Frequency depends on the model.</p>
+  <p class="note">Select a CAD or enable assembly part identification before starting. The previous result stays visible during the next analysis.
+    If 6D pose is enabled, it is estimated in every cycle. Each analysis saves a result job.</p>
+  <h3>Fast pose tracking · FoundationPose</h3>
+  <label>Backup SAM check (seconds; 0 disables periodic checks)<input id="sam-refresh" type="number" min="0" max="3600" step="0.5" value="10"></label>
+  <p id="sam-refresh-note" class="note">SAM/FastSAM runs after tracking loss and, by default, every 10 seconds as a backup. FoundationPose tracks continuously; only one SAM detection can be pending.</p>
+  <div class="camera-actions"><button type="button" class="primary" id="fast-start" disabled>Locate and start fast tracking</button><button type="button" class="secondary" id="fast-stop" disabled>Stop tracking</button></div>
+  <p id="fast-status" class="note" role="status">Select FoundationPose. The part is localized once, then tracked using persistent GPU models.</p>
+  <img id="fast-preview" hidden alt="Tracked pose on the current RealSense frame" style="width:100%;border-radius:8px">
   <section id="cad-view" hidden aria-labelledby="cad-view-title">
-    <h3 id="cad-view-title">CAD y triedro sobre fondo negro</h3>
-    <img id="cad-preview" hidden alt="CAD con su pose actual y triedro de referencia sobre fondo negro">
-    <p id="cad-view-status" class="note" role="status">Esperando una pose válida.</p>
-    <p class="note">Triedro centrado en el CAD, igual que en la cámara: X rojo · Y verde · Z azul. Ambas vistas usan el mismo origen y longitud de ejes.</p>
+    <h3 id="cad-view-title">CAD and axes on a black background</h3>
+    <img id="cad-preview" hidden alt="Current CAD pose and coordinate axes on a black background">
+    <p id="cad-view-status" class="note" role="status">Waiting for a valid pose.</p>
+    <p class="note">CAD-centred axes, matching the camera: X red · Y green · Z blue. Both views use the same origin and axis length.</p>
   </section>
-  <p id="fast-video-status" class="note" role="status"></p><p class="note">Los FPS y la latencia del seguimiento se miden en el servidor; debajo del vídeo se indica la frecuencia recibida y su antigüedad estimada. La primera localización tarda más. En identificación de ensamblaje el CAD se actualiza automáticamente; con un CAD fijo, detén y vuelve a localizar para cambiar de pieza. El score del resultado inferior corresponde a la detección inicial; el estado del seguimiento muestra la pieza y el último refresco.</p>
+  <p id="fast-video-status" class="note" role="status"></p><p class="note">Tracking FPS and latency are measured on the server; the received rate and estimated age appear below the video. Initial localization takes longer. Assembly identification updates CAD automatically; for a fixed CAD, stop and relocalize to change parts. The result score refers to initial detection; tracking status shows the current part and latest refresh.</p>
   <div id="camera-downloads" class="camera-actions"></div>
-  <label>Grabaciones guardadas<select id="camera-recording"><option value="">Selecciona una grabación</option></select></label>
-  <button type="button" class="secondary" id="track-recording" disabled>Seguir grabación con FoundationPose</button>
-  <video id="camera-playback" hidden controls preload="none" aria-label="Grabación RGB guardada"></video>
-  <p class="note">El directo continúa durante el análisis. «Analizar fotograma actual» toma un nuevo par RGB-D.
-    Los vídeos conservan profundidad uint16, calibración y marcas de tiempo. El seguimiento se procesa sobre la grabación detenida.</p>
+  <label>Saved recordings<select id="camera-recording"><option value="">Select a recording</option></select></label>
+  <button type="button" class="secondary" id="track-recording" disabled>Track recording with FoundationPose</button>
+  <video id="camera-playback" hidden controls preload="none" aria-label="Saved RGB recording"></video>
+  <p class="note">Live video continues during analysis. Analyse current frame captures a fresh RGB-D pair.
+    Videos preserve uint16 depth, calibration and timestamps. Tracking processes a stopped recording.</p>
 </section>
 
-<div class="files"><div class="file source-server"><label for="server-rgb">Imagen RGB en disassembly-0</label><input id="server-rgb" type="text" placeholder="Selecciona un archivo del servidor"><button type="button" class="secondary browse-server" data-kind="rgb" data-target="server-rgb">Explorar servidor</button><small>JPG o PNG</small></div><label class="file source-upload" hidden>Imagen RGB <input id="rgb" type="file" accept=".jpg,.jpeg,.png"><small>JPG o PNG · hasta 4 megapíxeles</small></label>
-<div class="file source-server"><label>Ensamblaje<select id="assembly-select"></select></label><label>Pieza del ensamblaje<select id="assembly-part"></select></label><label for="server-cad">Modelo CAD en disassembly-0</label><input id="server-cad" type="text" placeholder="Selecciona un archivo del servidor"><button type="button" class="secondary browse-server" data-kind="cad" data-target="server-cad">Explorar servidor</button><small>STL, OBJ o PLY</small></div><label class="file source-upload" hidden>Modelo CAD <input id="cad" type="file" accept=".stl,.obj,.ply"><small>STL, OBJ o PLY. Exporta STEP a una malla primero.</small></label></div>
-<div class="row"><label>Modo de análisis<select id="mode"><option value="rgb">Solo RGB · detección 2D</option><option value="rgbd">RGB-D · SAM-6D con geometría</option></select></label>
-<label>Unidades del CAD<select id="cad_units"><option value="mm">Milímetros</option><option value="cm">Centímetros</option><option value="m">Metros</option></select></label></div>
-<div class="row"><label>Motor de pose 6D<select id="pose-backend"><option value="pem">SAM-6D · PEM</option><option value="foundationpose">FoundationPose</option></select></label>
-<div><p id="foundationpose-state" class="note">Comprobando FoundationPose…</p></div></div>
-<label id="pose-init-choice" hidden>Inicialización de FoundationPose<select id="pose-initialization"><option value="automatic">Automática con SAM6D</option><option value="manual">Caja manual · solo FoundationPose</option></select></label>
+<div class="files"><div class="file source-server"><label for="server-rgb">RGB image on server</label><input id="server-rgb" type="text" placeholder="Select a server file"><button type="button" class="secondary browse-server" data-kind="rgb" data-target="server-rgb">Browse server</button><small>JPG or PNG</small></div><label class="file source-upload" hidden>RGB image <input id="rgb" type="file" accept=".jpg,.jpeg,.png"><small>JPG or PNG · up to 4 megapixels</small></label>
+<div class="file source-server"><label>Assembly<select id="assembly-select"></select></label><label>Assembly part<select id="assembly-part"></select></label><label for="server-cad">CAD model on server</label><input id="server-cad" type="text" placeholder="Select a server file"><button type="button" class="secondary browse-server" data-kind="cad" data-target="server-cad">Browse server</button><small>STL, OBJ or PLY</small></div><label class="file source-upload" hidden>CAD model <input id="cad" type="file" accept=".stl,.obj,.ply"><small>STL, OBJ or PLY. Export STEP to a mesh first.</small></label></div>
+<div class="row"><label>Analysis mode<select id="mode"><option value="rgb">RGB only · 2D detection</option><option value="rgbd">RGB-D · SAM-6D with geometry</option></select></label>
+<label>CAD units<select id="cad_units"><option value="mm">Millimetres</option><option value="cm">Centimetres</option><option value="m">Metres</option></select></label></div>
+<div class="row"><label>6D pose backend<select id="pose-backend"><option value="pem">SAM-6D · PEM</option><option value="foundationpose">FoundationPose</option></select></label>
+<div><p id="foundationpose-state" class="note">Checking FoundationPose…</p></div></div>
+<label id="pose-init-choice" hidden>FoundationPose initialization<select id="pose-initialization"><option value="automatic">Automatic with SAM6D</option><option value="manual">Manual box · FoundationPose only</option></select></label>
 <section id="manual-panel" hidden style="padding:14px;border:1px solid #c9ded5;border-radius:8px;margin:14px 0">
-<h3>Selecciona el objeto manualmente</h3>
-<p class="note">Selecciona RealSense y abre la cámara. Captura un par RGB-D y arrastra sobre la imagen para marcar la caja. RGB, profundidad y calibración quedan congelados juntos para esta selección.</p>
-<button type="button" class="secondary" id="manual-freeze">Capturar fotograma para seleccionar</button>
-<canvas id="manual-canvas" hidden style="display:block;width:100%;height:auto;touch-action:none;margin-top:12px;cursor:crosshair" aria-label="Arrastra para seleccionar la caja del objeto"></canvas>
-<p id="manual-status" class="note" role="status">Sin selección. La caja se usa como máscara rectangular aproximada, incluyendo su fondo; ajústala al contorno.</p>
-<button type="button" class="primary" id="manual-estimate" disabled>Estimar pose desde mi caja</button>
+<h3>Select the object manually</h3>
+<p class="note">Select RealSense and open the camera. Capture an RGB-D pair and drag a box around the object. RGB, depth and calibration are frozen together for this selection.</p>
+<button type="button" class="secondary" id="manual-freeze">Capture frame for selection</button>
+<canvas id="manual-canvas" hidden style="display:block;width:100%;height:auto;touch-action:none;margin-top:12px;cursor:crosshair" aria-label="Drag to select the object box"></canvas>
+<p id="manual-status" class="note" role="status">No selection. The box is an approximate rectangular mask, including its background; fit it to the object boundary.</p>
+<button type="button" class="primary" id="manual-estimate" disabled>Estimate pose from my box</button>
 </section>
-<p id="backend-note" class="note">La pose PEM es opcional. FoundationPose recibe automáticamente la máscara SAM/FastSAM: no necesitas dibujar una caja a mano. Exige RGB-D y CUDA.</p>
-<div class="row"><label>Generador de máscaras<select id="segmentor"><option value="sam">SAM ViT-H · calidad</option><option value="fastsam">FastSAM-x · velocidad</option></select></label><label class="pose-toggle"><input id="pose" type="checkbox"> Estimar pose 6D<small>Requiere RGB-D y CUDA</small></label></div>
-<p id="mode-note" class="note">Sin profundidad: score de similitud y apariencia. No es el score geométrico completo de SAM-6D.</p>
-<div id="depth-files" hidden class="files"><div class="file source-server"><label for="server-depth">Profundidad alineada en disassembly-0</label><input id="server-depth" type="text" placeholder="Selecciona un archivo del servidor"><button type="button" class="secondary browse-server" data-kind="depth" data-target="server-depth">Explorar servidor</button><small>Raw uint16 .npy o PNG de 16 bits</small></div><label class="file source-upload" hidden>Profundidad alineada <input id="depth" type="file" accept=".npy,.png"><small>Raw uint16 .npy o PNG de 16 bits; no coloreada.</small></label>
-<div class="file source-server"><label for="server-camera">Calibración de cámara en disassembly-0</label><input id="server-camera" type="text" placeholder="Selecciona un archivo del servidor"><button type="button" class="secondary browse-server" data-kind="camera" data-target="server-camera">Explorar servidor</button><small>JSON de la cámara</small></div><label class="file source-upload" hidden>Calibración de cámara <input id="camera" type="file" accept=".json"><small>JSON SAM-6D/BOP o metadatos RealSense de tus capturas.</small></label></div>
-<details><summary>2. Configuración avanzada</summary><div class="advanced">
-<label>Dispositivo<select id="device-select"><option value="cuda">GPU CUDA</option><option value="auto">Automático</option><option value="cpu">CPU</option></select></label>
+<p id="backend-note" class="note">PEM pose is optional. FoundationPose automatically receives the SAM/FastSAM mask; no manual box is needed. Requires RGB-D and CUDA.</p>
+<div class="row"><label>Mask generator<select id="segmentor"><option value="sam">SAM ViT-H · quality</option><option value="fastsam">FastSAM-x · speed</option></select></label><label class="pose-toggle"><input id="pose" type="checkbox"> Estimate 6D pose<small>Requires RGB-D and CUDA</small></label></div>
+<p id="mode-note" class="note">Without depth: similarity and appearance score, not the full SAM-6D geometric score.</p>
+<div id="depth-files" hidden class="files"><div class="file source-server"><label for="server-depth">Aligned depth on server</label><input id="server-depth" type="text" placeholder="Select a server file"><button type="button" class="secondary browse-server" data-kind="depth" data-target="server-depth">Browse server</button><small>Raw uint16 .npy or 16-bit PNG</small></div><label class="file source-upload" hidden>Aligned depth <input id="depth" type="file" accept=".npy,.png"><small>Raw uint16 .npy or 16-bit PNG; not colourized.</small></label>
+<div class="file source-server"><label for="server-camera">Camera calibration on server</label><input id="server-camera" type="text" placeholder="Select a server file"><button type="button" class="secondary browse-server" data-kind="camera" data-target="server-camera">Browse server</button><small>Camera JSON</small></div><label class="file source-upload" hidden>Camera calibration <input id="camera" type="file" accept=".json"><small>SAM-6D/BOP JSON or capture RealSense metadata.</small></label></div>
+<details><summary>2. Advanced settings</summary><div class="advanced">
+<label>Device<select id="device-select"><option value="cuda">GPU CUDA</option><option value="auto">Automatic</option><option value="cpu">CPU</option></select></label>
 <label>SAM<select id="backbone"><option value="vit_h">ViT-H</option><option value="vit_l">ViT-L</option><option value="vit_b">ViT-B</option></select></label>
-<label>Score mínimo guardado<input id="min_score" type="number" min="0" max="1" step="0.01" value="0.30"></label>
-<label>Score para aceptar y dibujar<input id="confidence" type="number" min="0" max="1" step="0.01" value="0.50"></label>
-<label>Estabilidad de máscara SAM<input id="stability" type="number" min="0" max="1" step="0.01" value="0.97"></label>
-<label>Calidad de máscara SAM · IoU<input id="pred_iou" type="number" min="0" max="1" step="0.01" value="0.88"></label>
-<label>Puntos por lote<input id="points_per_batch" type="number" min="1" max="128" step="1" value="64"></label>
-<label>FastSAM · confianza de propuestas<input id="fastsam_conf" type="number" min="0.01" max="1" step="0.01" value="0.05"></label>
-<label>FastSAM · IoU de propuestas<input id="fastsam_iou" type="number" min="0.01" max="1" step="0.01" value="0.90"></label>
-<label>NMS entre detecciones<input id="nms" type="number" min="0" max="1" step="0.01" value="0.25"></label>
-<label>Agregación de vistas CAD<select id="aggregation"><option value="avg_5">Media de las 5 mejores</option><option value="mean">Media de las 42</option><option value="median">Mediana</option><option value="max">Mejor vista</option></select></label></div>
-<p class="note">DINOv2 ViT-L/14 y 42 vistas CAD. La confianza de propuestas FastSAM es un filtro interno; el score final SAM-6D se calcula después de comparar con el CAD.</p></details>
-<button id="run" type="submit" class="primary">Detectar objeto</button></form>
-<details class="example"><summary>Probar con los datos del ensamblaje</summary><label>Captura<select id="example-frame"></select></label><label>CAD a comparar<select id="example-cad"></select></label>
-<button id="run-example" class="secondary">Ejecutar ejemplo</button><p class="note">Usa la captura RGB-D y el CAD seleccionado del disco. No utiliza el nombre de la foto para decidir si coincide.</p></details>
+<label>Minimum retained score<input id="min_score" type="number" min="0" max="1" step="0.01" value="0.30"></label>
+<label>Acceptance and drawing score<input id="confidence" type="number" min="0" max="1" step="0.01" value="0.50"></label>
+<label>SAM mask stability<input id="stability" type="number" min="0" max="1" step="0.01" value="0.97"></label>
+<label>SAM mask quality · IoU<input id="pred_iou" type="number" min="0" max="1" step="0.01" value="0.88"></label>
+<label>Points per batch<input id="points_per_batch" type="number" min="1" max="128" step="1" value="64"></label>
+<label>FastSAM · proposal confidence<input id="fastsam_conf" type="number" min="0.01" max="1" step="0.01" value="0.05"></label>
+<label>FastSAM · proposal IoU<input id="fastsam_iou" type="number" min="0.01" max="1" step="0.01" value="0.90"></label>
+<label>Detection NMS<input id="nms" type="number" min="0" max="1" step="0.01" value="0.25"></label>
+<label>CAD view aggregation<select id="aggregation"><option value="avg_5">Mean of top 5</option><option value="mean">Mean of all 42</option><option value="median">Median</option><option value="max">Best view</option></select></label></div>
+<p class="note">DINOv2 ViT-L/14 and 42 CAD views. FastSAM proposal confidence is an internal filter; the final SAM-6D score is computed after comparing against the CAD.</p></details>
+<button id="run" type="submit" class="primary">Detect object</button></form>
+<details class="example"><summary>Try prepared assembly data</summary><label>Capture<select id="example-frame"></select></label><label>CAD to compare<select id="example-cad"></select></label>
+<button id="run-example" class="secondary">Run example</button><p class="note">Uses the selected saved RGB-D capture and CAD. The photograph filename is not used to decide a match.</p></details>
 </section>
-<section class="panel result"><h2>3. Resultado</h2><div id="progress" role="status" aria-live="polite">Selecciona una imagen y un CAD para empezar.</div>
-<div id="output" hidden><div class="metrics"><div><small id="score-label">Score de detección SAM6D</small><strong id="score"></strong></div><div><small>Inferencia y pose</small><strong id="time"></strong></div><div><small>Dispositivo real</small><strong id="actual-device"></strong></div></div>
-<p id="result-note" class="note"></p><div class="pictures"><figure><img id="original" alt="Imagen original"><figcaption>Original</figcaption></figure><figure><img id="overlay" alt="Máscaras aceptadas de SAM-6D"><figcaption>Detecciones por encima del umbral</figcaption></figure></div>
-<div id="pose-output" hidden><h3>Pose 6D · CAD respecto a la cámara</h3><img id="pose-overlay" alt="Proyección del CAD con la pose estimada"><pre id="pose-values"></pre></div><div id="downloads"></div><video id="tracking-video" hidden controls preload="none" aria-label="Seguimiento de pose FoundationPose"></video><div class="table-wrap"><table><thead><tr><th>Región</th><th>Score</th><th>Estado</th><th>Máscara</th></tr></thead><tbody id="detections"></tbody></table></div>
-<details><summary>Tiempos y configuración de esta ejecución</summary><pre id="technical"></pre></details></div>
+<section class="panel result"><h2>3. Result</h2><div id="progress" role="status" aria-live="polite">Select an image and a CAD to start.</div>
+<div id="output" hidden><div class="metrics"><div><small id="score-label">SAM6D detection score</small><strong id="score"></strong></div><div><small>Inference and pose</small><strong id="time"></strong></div><div><small>Actual device</small><strong id="actual-device"></strong></div></div>
+<p id="result-note" class="note"></p><div class="pictures"><figure><img id="original" alt="Original image"><figcaption>Original</figcaption></figure><figure><img id="overlay" alt="Accepted SAM-6D masks"><figcaption>Detections above threshold</figcaption></figure></div>
+<div id="pose-output" hidden><h3>6D pose · CAD relative to camera</h3><img id="pose-overlay" alt="CAD projection with estimated pose"><pre id="pose-values"></pre></div><div id="downloads"></div><video id="tracking-video" hidden controls preload="none" aria-label="FoundationPose tracking"></video><div class="table-wrap"><table><thead><tr><th>Region</th><th>Score</th><th>Status</th><th>Mask</th></tr></thead><tbody id="detections"></tbody></table></div>
+<details><summary>Timings and run configuration</summary><pre id="technical"></pre></details></div>
 </section>
 </div>
-<section class="panel help"><h2>Qué significan los modos</h2><div class="help-grid"><div><h3>Solo RGB</h3><p>Localiza el CAD usando máscaras, similitud visual y apariencia. No requiere cámara calibrada ni profundidad. El score es la media de similitud y apariencia.</p></div>
-<div><h3>RGB-D</h3><p>Añade profundidad y calibración para evaluar coherencia geométrica con la fórmula ISM de SAM-6D. RGB y profundidad deben estar alineados.</p></div>
-<div><h3>Pose 6D · PEM o FoundationPose</h3><p>Activa «Estimar pose 6D» para ejecutar el motor elegido tras la detección. FoundationPose recibe una máscara inicial de SAM/FastSAM y también permite seguir una grabación RGB-D. No hace falta marcar una caja manualmente. La caja 3D dibujada en el resultado muestra la proyección de la pose estimada. Devuelve rotación y traslación en milímetros respecto a la cámara. Requiere profundidad alineada, calibración y CUDA; la proyección permite revisar la estimación.</p></div></div>
-<p class="note">Los scores no son probabilidades calibradas. Comparar con un único CAD no demuestra que sea la única clase posible. La primera ejecución incluye carga de modelos y, para un CAD nuevo, renderizado y preparación de referencias; las siguientes reutilizan esas cachés.</p></section>
+<section class="panel help"><h2>What the modes mean</h2><div class="help-grid"><div><h3>RGB only</h3><p>Locate CAD using masks, visual similarity and appearance. No calibrated camera or depth is required. The score is the mean of similarity and appearance.</p></div>
+<div><h3>RGB-D</h3><p>Adds depth and calibration to evaluate geometric consistency using the SAM-6D ISM formula. RGB and depth must be aligned.</p></div>
+<div><h3>6D pose · PEM or FoundationPose</h3><p>Enable Estimate 6D pose to run the selected backend after detection. FoundationPose receives a SAM/FastSAM mask and can track RGB-D recordings. No manual box is needed. The 3D box projects the estimated pose for inspection. Rotation and translation are returned in millimetres in camera coordinates. Requires aligned depth, calibration and CUDA.</p></div></div>
+<p class="note">Scores are not calibrated probabilities. Matching a single CAD does not establish that it is the only possible class. The first run includes model loading and, for a new CAD, rendering and reference preparation; later runs reuse these caches.</p></section>
 
-</main><dialog id="server-browser" aria-labelledby="browser-title"><div class="browser-heading"><h2 id="browser-title">Archivos del servidor</h2><button id="browser-close" type="button" aria-label="Cerrar selector">Cerrar</button></div><p class="note">Selecciona una carpeta y después el archivo. Este selector muestra el disco del servidor.</p><div class="browser-path"><input id="browser-path" type="text" aria-label="Carpeta del servidor"><button type="button" id="browser-go">Ir</button><button type="button" id="browser-up">Subir carpeta</button></div><div class="browser-shortcuts"><button type="button" data-location="">Proyectos</button><button type="button" data-location="PDDL/DINOPDDL/realsense_photos">Fotos y profundidad</button><button type="button" data-location="PDDL/Assembly CAD/Assembly parts">CAD del ensamblaje</button></div><p id="browser-status" role="status"></p><div id="browser-entries"></div></dialog><script src="video.js"></script><script src="app.js"></script><script src="camera.js"></script><script src="manual.js"></script></body></html>
+</main><dialog id="server-browser" aria-labelledby="browser-title"><div class="browser-heading"><h2 id="browser-title">Server files</h2><button id="browser-close" type="button" aria-label="Close selector">Close</button></div><p class="note">Select a directory, then a file. This browser shows the server disk.</p><div class="browser-path"><input id="browser-path" type="text" aria-label="Server directory"><button type="button" id="browser-go">Go</button><button type="button" id="browser-up">Parent directory</button></div><div class="browser-shortcuts"><button type="button" data-location="">Projects</button><button type="button" data-location="PDDL/DINOPDDL/realsense_photos">Photos and depth</button><button type="button" data-location="PDDL/Assembly CAD/Assembly parts">Assembly CAD</button></div><p id="browser-status" role="status"></p><div id="browser-entries"></div></dialog><script src="video.js"></script><script src="app.js"></script><script src="camera.js"></script><script src="manual.js"></script><script src="/alignment_pose_cad/panel.js"></script></body></html>

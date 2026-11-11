@@ -1,4 +1,4 @@
-"""Una única sesión RealSense compartida por vista previa, capturas y vídeo."""
+"""One RealSense session shared by preview, captures and video."""
 from .service import CameraService
 
 __all__ = ['CameraService']

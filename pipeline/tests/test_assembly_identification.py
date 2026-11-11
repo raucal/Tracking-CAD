@@ -7,6 +7,7 @@ import sys
 import tempfile
 from types import SimpleNamespace
 import unittest
+import pytest
 from unittest.mock import patch, Mock
 
 import numpy as np
@@ -29,19 +30,19 @@ class CatalogTests(unittest.TestCase):
             stack.enter_context(patch.object(catalog, 'PREPARED', root))
             stack.enter_context(patch.object(catalog, 'load_registry', return_value={
                 'default':'demo', 'assemblies':{'demo':{'assembly_id':'demo','parts':{'one':{}}}}}))
-            with self.assertRaisesRegex(ValueError, 'Faltan las plantillas'):
+            with self.assertRaisesRegex(ValueError, 'Missing templates'):
                 catalog.assembly_catalog('demo')
             manifest = root/'manifest.json'
             manifest.write_text(json.dumps({'assembly_id':'other','parts':[]}))
-            with self.assertRaisesRegex(ValueError, 'no corresponde'):
+            with self.assertRaisesRegex(ValueError, 'does not belong'):
                 catalog.assembly_catalog('demo')
             manifest.write_text(json.dumps({'assembly_id':'demo','parts':[]}))
-            with self.assertRaisesRegex(ValueError, 'todas las piezas'):
+            with self.assertRaisesRegex(ValueError, 'every assembly part'):
                 catalog.assembly_catalog('demo')
             part={'key':'one', 'source_stl':'one.stl', 'sam_ply':'one.ply',
                   'sam_template_dir':'templates','T_local_from_sam_mm':np.eye(4).tolist()}
             manifest.write_text(json.dumps({'assembly_id':'demo','parts':[part]}))
-            with self.assertRaisesRegex(ValueError, 'Faltan mallas o plantillas'):
+            with self.assertRaisesRegex(ValueError, 'Missing meshes or templates'):
                 catalog.assembly_catalog('demo')
             for filename in ('one.stl','one.ply'):
                 (root/filename).touch()
@@ -50,7 +51,7 @@ class CatalogTests(unittest.TestCase):
                 for i in range(42):
                     (root/'templates'/f'{prefix}_{i}.png').touch()
             self.assertEqual(catalog.assembly_catalog('demo'),(manifest,[part]))
-            with self.assertRaisesRegex(ValueError, 'desconocido'):
+            with self.assertRaisesRegex(ValueError, 'unknown'):
                 catalog.assembly_catalog('../../unknown')
 
 
@@ -115,6 +116,7 @@ class EngineIdentificationTests(unittest.TestCase):
         self.assertFalse(result['pose_6d_estimated'])
 
 
+@pytest.mark.usefixtures("app_dataset")
 class SubmissionTests(unittest.TestCase):
     def test_automatic_request_uses_catalog_without_requiring_a_user_cad(self):
         import trimesh

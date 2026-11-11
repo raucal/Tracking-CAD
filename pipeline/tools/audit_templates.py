@@ -15,7 +15,7 @@ import trimesh
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, default=PREPARED / "manifest.json")
-    parser.add_argument("--output-dir", type=Path, help="Guardar lámina y auditoría solo si se solicita")
+    parser.add_argument("--output-dir", type=Path, help="Save overview and audit only when requested")
     args = parser.parse_args()
     base = args.manifest.resolve().parent
     data = json.loads(args.manifest.read_text())
@@ -25,14 +25,14 @@ def main():
     draw = ImageDraw.Draw(sheet)
     font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
     font = ImageFont.truetype(font_path, 15)
-    draw.text((15, 12), "Referencias CAD usadas por SAM-6D / DINOv2", font=font, fill="black")
-    draw.text((15, 36), "Selección de 4 de las 42 vistas por pieza · Render CPU: 256 px, 16 muestras", font=font, fill="black")
+    draw.text((15, 12), "CAD references used by SAM-6D / DINOv2", font=font, fill="black")
+    draw.text((15, 36), "4 of 42 views per part · CPU rendering: 256 px, 16 samples", font=font, fill="black")
     report = {"scope": "rendered_geometry_not_detection_accuracy", "parts": [], "views_checked": 0}
     for row, part in enumerate(data["parts"]):
         folder = base / part["sam_template_dir"]
         metadata = json.loads((folder / "render_metadata.json").read_text())
         if metadata["views"] != 42 or metadata["xyz_unit"] != "mm":
-            raise ValueError("Unidades o vistas no válidas.")
+            raise ValueError("Invalid units or views.")
         mesh = trimesh.load_mesh(base / part["sam_ply"], process=False)
         points = []
         for index in range(42):
@@ -40,9 +40,9 @@ def main():
             with Image.open(folder / f"mask_{index}.png") as source:
                 mask = np.array(source) > 0
             if xyz.dtype != np.float32 or xyz.shape != (*mask.shape, 3) or not np.isfinite(xyz).all() or not np.any(mask):
-                raise ValueError(f"XYZ/máscara no válidos: {part['key']}, {index}")
+                raise ValueError(f"Invalid XYZ/mask: {part['key']}, {index}")
             if not np.all(xyz[~mask] == 0):
-                raise ValueError("Hay coordenadas de objeto en el fondo.")
+                raise ValueError("Object coordinates exist in the background.")
             valid = xyz[mask]
             points.extend(valid[random.choice(len(valid), size=min(8, len(valid)), replace=False)])
             report["views_checked"] += 1

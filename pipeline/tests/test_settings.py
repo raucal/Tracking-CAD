@@ -47,7 +47,10 @@ class SettingsTests(unittest.TestCase):
     def test_suite_cli_overrides_profile_without_running_gpu(self):
         with tempfile.TemporaryDirectory() as folder:
             config=Path(folder)/'suite.json';config.write_text(json.dumps({'confidence':.63,'stability_score':.94,'segmentor':'fastsam','frame':['control_board']}))
-            result=subprocess.run(['bash',str(ROOT/'run.sh'),'suite','run','--config',str(config),'--confidence','.71','--dry-run'],capture_output=True,text=True)
+            manifest=Path(folder)/'manifest.json'
+            manifest.write_text(json.dumps({'schema_version':1,'assembly_name':'printed_assembly','parts':[], 'frames':[{'name':'control_board'}]}))
+            env=dict(os.environ, CAD_TRACKING_PYTHON=sys.executable)
+            result=subprocess.run(['bash',str(ROOT/'run.sh'),'suite','run','--manifest',str(manifest),'--config',str(config),'--confidence','.71','--dry-run'],env=env,capture_output=True,text=True)
             self.assertEqual(result.returncode,0,result.stderr)
             self.assertIn('--confidence 0.71',result.stdout)
             self.assertIn('--stability-score 0.94',result.stdout)

@@ -1,0 +1,366 @@
+{
+  "status": "predicted",
+  "error": null,
+  "timing": {
+    "input_s": 0.008867244934663177,
+    "sam_s": 1.0457482340279967,
+    "proposal_filter_s": 0.0006101240869611502,
+    "dino_s": 0.10135874093975872,
+    "semantic_s": 0.0015340690733864903,
+    "assignment_s": 0.0001702799927443266,
+    "appearance_s": 0.00021116097923368216,
+    "projection_s": 0.0012540750904008746,
+    "geometry_s": 0.00023660296574234962,
+    "postprocess_s": 1.4868698460049927,
+    "comparison_export_s": 6.885197944939137e-05,
+    "processing_s": 2.6470925110625103,
+    "ranking_query_features_s": 0.011470051016658545,
+    "ranking_all_cads_s": 0.0030345850391313434,
+    "foundationpose_pipeline_s": 0.9807363209547475,
+    "total_s": 3.8058870349777862
+  },
+  "scores": [
+    {
+      "cad_key": "05_control_board",
+      "category_id": 8,
+      "status": "scored",
+      "error": null,
+      "best_template": 20,
+      "score": 0.5072498321533203,
+      "semantic": 0.44388362765312195,
+      "appearance": 0.5384114980697632,
+      "geometry": 0.5473152995109558,
+      "visible_ratio": 0.8037974834442139,
+      "raw_rank": 1,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 1,
+      "semantic_rank": 1,
+      "foundationpose_score": 60.21875,
+      "foundationpose_status": "estimated",
+      "foundationpose_reason": null
+    },
+    {
+      "cad_key": "06_power_unit",
+      "category_id": 9,
+      "status": "scored",
+      "error": null,
+      "best_template": 6,
+      "score": 0.4780469238758087,
+      "semantic": 0.40474921464920044,
+      "appearance": 0.49096953868865967,
+      "geometry": 0.6171724200248718,
+      "visible_ratio": 0.43396225571632385,
+      "raw_rank": 2,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 2,
+      "semantic_rank": 2,
+      "foundationpose_score": null,
+      "foundationpose_status": "not_evaluated",
+      "foundationpose_reason": "Only ISM winner registered; FP does not select CAD"
+    },
+    {
+      "cad_key": "04_io_terminals",
+      "category_id": 7,
+      "status": "scored",
+      "error": null,
+      "best_template": 9,
+      "score": 0.40059199929237366,
+      "semantic": 0.38435956835746765,
+      "appearance": 0.42945313453674316,
+      "geometry": 0.3544696271419525,
+      "visible_ratio": 0.2738095223903656,
+      "raw_rank": 3,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 3,
+      "semantic_rank": 3,
+      "foundationpose_score": null,
+      "foundationpose_status": "not_evaluated",
+      "foundationpose_reason": "Only ISM winner registered; FP does not select CAD"
+    },
+    {
+      "cad_key": "03_option_cassette",
+      "category_id": 4,
+      "status": "scored",
+      "error": null,
+      "best_template": 38,
+      "score": 0.3758465647697449,
+      "semantic": 0.3477711081504822,
+      "appearance": 0.40304386615753174,
+      "geometry": 0.3839448094367981,
+      "visible_ratio": 0.10843373835086823,
+      "raw_rank": 4,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 4,
+      "semantic_rank": 4,
+      "foundationpose_score": null,
+      "foundationpose_status": "not_evaluated",
+      "foundationpose_reason": "Only ISM winner registered; FP does not select CAD"
+    },
+    {
+      "cad_key": "01_front_housing",
+      "category_id": 2,
+      "status": "scored",
+      "error": null,
+      "best_template": 6,
+      "score": 0.3291727900505066,
+      "semantic": 0.2614569664001465,
+      "appearance": 0.36684659123420715,
+      "geometry": 0.6471171379089355,
+      "visible_ratio": 0.09448818862438202,
+      "raw_rank": 5,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 5,
+      "semantic_rank": 8,
+      "foundationpose_score": null,
+      "foundationpose_status": "not_evaluated",
+      "foundationpose_reason": "Only ISM winner registered; FP does not select CAD"
+    },
+    {
+      "cad_key": "07_thermal_core",
+      "category_id": 10,
+      "status": "scored",
+      "error": null,
+      "best_template": 22,
+      "score": 0.3266976475715637,
+      "semantic": 0.27038484811782837,
+      "appearance": 0.38389459252357483,
+      "geometry": 0.3201768100261688,
+      "visible_ratio": 0.1355932205915451,
+      "raw_rank": 6,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 6,
+      "semantic_rank": 6,
+      "foundationpose_score": null,
+      "foundationpose_status": "not_evaluated",
+      "foundationpose_reason": "Only ISM winner registered; FP does not select CAD"
+    },
+    {
+      "cad_key": "00_rear_mounting_plate",
+      "category_id": 1,
+      "status": "scored",
+      "error": null,
+      "best_template": 3,
+      "score": 0.32330602407455444,
+      "semantic": 0.2620832026004791,
+      "appearance": 0.3813033699989319,
+      "geometry": 0.35233524441719055,
+      "visible_ratio": 0.1111111119389534,
+      "raw_rank": 7,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 7,
+      "semantic_rank": 7,
+      "foundationpose_score": null,
+      "foundationpose_status": "not_evaluated",
+      "foundationpose_reason": "Only ISM winner registered; FP does not select CAD"
+    },
+    {
+      "cad_key": "02_control_panel",
+      "category_id": 3,
+      "status": "scored",
+      "error": null,
+      "best_template": 1,
+      "score": 0.30156296491622925,
+      "semantic": 0.23727647960186005,
+      "appearance": 0.3407604992389679,
+      "geometry": 0.7475891709327698,
+      "visible_ratio": 0.05624999850988388,
+      "raw_rank": 8,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 8,
+      "semantic_rank": 10,
+      "foundationpose_score": null,
+      "foundationpose_status": "not_evaluated",
+      "foundationpose_reason": "Only ISM winner registered; FP does not select CAD"
+    },
+    {
+      "cad_key": "03a_vertical_option_a",
+      "category_id": 5,
+      "status": "scored",
+      "error": null,
+      "best_template": 0,
+      "score": 0.29412412643432617,
+      "semantic": 0.29158973693847656,
+      "appearance": 0.3140723705291748,
+      "geometry": 0.035818152129650116,
+      "visible_ratio": 0.06741572916507721,
+      "raw_rank": 9,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 9,
+      "semantic_rank": 5,
+      "foundationpose_score": null,
+      "foundationpose_status": "not_evaluated",
+      "foundationpose_reason": "Only ISM winner registered; FP does not select CAD"
+    },
+    {
+      "cad_key": "03b_vertical_option_b",
+      "category_id": 6,
+      "status": "scored",
+      "error": null,
+      "best_template": 0,
+      "score": 0.27056685090065,
+      "semantic": 0.25265511870384216,
+      "appearance": 0.31135323643684387,
+      "geometry": 0.036736566573381424,
+      "visible_ratio": 0.09782608598470688,
+      "raw_rank": 10,
+      "eligible": true,
+      "filter_reason": null,
+      "rank": 10,
+      "semantic_rank": 9,
+      "foundationpose_score": null,
+      "foundationpose_status": "not_evaluated",
+      "foundationpose_reason": "Only ISM winner registered; FP does not select CAD"
+    }
+  ],
+  "pose": {
+    "status": "estimated",
+    "backend": "foundationpose",
+    "poses": [
+      {
+        "R": [
+          [
+            -0.10800444334745407,
+            0.07309198379516602,
+            -0.9914597868919373
+          ],
+          [
+            0.9900233149528503,
+            0.09868528693914413,
+            -0.10057269036769867
+          ],
+          [
+            0.09049143642187119,
+            -0.9924307465553284,
+            -0.08302123099565506
+          ]
+        ],
+        "t_mm": [
+          -56.72623589634895,
+          -53.07978391647339,
+          661.4377498626709
+        ],
+        "T_camera_from_model_mm": [
+          [
+            -0.10800444334745407,
+            0.07309198379516602,
+            -0.9914597868919373,
+            -56.72623589634895
+          ],
+          [
+            0.9900233149528503,
+            0.09868528693914413,
+            -0.10057269036769867,
+            -53.07978391647339
+          ],
+          [
+            0.09049143642187119,
+            -0.9924307465553284,
+            -0.08302123099565506,
+            661.4377498626709
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "T_camera_from_input_cad_mm": [
+          [
+            -0.10800444334745407,
+            0.07309198379516602,
+            -0.9914597868919373,
+            70.07569685578346
+          ],
+          [
+            0.9900233149528503,
+            0.09868528693914413,
+            -0.10057269036769867,
+            -41.58618616312742
+          ],
+          [
+            0.09049143642187119,
+            -0.9924307465553284,
+            -0.08302123099565506,
+            687.0339498594403
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "translation_unit": "mm",
+        "frame": "OpenCV camera: X right, Y down, Z forward",
+        "pose_score": 60.21875
+      }
+    ],
+    "best_index": 0,
+    "pose_score_is_probability": false,
+    "device": "cuda",
+    "accuracy_validated": false,
+    "models_reused": true,
+    "worker_pid": 1332968,
+    "timing": {
+      "model_load_s": 0.011849130038172007,
+      "pose_inference_s": 0.7253516039345413,
+      "total_s": 0.8499940460314974
+    },
+    "rpc_seconds": 0.850554283009842
+  },
+  "original_assignment_winner": "05_control_board",
+  "predicted_cad": "05_control_board",
+  "semantic_winner": "05_control_board",
+  "margin": 0.029202908277511597,
+  "region_filter": {
+    "enabled": true,
+    "rejected_detections": [
+      {
+        "cad_key": "03a_vertical_option_a",
+        "bbox": [
+          542,
+          469,
+          97,
+          10
+        ],
+        "reason": "vertical_option_a_lower_right_corner"
+      },
+      {
+        "cad_key": "03a_vertical_option_a",
+        "bbox": [
+          576,
+          331,
+          22,
+          67
+        ],
+        "reason": "vertical_option_a_lower_right_corner"
+      },
+      {
+        "cad_key": "03a_vertical_option_a",
+        "bbox": [
+          565,
+          401,
+          48,
+          65
+        ],
+        "reason": "vertical_option_a_lower_right_corner"
+      }
+    ]
+  },
+  "primary_mask_sha256": "a05d5567a2ccf0b0c42058ee7cd6fa112fcc04b712d6a58ee730b91ca1b98b51",
+  "frame_id": 5,
+  "name": "control_far_ro",
+  "rgb_path": "/home/raca/projects/CADTracking/data/prepared/sam6d/frames/control_far_ro/rgb.png",
+  "expected_cad": "05_control_board",
+  "correct": true
+}

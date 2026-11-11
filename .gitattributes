@@ -1,0 +1,11 @@
+# Maintained source has consistent line endings.
+*.py text eol=lf
+*.js text eol=lf
+*.html text eol=lf
+*.md text eol=lf
+*.sh text eol=lf
+*.yml text eol=lf
+
+# Evidence and upstream originals retain exact bytes, including CSV CRLF.
+/results/** -text -whitespace
+/integrations/foundationpose_sdu/files/** -text -whitespace

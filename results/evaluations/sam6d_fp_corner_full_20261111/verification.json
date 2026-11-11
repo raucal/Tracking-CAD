@@ -1,0 +1,5476 @@
+{
+  "created_utc": "2026-11-11T09:44:56.456433+00:00",
+  "checks": [
+    {
+      "check": "manifest_snapshot_hash",
+      "passed": true
+    },
+    {
+      "check": "original_manifest_unchanged",
+      "passed": true
+    },
+    {
+      "check": "mesh_unchanged:00_rear_mounting_plate",
+      "passed": true
+    },
+    {
+      "check": "mesh_unchanged:01_front_housing",
+      "passed": true
+    },
+    {
+      "check": "mesh_unchanged:02_control_panel",
+      "passed": true
+    },
+    {
+      "check": "mesh_unchanged:03_option_cassette",
+      "passed": true
+    },
+    {
+      "check": "mesh_unchanged:03a_vertical_option_a",
+      "passed": true
+    },
+    {
+      "check": "mesh_unchanged:03b_vertical_option_b",
+      "passed": true
+    },
+    {
+      "check": "mesh_unchanged:04_io_terminals",
+      "passed": true
+    },
+    {
+      "check": "mesh_unchanged:05_control_board",
+      "passed": true
+    },
+    {
+      "check": "mesh_unchanged:06_power_unit",
+      "passed": true
+    },
+    {
+      "check": "mesh_unchanged:07_thermal_core",
+      "passed": true
+    },
+    {
+      "check": "checkpoint_unchanged:checkpoints/sam-6d-pem-base.pth",
+      "passed": true
+    },
+    {
+      "check": "checkpoint_unchanged:checkpoints/sam_vit_h_4b8939.pth",
+      "passed": true
+    },
+    {
+      "check": "checkpoint_unchanged:checkpoints/dinov2_vitl14_pretrain.pth",
+      "passed": true
+    },
+    {
+      "check": "checkpoint_unchanged:checkpoints/foundationpose/2024-01-11-20-02-45/model_best.pth",
+      "passed": true
+    },
+    {
+      "check": "checkpoint_unchanged:checkpoints/foundationpose/2023-10-28-18-33-37/model_best.pth",
+      "passed": true
+    },
+    {
+      "check": "unique_result_ids",
+      "passed": true
+    },
+    {
+      "check": "0:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "0:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "0:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "0:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "0:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "0:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "0:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "0:margin",
+      "passed": true
+    },
+    {
+      "check": "0:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "0:score_formula",
+      "passed": true
+    },
+    {
+      "check": "0:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "0:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "0:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "0:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "0:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "0:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "0:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "0:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "0:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "0:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "0:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "0:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "0:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "0:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "0:pose_score",
+      "passed": true
+    },
+    {
+      "check": "0:visualizations",
+      "passed": true
+    },
+    {
+      "check": "1:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "1:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "1:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "1:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "1:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "1:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "1:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "1:margin",
+      "passed": true
+    },
+    {
+      "check": "1:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "1:score_formula",
+      "passed": true
+    },
+    {
+      "check": "1:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "1:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "1:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "1:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "1:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "1:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "1:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "1:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "1:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "1:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "1:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "1:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "1:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "1:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "1:pose_score",
+      "passed": true
+    },
+    {
+      "check": "1:visualizations",
+      "passed": true
+    },
+    {
+      "check": "2:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "2:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "2:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "2:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "2:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "2:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "2:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "2:margin",
+      "passed": true
+    },
+    {
+      "check": "2:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "2:score_formula",
+      "passed": true
+    },
+    {
+      "check": "2:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "2:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "2:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "2:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "2:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "2:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "2:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "2:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "2:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "2:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "2:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "2:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "2:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "2:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "2:pose_score",
+      "passed": true
+    },
+    {
+      "check": "2:visualizations",
+      "passed": true
+    },
+    {
+      "check": "3:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "3:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "3:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "3:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "3:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "3:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "3:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "3:margin",
+      "passed": true
+    },
+    {
+      "check": "3:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "3:score_formula",
+      "passed": true
+    },
+    {
+      "check": "3:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "3:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "3:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "3:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "3:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "3:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "3:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "3:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "3:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "3:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "3:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "3:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "3:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "3:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "3:pose_score",
+      "passed": true
+    },
+    {
+      "check": "3:visualizations",
+      "passed": true
+    },
+    {
+      "check": "4:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "4:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "4:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "4:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "4:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "4:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "4:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "4:margin",
+      "passed": true
+    },
+    {
+      "check": "4:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "4:score_formula",
+      "passed": true
+    },
+    {
+      "check": "4:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "4:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "4:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "4:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "4:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "4:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "4:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "4:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "4:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "4:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "4:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "4:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "4:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "4:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "4:pose_score",
+      "passed": true
+    },
+    {
+      "check": "4:visualizations",
+      "passed": true
+    },
+    {
+      "check": "5:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "5:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "5:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "5:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "5:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "5:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "5:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "5:margin",
+      "passed": true
+    },
+    {
+      "check": "5:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "5:score_formula",
+      "passed": true
+    },
+    {
+      "check": "5:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "5:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "5:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "5:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "5:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "5:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "5:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "5:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "5:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "5:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "5:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "5:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "5:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "5:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "5:pose_score",
+      "passed": true
+    },
+    {
+      "check": "5:visualizations",
+      "passed": true
+    },
+    {
+      "check": "6:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "6:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "6:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "6:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "6:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "6:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "6:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "6:margin",
+      "passed": true
+    },
+    {
+      "check": "6:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "6:score_formula",
+      "passed": true
+    },
+    {
+      "check": "6:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "6:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "6:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "6:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "6:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "6:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "6:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "6:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "6:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "6:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "6:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "6:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "6:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "6:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "6:pose_score",
+      "passed": true
+    },
+    {
+      "check": "6:visualizations",
+      "passed": true
+    },
+    {
+      "check": "7:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "7:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "7:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "7:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "7:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "7:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "7:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "7:margin",
+      "passed": true
+    },
+    {
+      "check": "7:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "7:score_formula",
+      "passed": true
+    },
+    {
+      "check": "7:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "7:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "7:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "7:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "7:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "7:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "7:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "7:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "7:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "7:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "7:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "7:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "7:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "7:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "7:pose_score",
+      "passed": true
+    },
+    {
+      "check": "7:visualizations",
+      "passed": true
+    },
+    {
+      "check": "8:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "8:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "8:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "8:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "8:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "8:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "8:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "8:margin",
+      "passed": true
+    },
+    {
+      "check": "8:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "8:score_formula",
+      "passed": true
+    },
+    {
+      "check": "8:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "8:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "8:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "8:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "8:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "8:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "8:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "8:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "8:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "8:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "8:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "8:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "8:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "8:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "8:pose_score",
+      "passed": true
+    },
+    {
+      "check": "8:visualizations",
+      "passed": true
+    },
+    {
+      "check": "9:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "9:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "9:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "9:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "9:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "9:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "9:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "9:margin",
+      "passed": true
+    },
+    {
+      "check": "9:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "9:score_formula",
+      "passed": true
+    },
+    {
+      "check": "9:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "9:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "9:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "9:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "9:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "9:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "9:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "9:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "9:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "9:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "9:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "9:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "9:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "9:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "9:pose_score",
+      "passed": true
+    },
+    {
+      "check": "9:visualizations",
+      "passed": true
+    },
+    {
+      "check": "10:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "10:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "10:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "10:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "10:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "10:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "10:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "10:margin",
+      "passed": true
+    },
+    {
+      "check": "10:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "10:score_formula",
+      "passed": true
+    },
+    {
+      "check": "10:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "10:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "10:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "10:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "10:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "10:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "10:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "10:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "10:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "10:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "10:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "10:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "10:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "10:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "10:pose_score",
+      "passed": true
+    },
+    {
+      "check": "10:visualizations",
+      "passed": true
+    },
+    {
+      "check": "11:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "11:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "11:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "11:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "11:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "11:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "11:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "11:margin",
+      "passed": true
+    },
+    {
+      "check": "11:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "11:score_formula",
+      "passed": true
+    },
+    {
+      "check": "11:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "11:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "11:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "11:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "11:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "11:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "11:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "11:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "11:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "11:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "11:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "11:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "11:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "11:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "11:pose_score",
+      "passed": true
+    },
+    {
+      "check": "11:visualizations",
+      "passed": true
+    },
+    {
+      "check": "12:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "12:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "12:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "12:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "12:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "12:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "12:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "12:margin",
+      "passed": true
+    },
+    {
+      "check": "12:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "12:score_formula",
+      "passed": true
+    },
+    {
+      "check": "12:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "12:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "12:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "12:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "12:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "12:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "12:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "12:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "12:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "12:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "12:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "12:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "12:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "12:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "12:pose_score",
+      "passed": true
+    },
+    {
+      "check": "12:visualizations",
+      "passed": true
+    },
+    {
+      "check": "13:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "13:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "13:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "13:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "13:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "13:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "13:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "13:margin",
+      "passed": true
+    },
+    {
+      "check": "13:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "13:score_formula",
+      "passed": true
+    },
+    {
+      "check": "13:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "13:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "13:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "13:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "13:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "13:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "13:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "13:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "13:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "13:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "13:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "13:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "13:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "13:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "13:pose_score",
+      "passed": true
+    },
+    {
+      "check": "13:visualizations",
+      "passed": true
+    },
+    {
+      "check": "14:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "14:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "14:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "14:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "14:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "14:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "14:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "14:margin",
+      "passed": true
+    },
+    {
+      "check": "14:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "14:score_formula",
+      "passed": true
+    },
+    {
+      "check": "14:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "14:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "14:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "14:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "14:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "14:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "14:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "14:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "14:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "14:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "14:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "14:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "14:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "14:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "14:pose_score",
+      "passed": true
+    },
+    {
+      "check": "14:visualizations",
+      "passed": true
+    },
+    {
+      "check": "15:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "15:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "15:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "15:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "15:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "15:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "15:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "15:margin",
+      "passed": true
+    },
+    {
+      "check": "15:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "15:score_formula",
+      "passed": true
+    },
+    {
+      "check": "15:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "15:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "15:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "15:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "15:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "15:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "15:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "15:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "15:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "15:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "15:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "15:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "15:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "15:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "15:pose_score",
+      "passed": true
+    },
+    {
+      "check": "15:visualizations",
+      "passed": true
+    },
+    {
+      "check": "16:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "16:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "16:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "16:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "16:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "16:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "16:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "16:margin",
+      "passed": true
+    },
+    {
+      "check": "16:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "16:score_formula",
+      "passed": true
+    },
+    {
+      "check": "16:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "16:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "16:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "16:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "16:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "16:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "16:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "16:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "16:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "16:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "16:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "16:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "16:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "16:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "16:pose_score",
+      "passed": true
+    },
+    {
+      "check": "16:visualizations",
+      "passed": true
+    },
+    {
+      "check": "17:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "17:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "17:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "17:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "17:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "17:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "17:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "17:margin",
+      "passed": true
+    },
+    {
+      "check": "17:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "17:score_formula",
+      "passed": true
+    },
+    {
+      "check": "17:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "17:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "17:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "17:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "17:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "17:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "17:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "17:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "17:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "17:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "17:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "17:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "17:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "17:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "17:pose_score",
+      "passed": true
+    },
+    {
+      "check": "17:visualizations",
+      "passed": true
+    },
+    {
+      "check": "18:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "18:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "18:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "18:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "18:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "18:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "18:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "18:margin",
+      "passed": true
+    },
+    {
+      "check": "18:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "18:score_formula",
+      "passed": true
+    },
+    {
+      "check": "18:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "18:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "18:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "18:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "18:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "18:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "18:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "18:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "18:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "18:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "18:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "18:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "18:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "18:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "18:pose_score",
+      "passed": true
+    },
+    {
+      "check": "18:visualizations",
+      "passed": true
+    },
+    {
+      "check": "19:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "19:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "19:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "19:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "19:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "19:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "19:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "19:margin",
+      "passed": true
+    },
+    {
+      "check": "19:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "19:score_formula",
+      "passed": true
+    },
+    {
+      "check": "19:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "19:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "19:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "19:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "19:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "19:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "19:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "19:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "19:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "19:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "19:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "19:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "19:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "19:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "19:pose_score",
+      "passed": true
+    },
+    {
+      "check": "19:visualizations",
+      "passed": true
+    },
+    {
+      "check": "20:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "20:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "20:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "20:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "20:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "20:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "20:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "20:margin",
+      "passed": true
+    },
+    {
+      "check": "20:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "20:score_formula",
+      "passed": true
+    },
+    {
+      "check": "20:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "20:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "20:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "20:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "20:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "20:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "20:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "20:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "20:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "20:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "20:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "20:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "20:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "20:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "20:pose_score",
+      "passed": true
+    },
+    {
+      "check": "20:visualizations",
+      "passed": true
+    },
+    {
+      "check": "21:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "21:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "21:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "21:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "21:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "21:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "21:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "21:margin",
+      "passed": true
+    },
+    {
+      "check": "21:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "21:score_formula",
+      "passed": true
+    },
+    {
+      "check": "21:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "21:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "21:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "21:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "21:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "21:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "21:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "21:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "21:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "21:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "21:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "21:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "21:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "21:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "21:pose_score",
+      "passed": true
+    },
+    {
+      "check": "21:visualizations",
+      "passed": true
+    },
+    {
+      "check": "22:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "22:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "22:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "22:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "22:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "22:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "22:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "22:margin",
+      "passed": true
+    },
+    {
+      "check": "22:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "22:score_formula",
+      "passed": true
+    },
+    {
+      "check": "22:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "22:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "22:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "22:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "22:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "22:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "22:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "22:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "22:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "22:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "22:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "22:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "22:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "22:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "22:pose_score",
+      "passed": true
+    },
+    {
+      "check": "22:visualizations",
+      "passed": true
+    },
+    {
+      "check": "23:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "23:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "23:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "23:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "23:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "23:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "23:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "23:margin",
+      "passed": true
+    },
+    {
+      "check": "23:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "23:score_formula",
+      "passed": true
+    },
+    {
+      "check": "23:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "23:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "23:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "23:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "23:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "23:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "23:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "23:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "23:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "23:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "23:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "23:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "23:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "23:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "23:pose_score",
+      "passed": true
+    },
+    {
+      "check": "23:visualizations",
+      "passed": true
+    },
+    {
+      "check": "24:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "24:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "24:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "24:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "24:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "24:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "24:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "24:margin",
+      "passed": true
+    },
+    {
+      "check": "24:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "24:score_formula",
+      "passed": true
+    },
+    {
+      "check": "24:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "24:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "24:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "24:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "24:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "24:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "24:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "24:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "24:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "24:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "24:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "24:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "24:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "24:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "24:pose_score",
+      "passed": true
+    },
+    {
+      "check": "24:visualizations",
+      "passed": true
+    },
+    {
+      "check": "25:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "25:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "25:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "25:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "25:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "25:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "25:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "25:margin",
+      "passed": true
+    },
+    {
+      "check": "25:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "25:score_formula",
+      "passed": true
+    },
+    {
+      "check": "25:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "25:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "25:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "25:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "25:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "25:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "25:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "25:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "25:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "25:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "25:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "25:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "25:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "25:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "25:pose_score",
+      "passed": true
+    },
+    {
+      "check": "25:visualizations",
+      "passed": true
+    },
+    {
+      "check": "26:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "26:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "26:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "26:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "26:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "26:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "26:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "26:margin",
+      "passed": true
+    },
+    {
+      "check": "26:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "26:score_formula",
+      "passed": true
+    },
+    {
+      "check": "26:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "26:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "26:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "26:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "26:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "26:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "26:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "26:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "26:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "26:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "26:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "26:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "26:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "26:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "26:pose_score",
+      "passed": true
+    },
+    {
+      "check": "26:visualizations",
+      "passed": true
+    },
+    {
+      "check": "27:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "27:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "27:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "27:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "27:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "27:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "27:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "27:margin",
+      "passed": true
+    },
+    {
+      "check": "27:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "27:score_formula",
+      "passed": true
+    },
+    {
+      "check": "27:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "27:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "27:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "27:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "27:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "27:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "27:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "27:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "27:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "27:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "27:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "27:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "27:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "27:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "27:pose_score",
+      "passed": true
+    },
+    {
+      "check": "27:visualizations",
+      "passed": true
+    },
+    {
+      "check": "28:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "28:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "28:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "28:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "28:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "28:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "28:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "28:margin",
+      "passed": true
+    },
+    {
+      "check": "28:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "28:score_formula",
+      "passed": true
+    },
+    {
+      "check": "28:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "28:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "28:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "28:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "28:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "28:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "28:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "28:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "28:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "28:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "28:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "28:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "28:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "28:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "28:pose_score",
+      "passed": true
+    },
+    {
+      "check": "28:visualizations",
+      "passed": true
+    },
+    {
+      "check": "29:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "29:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "29:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "29:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "29:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "29:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "29:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "29:margin",
+      "passed": true
+    },
+    {
+      "check": "29:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "29:score_formula",
+      "passed": true
+    },
+    {
+      "check": "29:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "29:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "29:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "29:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "29:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "29:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "29:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "29:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "29:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "29:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "29:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "29:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "29:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "29:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "29:pose_score",
+      "passed": true
+    },
+    {
+      "check": "29:visualizations",
+      "passed": true
+    },
+    {
+      "check": "30:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "30:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "30:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "30:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "30:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "30:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "30:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "30:margin",
+      "passed": true
+    },
+    {
+      "check": "30:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "30:score_formula",
+      "passed": true
+    },
+    {
+      "check": "30:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "30:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "30:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "30:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "30:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "30:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "30:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "30:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "30:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "30:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "30:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "30:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "30:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "30:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "30:pose_score",
+      "passed": true
+    },
+    {
+      "check": "30:visualizations",
+      "passed": true
+    },
+    {
+      "check": "31:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "31:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "31:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "31:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "31:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "31:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "31:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "31:margin",
+      "passed": true
+    },
+    {
+      "check": "31:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "31:score_formula",
+      "passed": true
+    },
+    {
+      "check": "31:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "31:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "31:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "31:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "31:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "31:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "31:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "31:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "31:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "31:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "31:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "31:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "31:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "31:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "31:pose_score",
+      "passed": true
+    },
+    {
+      "check": "31:visualizations",
+      "passed": true
+    },
+    {
+      "check": "32:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "32:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "32:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "32:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "32:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "32:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "32:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "32:margin",
+      "passed": true
+    },
+    {
+      "check": "32:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "32:score_formula",
+      "passed": true
+    },
+    {
+      "check": "32:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "32:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "32:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "32:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "32:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "32:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "32:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "32:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "32:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "32:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "32:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "32:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "32:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "32:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "32:pose_score",
+      "passed": true
+    },
+    {
+      "check": "32:visualizations",
+      "passed": true
+    },
+    {
+      "check": "33:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "33:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "33:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "33:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "33:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "33:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "33:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "33:margin",
+      "passed": true
+    },
+    {
+      "check": "33:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "33:score_formula",
+      "passed": true
+    },
+    {
+      "check": "33:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "33:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "33:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "33:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "33:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "33:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "33:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "33:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "33:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "33:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "33:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "33:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "33:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "33:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "33:pose_score",
+      "passed": true
+    },
+    {
+      "check": "33:visualizations",
+      "passed": true
+    },
+    {
+      "check": "34:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "34:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "34:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "34:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "34:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "34:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "34:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "34:margin",
+      "passed": true
+    },
+    {
+      "check": "34:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "34:score_formula",
+      "passed": true
+    },
+    {
+      "check": "34:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "34:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "34:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "34:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "34:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "34:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "34:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "34:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "34:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "34:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "34:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "34:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "34:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "34:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "34:pose_score",
+      "passed": true
+    },
+    {
+      "check": "34:visualizations",
+      "passed": true
+    },
+    {
+      "check": "35:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "35:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "35:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "35:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "35:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "35:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "35:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "35:margin",
+      "passed": true
+    },
+    {
+      "check": "35:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "35:score_formula",
+      "passed": true
+    },
+    {
+      "check": "35:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "35:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "35:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "35:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "35:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "35:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "35:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "35:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "35:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "35:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "35:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "35:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "35:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "35:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "35:pose_score",
+      "passed": true
+    },
+    {
+      "check": "35:visualizations",
+      "passed": true
+    },
+    {
+      "check": "36:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "36:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "36:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "36:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "36:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "36:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "36:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "36:margin",
+      "passed": true
+    },
+    {
+      "check": "36:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "36:score_formula",
+      "passed": true
+    },
+    {
+      "check": "36:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "36:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "36:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "36:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "36:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "36:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "36:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "36:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "36:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "36:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "36:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "36:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "36:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "36:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "36:pose_score",
+      "passed": true
+    },
+    {
+      "check": "36:visualizations",
+      "passed": true
+    },
+    {
+      "check": "37:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "37:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "37:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "37:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "37:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "37:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "37:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "37:margin",
+      "passed": true
+    },
+    {
+      "check": "37:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "37:score_formula",
+      "passed": true
+    },
+    {
+      "check": "37:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "37:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "37:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "37:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "37:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "37:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "37:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "37:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "37:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "37:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "37:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "37:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "37:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "37:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "37:pose_score",
+      "passed": true
+    },
+    {
+      "check": "37:visualizations",
+      "passed": true
+    },
+    {
+      "check": "38:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "38:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "38:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "38:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "38:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "38:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "38:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "38:margin",
+      "passed": true
+    },
+    {
+      "check": "38:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "38:score_formula",
+      "passed": true
+    },
+    {
+      "check": "38:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "38:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "38:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "38:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "38:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "38:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "38:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "38:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "38:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "38:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "38:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "38:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "38:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "38:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "38:pose_score",
+      "passed": true
+    },
+    {
+      "check": "38:visualizations",
+      "passed": true
+    },
+    {
+      "check": "39:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "39:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "39:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "39:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "39:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "39:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "39:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "39:margin",
+      "passed": true
+    },
+    {
+      "check": "39:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "39:score_formula",
+      "passed": true
+    },
+    {
+      "check": "39:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "39:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "39:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "39:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "39:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "39:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "39:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "39:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "39:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "39:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "39:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "39:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "39:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "39:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "39:pose_score",
+      "passed": true
+    },
+    {
+      "check": "39:visualizations",
+      "passed": true
+    },
+    {
+      "check": "40:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "40:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "40:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "40:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "40:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "40:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "40:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "40:margin",
+      "passed": true
+    },
+    {
+      "check": "40:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "40:score_formula",
+      "passed": true
+    },
+    {
+      "check": "40:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "40:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "40:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "40:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "40:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "40:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "40:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "40:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "40:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "40:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "40:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "40:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "40:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "40:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "40:pose_score",
+      "passed": true
+    },
+    {
+      "check": "40:visualizations",
+      "passed": true
+    },
+    {
+      "check": "41:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "41:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "41:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "41:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "41:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "41:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "41:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "41:margin",
+      "passed": true
+    },
+    {
+      "check": "41:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "41:score_formula",
+      "passed": true
+    },
+    {
+      "check": "41:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "41:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "41:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "41:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "41:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "41:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "41:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "41:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "41:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "41:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "41:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "41:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "41:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "41:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "41:pose_score",
+      "passed": true
+    },
+    {
+      "check": "41:visualizations",
+      "passed": true
+    },
+    {
+      "check": "42:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "42:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "42:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "42:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "42:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "42:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "42:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "42:margin",
+      "passed": true
+    },
+    {
+      "check": "42:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "42:score_formula",
+      "passed": true
+    },
+    {
+      "check": "42:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "42:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "42:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "42:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "42:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "42:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "42:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "42:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "42:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "42:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "42:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "42:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "42:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "42:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "42:pose_score",
+      "passed": true
+    },
+    {
+      "check": "42:visualizations",
+      "passed": true
+    },
+    {
+      "check": "43:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "43:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "43:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "43:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "43:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "43:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "43:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "43:margin",
+      "passed": true
+    },
+    {
+      "check": "43:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "43:score_formula",
+      "passed": true
+    },
+    {
+      "check": "43:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "43:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "43:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "43:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "43:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "43:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "43:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "43:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "43:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "43:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "43:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "43:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "43:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "43:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "43:pose_score",
+      "passed": true
+    },
+    {
+      "check": "43:visualizations",
+      "passed": true
+    },
+    {
+      "check": "44:manifest_join",
+      "passed": true
+    },
+    {
+      "check": "44:all_CADs_once",
+      "passed": true
+    },
+    {
+      "check": "44:sorted_eligible_ranking",
+      "passed": true
+    },
+    {
+      "check": "44:corner_filter_eligibility",
+      "passed": true
+    },
+    {
+      "check": "44:excluded_not_ranked",
+      "passed": true
+    },
+    {
+      "check": "44:raw_scores_preserved",
+      "passed": true
+    },
+    {
+      "check": "44:winner_and_correctness",
+      "passed": true
+    },
+    {
+      "check": "44:margin",
+      "passed": true
+    },
+    {
+      "check": "44:primary_mask_hash",
+      "passed": true
+    },
+    {
+      "check": "44:score_formula",
+      "passed": true
+    },
+    {
+      "check": "44:score_scales_finite",
+      "passed": true
+    },
+    {
+      "check": "44:FP_only_winner",
+      "passed": true
+    },
+    {
+      "check": "44:07_thermal_core:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "44:05_control_board:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "44:06_power_unit:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "44:03_option_cassette:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "44:04_io_terminals:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "44:01_front_housing:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "44:02_control_panel:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "44:00_rear_mounting_plate:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "44:03b_vertical_option_b:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "44:03a_vertical_option_a:category_mapping",
+      "passed": true
+    },
+    {
+      "check": "44:pose_transform",
+      "passed": true
+    },
+    {
+      "check": "44:rigid_pose",
+      "passed": true
+    },
+    {
+      "check": "44:pose_score",
+      "passed": true
+    },
+    {
+      "check": "44:visualizations",
+      "passed": true
+    },
+    {
+      "check": "CSV_long_cartesian_size",
+      "passed": true
+    },
+    {
+      "check": "CSV_long_unique_pairs",
+      "passed": true
+    },
+    {
+      "check": "CSV_wide_size",
+      "passed": true
+    },
+    {
+      "check": "pose_CSV_rows",
+      "passed": true
+    }
+  ],
+  "checks_passed": 1192,
+  "checks_total": 1192,
+  "all_passed": true,
+  "baseline": {
+    "first_suite": "/home/raca/projects/CADTracking/results/reports/sam6d_suite_20261102T150131Z",
+    "old_cases": 22,
+    "new_cases": 45,
+    "old_expected_labels": 0,
+    "common_exact_rgb_bytes": 0,
+    "common": [],
+    "direct_protocol_comparison_valid": false,
+    "reasons": [
+      "First suite uses PEM, new uses FoundationPose",
+      "First table contains assigned-detection maxima; new all-CAD hypotheses share one mask",
+      "New IoU is per row; historical IoU can zero whole batch",
+      "Different capture sets; no original ground truth labels"
+    ]
+  },
+  "history": {
+    "initial_audit": null,
+    "captured_utc": null,
+    "window_start_utc": null,
+    "recent_mtimes": null,
+    "certainty": "Git timestamps show recorded commits, not proof of actual edit time. Current diff cannot be dated to the last two hours. mtime cannot prove authorship or exact edit history."
+  },
+  "missing_original_source_paths": [
+    {
+      "name": "cassette_far",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_far.jpg"
+    },
+    {
+      "name": "cassette_far",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_far_depth.npy"
+    },
+    {
+      "name": "cassette_far",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_far_depth.json"
+    },
+    {
+      "name": "cassette_rot_far",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_rot_far.jpg"
+    },
+    {
+      "name": "cassette_rot_far",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_rot_far_depth.npy"
+    },
+    {
+      "name": "cassette_rot_far",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_rot_far_depth.json"
+    },
+    {
+      "name": "cassette_rot_side",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_rot_side.jpg"
+    },
+    {
+      "name": "cassette_rot_side",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_rot_side_depth.npy"
+    },
+    {
+      "name": "cassette_rot_side",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_rot_side_depth.json"
+    },
+    {
+      "name": "cassette_side",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_side.jpg"
+    },
+    {
+      "name": "cassette_side",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_side_depth.npy"
+    },
+    {
+      "name": "cassette_side",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_side_depth.json"
+    },
+    {
+      "name": "control_far",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_far.jpg"
+    },
+    {
+      "name": "control_far",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_far_depth.npy"
+    },
+    {
+      "name": "control_far",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_far_depth.json"
+    },
+    {
+      "name": "control_far_ro",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_far_ro.jpg"
+    },
+    {
+      "name": "control_far_ro",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_far_ro_depth.npy"
+    },
+    {
+      "name": "control_far_ro",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_far_ro_depth.json"
+    },
+    {
+      "name": "control_rot_side",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_rot_side.jpg"
+    },
+    {
+      "name": "control_rot_side",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_rot_side_depth.npy"
+    },
+    {
+      "name": "control_rot_side",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_rot_side_depth.json"
+    },
+    {
+      "name": "control_side",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_side.jpg"
+    },
+    {
+      "name": "control_side",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_side_depth.npy"
+    },
+    {
+      "name": "control_side",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_side_depth.json"
+    },
+    {
+      "name": "front_far",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_far.jpg"
+    },
+    {
+      "name": "front_far",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_far_depth.npy"
+    },
+    {
+      "name": "front_far",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_far_depth.json"
+    },
+    {
+      "name": "front_far_rot",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_far_rot.jpg"
+    },
+    {
+      "name": "front_far_rot",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_far_rot_depth.npy"
+    },
+    {
+      "name": "front_far_rot",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_far_rot_depth.json"
+    },
+    {
+      "name": "front_rot_side",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_rot_side.jpg"
+    },
+    {
+      "name": "front_rot_side",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_rot_side_depth.npy"
+    },
+    {
+      "name": "front_rot_side",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_rot_side_depth.json"
+    },
+    {
+      "name": "front_side",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_side.jpg"
+    },
+    {
+      "name": "front_side",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_side_depth.npy"
+    },
+    {
+      "name": "front_side",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_side_depth.json"
+    },
+    {
+      "name": "hmi_far",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_far.jpg"
+    },
+    {
+      "name": "hmi_far",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_far_depth.npy"
+    },
+    {
+      "name": "hmi_far",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_far_depth.json"
+    },
+    {
+      "name": "hmi_far_rot",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_far_rot.jpg"
+    },
+    {
+      "name": "hmi_far_rot",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_far_rot_depth.npy"
+    },
+    {
+      "name": "hmi_far_rot",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_far_rot_depth.json"
+    },
+    {
+      "name": "hmi_rot_side",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_rot_side.jpg"
+    },
+    {
+      "name": "hmi_rot_side",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_rot_side_depth.npy"
+    },
+    {
+      "name": "hmi_rot_side",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_rot_side_depth.json"
+    },
+    {
+      "name": "hmi_side",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_side.jpg"
+    },
+    {
+      "name": "hmi_side",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_side_depth.npy"
+    },
+    {
+      "name": "hmi_side",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_side_depth.json"
+    },
+    {
+      "name": "inverse_cassette",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_cassette.jpg"
+    },
+    {
+      "name": "inverse_cassette",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_cassette_depth.npy"
+    },
+    {
+      "name": "inverse_cassette",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_cassette_depth.json"
+    },
+    {
+      "name": "inverse_control",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_control.jpg"
+    },
+    {
+      "name": "inverse_control",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_control_depth.npy"
+    },
+    {
+      "name": "inverse_control",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_control_depth.json"
+    },
+    {
+      "name": "inverse_front",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_front.jpg"
+    },
+    {
+      "name": "inverse_front",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_front_depth.npy"
+    },
+    {
+      "name": "inverse_front",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_front_depth.json"
+    },
+    {
+      "name": "inverse_hmi",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_hmi.jpg"
+    },
+    {
+      "name": "inverse_hmi",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_hmi_depth.npy"
+    },
+    {
+      "name": "inverse_hmi",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_hmi_depth.json"
+    },
+    {
+      "name": "inverse_io",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_io.jpg"
+    },
+    {
+      "name": "inverse_io",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_io_depth.npy"
+    },
+    {
+      "name": "inverse_io",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_io_depth.json"
+    },
+    {
+      "name": "inverse_power",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_power.jpg"
+    },
+    {
+      "name": "inverse_power",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_power_depth.npy"
+    },
+    {
+      "name": "inverse_power",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_power_depth.json"
+    },
+    {
+      "name": "inverse_rear",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_rear.jpg"
+    },
+    {
+      "name": "inverse_rear",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_rear_depth.npy"
+    },
+    {
+      "name": "inverse_rear",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_rear_depth.json"
+    },
+    {
+      "name": "inverse_sensor",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_sensor.jpg"
+    },
+    {
+      "name": "inverse_sensor",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_sensor_depth.npy"
+    },
+    {
+      "name": "inverse_sensor",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_sensor_depth.json"
+    },
+    {
+      "name": "inverse_termal",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_termal.jpg"
+    },
+    {
+      "name": "inverse_termal",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_termal_depth.npy"
+    },
+    {
+      "name": "inverse_termal",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_termal_depth.json"
+    },
+    {
+      "name": "io_far",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_far.jpg"
+    },
+    {
+      "name": "io_far",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_far_depth.npy"
+    },
+    {
+      "name": "io_far",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_far_depth.json"
+    },
+    {
+      "name": "io_rot_far",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_rot_far.jpg"
+    },
+    {
+      "name": "io_rot_far",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_rot_far_depth.npy"
+    },
+    {
+      "name": "io_rot_far",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_rot_far_depth.json"
+    },
+    {
+      "name": "io_rot_side",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_rot_side.jpg"
+    },
+    {
+      "name": "io_rot_side",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_rot_side_depth.npy"
+    },
+    {
+      "name": "io_rot_side",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_rot_side_depth.json"
+    },
+    {
+      "name": "io_side",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_side.jpg"
+    },
+    {
+      "name": "io_side",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_side_depth.npy"
+    },
+    {
+      "name": "io_side",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_side_depth.json"
+    },
+    {
+      "name": "power_far",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_far.jpg"
+    },
+    {
+      "name": "power_far",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_far_depth.npy"
+    },
+    {
+      "name": "power_far",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_far_depth.json"
+    },
+    {
+      "name": "power_far_rot",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_far_rot.jpg"
+    },
+    {
+      "name": "power_far_rot",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_far_rot_depth.npy"
+    },
+    {
+      "name": "power_far_rot",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_far_rot_depth.json"
+    },
+    {
+      "name": "power_rot_side",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_rot_side.jpg"
+    },
+    {
+      "name": "power_rot_side",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_rot_side_depth.npy"
+    },
+    {
+      "name": "power_rot_side",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_rot_side_depth.json"
+    },
+    {
+      "name": "power_side",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_side.jpg"
+    },
+    {
+      "name": "power_side",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_side_depth.npy"
+    },
+    {
+      "name": "power_side",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_side_depth.json"
+    },
+    {
+      "name": "rear_far",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_far.jpg"
+    },
+    {
+      "name": "rear_far",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_far_depth.npy"
+    },
+    {
+      "name": "rear_far",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_far_depth.json"
+    },
+    {
+      "name": "rear_far_rot",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_far_rot.jpg"
+    },
+    {
+      "name": "rear_far_rot",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_far_rot_depth.npy"
+    },
+    {
+      "name": "rear_far_rot",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_far_rot_depth.json"
+    },
+    {
+      "name": "rear_rot_side",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_rot_side.jpg"
+    },
+    {
+      "name": "rear_rot_side",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_rot_side_depth.npy"
+    },
+    {
+      "name": "rear_rot_side",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_rot_side_depth.json"
+    },
+    {
+      "name": "rear_side",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_side.jpg"
+    },
+    {
+      "name": "rear_side",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_side_depth.npy"
+    },
+    {
+      "name": "rear_side",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_side_depth.json"
+    },
+    {
+      "name": "sensor_module_far",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_module_far.jpg"
+    },
+    {
+      "name": "sensor_module_far",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_module_far_depth.npy"
+    },
+    {
+      "name": "sensor_module_far",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_module_far_depth.json"
+    },
+    {
+      "name": "sensor_rot_far",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_rot_far.jpg"
+    },
+    {
+      "name": "sensor_rot_far",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_rot_far_depth.npy"
+    },
+    {
+      "name": "sensor_rot_far",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_rot_far_depth.json"
+    },
+    {
+      "name": "sensor_rot_side",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_rot_side.jpg"
+    },
+    {
+      "name": "sensor_rot_side",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_rot_side_depth.npy"
+    },
+    {
+      "name": "sensor_rot_side",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_rot_side_depth.json"
+    },
+    {
+      "name": "sensor_side",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_side.jpg"
+    },
+    {
+      "name": "sensor_side",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_side_depth.npy"
+    },
+    {
+      "name": "sensor_side",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_side_depth.json"
+    },
+    {
+      "name": "termal_far",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_far.jpg"
+    },
+    {
+      "name": "termal_far",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_far_depth.npy"
+    },
+    {
+      "name": "termal_far",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_far_depth.json"
+    },
+    {
+      "name": "termal_far_rot",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_far_rot.jpg"
+    },
+    {
+      "name": "termal_far_rot",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_far_rot_depth.npy"
+    },
+    {
+      "name": "termal_far_rot",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_far_rot_depth.json"
+    },
+    {
+      "name": "termal_rot_side",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_rot_side.jpg"
+    },
+    {
+      "name": "termal_rot_side",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_rot_side_depth.npy"
+    },
+    {
+      "name": "termal_rot_side",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_rot_side_depth.json"
+    },
+    {
+      "name": "termal_side",
+      "field": "source_rgb",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_side.jpg"
+    },
+    {
+      "name": "termal_side",
+      "field": "source_depth",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_side_depth.npy"
+    },
+    {
+      "name": "termal_side",
+      "field": "source_metadata",
+      "recorded_path": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_side_depth.json"
+    }
+  ],
+  "source_limitation": "Prepared RGB-D/camera hashes verified; original paths are broken or unavailable. Cannot certify historical alignment or calibration accuracy from arrays alone."
+}

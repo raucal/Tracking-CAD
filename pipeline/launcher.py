@@ -9,7 +9,7 @@ import sys
 def main():
     parser = argparse.ArgumentParser(description=__doc__, add_help=False)
     parser.add_argument('--settings', type=Path, help='JSON paths/runtime configuration')
-    parser.add_argument('command', choices=('ui','suite','detect','scores','sam','prepare','inspect','audit','install','install-foundationpose','settings','test'))
+    parser.add_argument('command', choices=('ui','suite','evaluate','detect','scores','sam','prepare','inspect','audit','install','install-foundationpose','settings','test'))
     if sys.argv[1:] in ([], ['--help'], ['-h']): parser.print_help(); return 0
     args, extra = parser.parse_known_args()
     if args.settings: os.environ['CAD_TRACKING_SETTINGS'] = str(args.settings.expanduser().resolve())
@@ -33,13 +33,14 @@ def main():
                       'MPLCONFIGDIR':str(cfg.path('matplotlib_cache')),'XDG_CACHE_HOME':str(cfg.path('runtime_cache')),
                       'TORCH_EXTENSIONS_DIR':str(cfg.path('runtime_cache')/'torch_extensions')}.items(): env.setdefault(key,value)
     routes = {'ui':cfg.PIPELINE/'sam6d_gui.py','suite':cfg.PIPELINE/'suites/sam6d_suite.py',
+              'evaluate':cfg.PIPELINE/'tools/evaluate_identification.py',
               'detect':cfg.PIPELINE/'tools/run_detection.py','scores':cfg.PIPELINE/'tools/score_all_cads.py',
               'prepare':cfg.PIPELINE/'tools/prepare.py','inspect':cfg.PIPELINE/'tools/inspect_data.py',
               'audit':cfg.PIPELINE/'tools/audit_templates.py','sam':cfg.SAM6D/'pddl_pipeline.py'}
     if args.command.startswith('install'):
         command=['bash',str(cfg.PIPELINE/'setup'/('install_models.sh' if args.command=='install' else 'install_foundationpose.sh')),*extra]
     elif args.command=='test':
-        command=[str(python),'-B','-m','unittest','discover','-s',str(cfg.PIPELINE/'tests'),'-p','test_*.py',*extra]
+        command=[str(python),'-B','-m','pytest','-p','no:cacheprovider',str(cfg.PIPELINE/'tests'),str(cfg.ROOT/'alignment_pose_cad/tests'),*extra]
     else:
         command=[str(python),'-B',str(routes[args.command]),*extra]
         if args.command=='sam' and extra and extra[0]=='render':

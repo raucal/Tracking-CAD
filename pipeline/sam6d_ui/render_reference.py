@@ -4,6 +4,7 @@ from pathlib import Path as _Path
 _sys.path.insert(0, str(next(p for p in _Path(__file__).resolve().parents if (p / 'settings.py').is_file())))
 import os
 os.environ["PYOPENGL_PLATFORM"] = "egl"
+os.environ.setdefault("OPENCV_IO_ENABLE_OPENEXR", "1")
 if os.path.isfile("/usr/share/glvnd/egl_vendor.d/10_nvidia.json"):
     os.environ.setdefault("__EGL_VENDOR_LIBRARY_FILENAMES", "/usr/share/glvnd/egl_vendor.d/10_nvidia.json")
 
@@ -33,7 +34,7 @@ def render_blender(mesh_path, output, poses_path):
                                "scale": 1 / (2 * np.linalg.norm(mesh.vertices, axis=1).max()), "poses": poses.tolist()}))
     binary = configured_path("blender")
     if not binary.is_file():
-        raise ValueError("Falta Blender 3.3.1 en .runtime/blender; consulta la instalación de la interfaz.")
+        raise ValueError("Blender 3.3.1 is missing from .runtime/blender; see the installation guide.")
     env = os.environ.copy()
     env.pop("LD_LIBRARY_PATH", None)
     subprocess.run([str(binary), "-b", "-t", "8", "--python", str(Path(__file__).with_name("blender_reference.py")),
@@ -44,7 +45,7 @@ def render_blender(mesh_path, output, poses_path):
             rgba = np.array(source.convert("RGBA"))
         mask = rgba[:, :, 3] > 127
         if not mask.any():
-            raise ValueError(f"Vista Blender vacía: {i}")
+            raise ValueError(f"Empty Blender view: {i}")
         color = rgba[:, :, :3].copy()
         color[~mask] = 64
         Image.fromarray(color).save(output / f"rgb_{i}.png")
@@ -52,12 +53,12 @@ def render_blender(mesh_path, output, poses_path):
         exr = output / f"position_{i:04d}.exr"
         position = cv2.imread(str(exr), cv2.IMREAD_UNCHANGED)
         if position is None:
-            raise ValueError(f"No se ha generado el pase métrico XYZ: {i}")
+            raise ValueError(f"Metric XYZ pass was not generated: {i}")
         xyz = position[:, :, :3][:, :, ::-1].copy() / (1 / (2 * np.linalg.norm(mesh.vertices, axis=1).max()))
         xyz[~mask] = 0
         tolerance = max(0.5, float(mesh.extents.max()) * 0.01)
         if not np.isfinite(xyz).all() or np.any(xyz[mask] < mesh.bounds[0] - tolerance) or np.any(xyz[mask] > mesh.bounds[1] + tolerance):
-            raise ValueError(f"XYZ fuera de las dimensiones físicas del CAD: {i}")
+            raise ValueError(f"XYZ exceeds physical CAD dimensions: {i}")
         np.save(output / f"xyz_{i}.npy", xyz.astype(np.float32))
         exr.unlink()
         raw.unlink()
@@ -91,7 +92,7 @@ def render(mesh_path, output, poses_path):
             color, depth = renderer.render(scene)
             mask = depth > 0
             if not mask.any():
-                raise ValueError(f"La vista {index} no contiene geometría visible.")
+                raise ValueError(f"View {index} contains no visible geometry.")
             Image.fromarray(color[:, :, :3]).save(output / f"rgb_{index}.png")
             Image.fromarray(mask.astype(np.uint8) * 255).save(output / f"mask_{index}.png")
             if index % 7 == 0:

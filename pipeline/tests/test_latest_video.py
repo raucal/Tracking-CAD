@@ -7,6 +7,7 @@ import tempfile
 import threading
 import time
 import unittest
+import pytest
 from urllib.error import HTTPError
 from urllib.request import urlopen
 from http.server import ThreadingHTTPServer
@@ -25,6 +26,7 @@ class Source:
         return dict(number=self.number,timestamp=time.time(),device_timestamp_ms=self.number*1000/30,rgb=np.full((10,10,3),self.number%200,np.uint8),depth=np.full((10,10),500,np.uint16),camera={'cam_K':[100,0,5,0,100,5,0,0,1],'depth_scale':1})
     def close(self):pass
 
+@pytest.mark.usefixtures("app_dataset")
 class LatestVideoTests(unittest.TestCase):
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup);root=Path(self.temp.name)

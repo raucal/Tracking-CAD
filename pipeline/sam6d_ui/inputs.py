@@ -15,7 +15,7 @@ DEFAULTS = profile('interface')['inference']
 
 def options(value):
     if not isinstance(value, dict):
-        raise ValueError('Las opciones deben ser un objeto JSON.')
+        raise ValueError('Options must be a JSON object.')
     result = {**DEFAULTS, **{k: v for k, v in value.items() if k in DEFAULTS}}
     for key, allowed in {"mode": ("rgb", "rgbd"), "device": ("auto", "cpu", "cuda"),
                          "segmentor": ("sam", "fastsam"),
@@ -23,28 +23,28 @@ def options(value):
                          "backbone": ("vit_h", "vit_l", "vit_b"), "cad_units": ("mm", "cm", "m"),
                          "aggregation": ("avg_5", "mean", "median", "max")}.items():
         if result[key] not in allowed:
-            raise ValueError(f"Opción {key} no válida.")
+            raise ValueError(f"Invalid option {key}.")
     for key in ("min_score", "confidence", "stability", "pred_iou", "nms", "fastsam_conf", "fastsam_iou"):
         result[key] = float(result[key])
         if not math.isfinite(result[key]) or not 0 <= result[key] <= 1:
-            raise ValueError(f"{key} debe estar entre 0 y 1.")
+            raise ValueError(f"{key} must be between 0 and 1.")
     if result["min_score"] > result["confidence"]:
-        raise ValueError("El umbral de conservación no puede superar al de aceptación.")
+        raise ValueError("The retention threshold cannot exceed the acceptance threshold.")
     if not isinstance(result["pose"], bool):
-        raise ValueError("La opción pose debe ser true o false.")
+        raise ValueError("The pose option must be true or false.")
     if result['pose_backend'] == 'foundationpose':
         result['pose'] = True
     if result["pose"] and (result["mode"] != "rgbd" or result["device"] == "cpu"):
-        raise ValueError("La pose 6D requiere modo RGB-D y GPU CUDA.")
+        raise ValueError("6D pose requires RGB-D mode and a CUDA GPU.")
     result["points_per_batch"] = int(result["points_per_batch"])
     if not 1 <= result["points_per_batch"] <= 128:
-        raise ValueError("Los puntos por lote deben estar entre 1 y 128.")
+        raise ValueError("Points per batch must be between 1 and 128.")
     return result
 
 
 def uploaded(item, extensions, maximum):
     if not isinstance(item, dict) or not item.get("data"):
-        raise ValueError("Falta seleccionar un archivo.")
+        raise ValueError("No file selected.")
     name = str(item.get("name", "")).replace("\\", "/").split("/")[-1]
     suffix = Path(name).suffix.lower()
     if suffix not in extensions:
@@ -52,16 +52,16 @@ def uploaded(item, extensions, maximum):
     try:
         content = base64.b64decode(item["data"], validate=True)
     except (ValueError, TypeError) as error:
-        raise ValueError("Archivo codificado incorrectamente.") from error
+        raise ValueError("Incorrectly encoded file.") from error
     if not content or len(content) > maximum:
-        raise ValueError("Archivo vacío o demasiado grande.")
+        raise ValueError("File is empty or too large.")
     return name, content
 
 
 def read_rgb(content):
     with Image.open(BytesIO(content)) as image:
         if image.width * image.height > 4_000_000:
-            raise ValueError("La imagen supera 4 megapíxeles. Redimensiona RGB y profundidad de forma coherente.")
+            raise ValueError("Image exceeds 4 megapixels. Resize RGB and depth consistently.")
         return image.convert("RGB")
 
 
@@ -72,11 +72,11 @@ def read_depth(content, suffix, size):
         with Image.open(BytesIO(content)) as source:
             depth = np.array(source)
     if depth.ndim != 2 or depth.shape != (size[1], size[0]):
-        raise ValueError("La profundidad debe ser una matriz alineada y del mismo tamaño que el RGB.")
+        raise ValueError("Depth must be an aligned array with the same size as RGB.")
     if depth.dtype != np.uint16:
-        raise ValueError("Se requiere profundidad raw uint16 (.npy o PNG de 16 bits), no una imagen coloreada.")
+        raise ValueError("Raw uint16 depth is required (.npy or 16-bit PNG), not a colourized image.")
     if not np.any(depth > 0):
-        raise ValueError("La profundidad no contiene valores válidos.")
+        raise ValueError("Depth contains no valid values.")
     return depth
 
 
@@ -88,22 +88,22 @@ def read_camera(content, depth, size):
     matrix = np.array(camera["cam_K"], dtype=np.float64).reshape(3, 3)
     scale = float(camera["depth_scale"])
     if not np.isfinite(matrix).all() or min(matrix[0, 0], matrix[1, 1]) <= 0:
-        raise ValueError("Intrínsecos de cámara no válidos.")
+        raise ValueError("Invalid camera intrinsics.")
     if not np.allclose(matrix[2], [0, 0, 1]) or not math.isfinite(scale) or scale <= 0:
-        raise ValueError("Matriz de cámara o escala de profundidad no válida.")
+        raise ValueError("Invalid camera matrix or depth scale.")
     if np.any(np.abs(camera.get("dist_coeffs", [])) > 1e-10):
-        raise ValueError("La imagen RGB-D debe estar rectificada, sin distorsión residual.")
+        raise ValueError("RGB-D must be rectified, without residual distortion.")
     return {"cam_K": matrix.reshape(-1).tolist(), "depth_scale": scale}
 
 
 def cad_mesh(content, suffix, units):
     mesh = trimesh.load(BytesIO(content), file_type=suffix.lstrip("."), force="mesh", process=True)
     if not isinstance(mesh, trimesh.Trimesh) or not len(mesh.faces):
-        raise ValueError("El CAD no contiene una malla triangular válida.")
+        raise ValueError("The CAD does not contain a valid triangular mesh.")
     if len(mesh.faces) > 250_000:
-        raise ValueError("El CAD supera 250.000 caras. Exporta una malla simplificada.")
+        raise ValueError("CAD exceeds 250,000 faces. Export a simplified mesh.")
     if not np.isfinite(mesh.vertices).all() or np.max(mesh.extents) <= 0:
-        raise ValueError("El CAD contiene coordenadas o dimensiones no válidas.")
+        raise ValueError("CAD contains invalid coordinates or dimensions.")
     mesh.apply_scale({"mm": 1, "cm": 10, "m": 1000}[units])
     center = mesh.bounds.mean(axis=0)
     mesh.apply_translation(-center)

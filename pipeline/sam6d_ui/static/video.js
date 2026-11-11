@@ -16,7 +16,7 @@ function play(img,source){
         player.controller=new AbortController();timeout=setTimeout(()=>player.controller.abort(),2000);
         const response=await fetch('/api/'+source+'/frame.jpg?after='+player.lastSequence,{cache:'no-store',signal:player.controller.signal});
         if(response.status===204){await pause(1000/30);continue;}
-        if(!response.ok)throw new Error('No se pudo recibir el vídeo: HTTP '+response.status);
+        if(!response.ok)throw new Error('Could not receive video: HTTP '+response.status);
         const blob=await response.blob();if(player.stopped)break;
         const url=URL.createObjectURL(blob),old=player.url;player.url=url;
         img.src=url;
@@ -30,7 +30,7 @@ function play(img,source){
         const details={source,sequence:player.lastSequence,fps:player.meanSeconds?1/player.meanSeconds:null,ageMs:Number(response.headers.get('X-Frame-Age-Ms'))+painted-started,transferMs:painted-started,bytes:blob.size};
         img.dataset.frameAgeMs=String(Math.round(details.ageMs));img.dataset.frameSequence=String(player.lastSequence);
         img.dispatchEvent(new CustomEvent('vision-frame',{detail:details}));
-      }catch(error){if(!player.stopped){img.hidden=true;img.dispatchEvent(new CustomEvent('vision-video-error',{detail:{message:error.name==='AbortError'?'La conexión de vídeo tarda demasiado; reintentando con una imagen nueva.':error.message}}));await pause(100);}}
+      }catch(error){if(!player.stopped){img.hidden=true;img.dispatchEvent(new CustomEvent('vision-video-error',{detail:{message:error.name==='AbortError'?'Video connection timed out; retrying with a fresh image.':error.message}}));await pause(100);}}
       finally{clearTimeout(timeout);player.controller=null;}
       await pause(Math.max(0,1000/30-(performance.now()-started)));
     }

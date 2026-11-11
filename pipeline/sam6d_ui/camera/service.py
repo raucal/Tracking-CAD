@@ -1,4 +1,4 @@
-"""Vídeo compartido, capturas atómicas y grabación RGB-D con marcas de tiempo."""
+"""Shared video, atomic captures and timestamped RGB-D recording."""
 from io import BytesIO
 import json
 from pathlib import Path
@@ -17,7 +17,7 @@ from settings import profile
 
 def identifier(value):
     if not isinstance(value, str) or len(value) != 32 or any(c not in '0123456789abcdef' for c in value):
-        raise ValueError('Identificador de captura o grabación no válido.')
+        raise ValueError('Invalid capture or recording ID.')
     return value
 
 
@@ -50,7 +50,7 @@ class CameraService:
 
     def start(self, options):
         if not isinstance(options, dict):
-            raise ValueError('Configuración de cámara no válida.')
+            raise ValueError('Invalid camera configuration.')
         width, height, fps = (options.get('width', self.config['width']), options.get('height', self.config['height']), options.get('fps', self.config['fps']))
         if (width, height) not in ((640, 480), (1280, 720)) or fps not in (15, 30):
             raise ValueError('Utiliza 640×480 o 1280×720 y 15 o 30 FPS.')
@@ -63,7 +63,7 @@ class CameraService:
                 self.latest = self.jpeg = None
                 self.error = None
                 self.sequence = 0
-            # Abrir aquí permite devolver al navegador un error de dispositivo ocupado.
+            # Opening here lets the browser report a device-busy error.
             source = self.source_factory(self.options)
             self.thread = threading.Thread(target=self._acquire, args=(source,), name='RealSense-RGBD', daemon=True)
             self.thread.start()
@@ -108,7 +108,7 @@ class CameraService:
         if thread and thread is not threading.current_thread():
             thread.join(5)
             if thread.is_alive():
-                raise RuntimeError('La cámara sigue cerrándose; espera antes de volver a abrirla.')
+                raise RuntimeError('The camera is still closing; wait before reopening it.')
         return self.status()
 
     def frame(self, timeout=3):
@@ -116,13 +116,13 @@ class CameraService:
             if self.error:
                 raise RuntimeError(self.error)
             if not self.thread or not self.thread.is_alive() or self.stop_event.is_set():
-                raise RuntimeError('La cámara no está activa. Pulsa «Abrir cámara» antes de analizar un fotograma.')
+                raise RuntimeError('The camera is inactive. Click Open camera before analysing a frame.')
             if not self.condition.wait_for(lambda: self.latest is not None or self.error or self.stop_event.is_set(), timeout):
-                raise RuntimeError('No ha llegado un fotograma de la RealSense.')
+                raise RuntimeError('No frame has arrived from RealSense.')
             if self.error or not self.thread or not self.thread.is_alive() or self.stop_event.is_set():
-                raise RuntimeError(self.error or 'La cámara no está activa.')
+                raise RuntimeError(self.error or 'The camera is inactive.')
             if self.latest is None or time.monotonic() - self.latest['received'] > 2:
-                raise RuntimeError('El último fotograma está caducado; revisa la cámara.')
+                raise RuntimeError('The latest frame is stale; check the camera.')
             return {**self.latest, 'rgb': self.latest['rgb'].copy(), 'depth': self.latest['depth'].copy()}
 
     def latest_preview(self):
@@ -142,7 +142,7 @@ class CameraService:
     def capture(self):
         frame = self.frame()
         if not np.any(frame['depth'] > 0):
-            raise RuntimeError('La profundidad no contiene medidas válidas.')
+            raise RuntimeError('Depth contains no valid measurements.')
         capture_id = uuid.uuid4().hex
         folder = self.root / 'images' / capture_id
         folder.mkdir(parents=True)
@@ -158,17 +158,17 @@ class CameraService:
     def capture_folder(self, capture_id):
         folder = self.root / 'images' / identifier(capture_id)
         if not (folder / 'capture.json').is_file():
-            raise ValueError('No existe esa captura.')
+            raise ValueError('Capture not found.')
         return folder
 
     def recording_folder(self, recording_id):
         folder = self.root / 'videos' / identifier(recording_id)
         metadata = folder / 'recording.json'
         if not metadata.is_file():
-            raise ValueError('No existe esa grabación.')
+            raise ValueError('Recording not found.')
         data = json.loads(metadata.read_text())
         if data.get('status') not in ('complete', 'interrupted') or not data.get('frames'):
-            raise ValueError('Detén una grabación con fotogramas antes de analizarla.')
+            raise ValueError('Stop a recording containing frames before analysing it.')
         return folder
 
     @staticmethod
@@ -179,9 +179,9 @@ class CameraService:
         frame = self.frame()
         with self.operations:
             if self.recording:
-                raise ValueError('Ya hay una grabación en curso.')
+                raise ValueError('A recording is already in progress.')
             if shutil.disk_usage(self.root).free < 256 * 1024**2:
-                raise ValueError('Se necesitan al menos 256 MiB libres para iniciar una grabación.')
+                raise ValueError('At least 256 MiB must be free to start a recording.')
             record_id = uuid.uuid4().hex
             folder = self.root / 'videos' / record_id
             folder.mkdir(parents=True)
@@ -190,7 +190,7 @@ class CameraService:
                                      self.options['fps'], (width, height))
             if not writer.isOpened():
                 writer.release()
-                raise RuntimeError('No se pudo abrir el codificador de vídeo MP4.')
+                raise RuntimeError('Could not open the MP4 video encoder.')
             try:
                 index = (folder / 'frames.jsonl').open('w')
                 (folder / 'camera.json').write_text(json.dumps(frame['camera'], indent=2))
@@ -214,7 +214,7 @@ class CameraService:
     def _write_frame(self, frame):
         record = self.recording
         if shutil.disk_usage(self.root).free < 192 * 1024**2 or time.time() - record['started_at'] > 600:
-            self.stop_recording(error='Grabación detenida por espacio disponible o límite de diez minutos.')
+            self.stop_recording(error='Recording stopped because of free space or the ten-minute limit.')
             return
         number = record['frames']
         folder = record['folder'] / 'frames' / f'{number:06d}'
@@ -228,14 +228,14 @@ class CameraService:
         record['index'].write(json.dumps(row) + '\n')
         record['index'].flush()
         record['frames'] += 1
-        # El índice queda persistido incluso si el proceso se interrumpe.
+        # Persist the index even if the process is interrupted.
         if number % 15 == 0:
             self._save_recording()
 
     def stop_recording(self, error=None):
         with self.operations:
             if not self.recording:
-                raise ValueError('No hay una grabación activa.')
+                raise ValueError('No active recording.')
             record = self.recording
             record['writer'].release()
             record['index'].close()

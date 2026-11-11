@@ -33,7 +33,7 @@ class SuiteDetails(unittest.TestCase):
    part={'sam_ply':'model.ply','sam_template_dir':'templates','T_local_from_sam_mm':T.tolist(),'bounds_local_mm':[[90,180,270],[110,220,330]]}
    audit=audit_cad(part,base);self.assertEqual(audit['views_checked'],42);self.assertEqual(audit['T_model_from_input_cad_mm'][0][3],-100)
    for i in range(42):np.save(folder/f'xyz_{i}.npy',xyz*.001)
-   with self.assertRaisesRegex(ValueError,'Escala XYZ'):audit_cad(part,base)
+   with self.assertRaisesRegex(ValueError,'XYZ scale'):audit_cad(part,base)
  def test_no_accepted_detection_does_not_run_pem(self):
   with tempfile.TemporaryDirectory() as temp:
    folder=Path(temp);(folder/'detection_ism.json').write_text('[]')
@@ -44,7 +44,7 @@ class SuiteDetails(unittest.TestCase):
   with tempfile.TemporaryDirectory() as temp:
    base=Path(temp);source=base/'run';case=source/'cases/capture';case.mkdir(parents=True)
    part={'key':'cad_a','name':'A','category_id':1,'sam_template_dir':'no_templates'}
-   manifest={'parts':[part],'frames':[{'name':'capture','camera':'camera.json','source_rgb':'original.jpg'}]};(base/'manifest.json').write_text(json.dumps(manifest));(base/'camera.json').write_text('{}')
+   manifest={'parts':[part],'frames':[{'name':'capture','camera':'camera.json','source_rgb':'original.jpg'}]};(base/'manifest.json').write_text(json.dumps(manifest));(case/'camera.json').write_text('{}')
    detection={'part_key':'cad_a','part_name':'A','category_id':1,'score':.74,'semantic_score':.6,'appearance_score':.8,'geometry_score':.9,'visible_ratio':.5}
    timing={'processing_s':1,'sam_s':.5,'dino_s':.2,'semantic_s':.1}
    frame={'name':'capture','frame_id':0,'device':'cuda','status':'ok','recognized':True,'candidate':detection,'timing':timing,'visible_components':['cad_a'],'proposal_counts':{'valid_depth_and_size':1},'proposal_semantic_scores':[[.6]],'comparisons':[{'part_key':'cad_a','part_name':'A','category_id':1,'semantic_score':.6,'best_template':0,'compared_proposals':1,'semantic_comparison_s':.1}],'comparison_region_proposal_id':0,'comparison_scope':'primary_detection'}
@@ -56,9 +56,34 @@ class SuiteDetails(unittest.TestCase):
    pose={'status':'estimated','backend':'pem','poses':[{'part_key':'cad_a','pose_score':.99,'segmentation_score':.74,'detection_index':0,'T_camera_from_input_cad_mm':T.tolist(),'T_camera_from_model_mm':T.tolist()}]}
    (case/'pose.json').write_text(json.dumps(pose))
    target=base/'report';export_report(source,target);page=(target/'index.html').read_text()
-   for text in ['Semántica','Apariencia','Geométrica','0.740','0.600','0.800','0.900','0.97','100.0','T_camara_desde_CAD_mm']:self.assertIn(text,page)
+   self.assertEqual((target/'cases/capture/camera.json').read_text(),'{}')
+   for text in ['Semantic','Appearance','Geometric','0.740','0.600','0.800','0.900','0.97','100.0','T_camara_desde_CAD_mm']:self.assertIn(text,page)
    row=next(csv.DictReader((target/'confianza_sam6d_por_imagen.csv').read_text(encoding='utf-8-sig').splitlines()));self.assertEqual(float(row['confianza_final_sam6d']),.74);self.assertEqual(row['ism_formula_matches'],'True')
    row=next(csv.DictReader((target/'poses_pem.csv').read_text(encoding='utf-8-sig').splitlines()));self.assertEqual(float(row['score_ism']),.74);self.assertEqual(float(row['score_pem']),.99);self.assertEqual(float(row['tz_mm']),500)
+
+ def test_report_counts_matches_against_expected_cad_key(self):
+  with tempfile.TemporaryDirectory() as temp:
+   base=Path(temp);source=base/'run';case=source/'cases/capture';case.mkdir(parents=True)
+   part={'key':'cad_a','name':'A','category_id':1,'sam_template_dir':'no_templates'}
+   manifest={'parts':[part],'frames':[{'name':'capture','camera':'camera.json','source_rgb':'original.jpg','expected_cad_key':'cad_a'}]}
+   (base/'manifest.json').write_text(json.dumps(manifest));(base/'camera.json').write_text('{}')
+   detection={'part_key':'cad_a','part_name':'A','category_id':1,'score':.74,'semantic_score':.6,'appearance_score':.8,'geometry_score':.9,'visible_ratio':.5}
+   timing={'processing_s':1,'sam_s':.5,'dino_s':.2,'semantic_s':.1}
+   frame={'name':'capture','frame_id':0,'device':'cuda','status':'ok','recognized':True,'candidate':detection,'timing':timing,'visible_components':['cad_a'],'proposal_counts':{'valid_depth_and_size':1},'proposal_semantic_scores':[[.6]],'comparisons':[{'part_key':'cad_a','part_name':'A','category_id':1,'semantic_score':.6,'best_template':0,'compared_proposals':1,'semantic_comparison_s':.1}],'comparison_region_proposal_id':0,'comparison_scope':'primary_detection'}
+   run={'catalog':[part],'manifest':str(base/'manifest.json'),'frames':[frame],'settings':{'confidence':.5,'min_score':.3,'stability_score':.97,'stability_score_yaml':.85,'stability_score_effective':.97},'device':{'used':'cuda','torch':'test'},'status':'complete','selected_frames':['capture'],'setup_timing':{}}
+   (source/'run.json').write_text(json.dumps(run));(case/'case.json').write_text(json.dumps(frame));(case/'detection_ism.json').write_text(json.dumps([detection]))
+   for name in ['rgb.png','overlay.png']:Image.new('RGB',(16,12)).save(case/name)
+   Image.fromarray(np.ones((12,16),np.uint8)*255).save(case/'mask_000.png')
+   target=base/'report';export_report(source,target)
+   summary=json.loads((target/'resumen.json').read_text())
+   self.assertEqual(summary['expected_cad_matches'],1)
+   self.assertAlmostEqual(summary['expected_cad_accuracy'],1.0)
+   page=(target/'index.html').read_text()
+   self.assertIn('Match against the manifest', page)
+   self.assertIn('1/1', page)
+   row=next(csv.DictReader((target/'confianza_sam6d_por_imagen.csv').read_text(encoding='utf-8-sig').splitlines()))
+   self.assertEqual(row['expected_cad_key'],'cad_a')
+   self.assertEqual(row['matches_expected_cad_key'],'True')
 
  def test_dashboard_preserves_old_report_and_switches_to_latest(self):
   with tempfile.TemporaryDirectory() as temp:
@@ -75,13 +100,13 @@ class SuiteDetails(unittest.TestCase):
   frames=[{'name':'hmi panel','frame_id':7},{'name':'missing','frame_id':8}]
   poses={'hmi panel':{'poses':[{}],'overlays':[{'part_key':'cad','path':'pose/cad/pose_overlay.png'}]},'missing':{'status':'no_accepted_detection','poses':[]}}
   page=pose_gallery(frames,poses)
-  for value in ['id="poses"','href="#frame7-pose"','cases/hmi%20panel/pose/cad/pose_overlay.png','Ver matrices R, t y T','Sin detección aceptada']:self.assertIn(value,page)
+  for value in ['id="poses"','href="#frame7-pose"','cases/hmi%20panel/pose/cad/pose_overlay.png','View R, t and T matrices','No accepted detection']:self.assertIn(value,page)
 
  def test_dashboard_does_not_replace_unrelated_user_files(self):
   with tempfile.TemporaryDirectory() as temp:
    base=Path(temp);dashboard=base/'dashboard';dashboard.mkdir();(dashboard/'mine.txt').write_text('keep')
    report=base/'report';report.mkdir();(report/'index.html').write_text('new')
-   with self.assertRaisesRegex(ValueError,'ajenos'):publish_dashboard(report,dashboard)
+   with self.assertRaisesRegex(ValueError,'unrelated'):publish_dashboard(report,dashboard)
    self.assertEqual((dashboard/'mine.txt').read_text(),'keep')
 
 if __name__=='__main__':unittest.main()

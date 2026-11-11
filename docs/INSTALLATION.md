@@ -54,6 +54,19 @@ To enable the optional tools in an already configured base runtime:
 
 The constraints are snapshots of an existing environment, including packages used by other local projects. They restrict versions when requested; they are not a request to install every listed package. Use the feature-specific requirements and installers above. Neither the web interface nor saved-demo inference requires a robot or its controller packages. Preserved SDU robot demos have additional hardware/software requirements described in their [integration README](../integrations/foundationpose_sdu/README.md).
 
+## CPU-only development checks
+
+After cloning with submodules, use a separate test environment if you only need to work on the application and run simulated tests:
+
+```bash
+python3.10 -m venv .venv
+.venv/bin/python -m pip install torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorch.org/whl/cpu
+.venv/bin/python -m pip install -r requirements-dev.txt
+PYTHONPATH=pipeline .venv/bin/python -B -m pytest -p no:cacheprovider pipeline/tests alignment_pose_cad/tests -q
+```
+
+These tests need neither prepared data nor weights, CUDA, Blender, RealSense or robot hardware. Shared fixtures in the root `conftest.py` provide synthetic CAD/RGB-D and an explicit temporary HTTP catalog. One topology-repair test is optional when `manifold3d` is absent. CPU tests do not validate native GPU builds or physical hardware. The GitLab CI job follows the same dependency split; its actual remote run requires the referenced submodule commit to be published first.
+
 ## Clone the project
 
 ```bash
@@ -164,11 +177,11 @@ The Blender helper currently fixes rendering to 256×256 pixels and 16 samples. 
 
 ### Assets required after cloning
 
-A Git clone includes code, configuration, suite results, and exported reports. It does **not** include the following ignored or external assets:
+A Git clone includes code, configuration and the two selected exported evidence bundles. It does **not** include the following ignored or external assets:
 
 | Asset | Needed for | What the recipient must do |
 | --- | --- | --- |
-| `data/prepared/` (about 335 MB) | Current UI startup, example captures, catalog matching, and suite processing | Receive the complete folder separately or reconstruct it from original inputs. It contains the manifest, centered CADs, 22 RGB-D examples, and 42 template views for each of the 10 CADs. |
+| `data/prepared/` (about 352 MiB) | Current UI startup, example captures, catalog matching, and suite processing | Receive the complete folder separately or reconstruct it from original inputs. It contains the manifest, centered CADs, 45 RGB-D examples, and 42 template views for each of the 10 CADs. |
 | Source CADs and `assembly.json` inventories under the sibling `PDDL/Assembly CAD/` | Example CAD selection and assembly discovery, identification, and suite validation | Receive the relevant assembly folders and point `assembly_registry`/`cad_dir` to them. The current code expects these inventories even when prepared data is present. |
 | Original photos, raw depth, calibration metadata, and catalog selected in `data/dataset.json` | Rebuilding prepared data with `prepare` | Supply these sources and update their paths before preparation. They are not needed merely to read an exported report. |
 | `checkpoints/` | Model inference | Download through the SAM6D installer and obtain the FoundationPose weights as described above. |
@@ -182,7 +195,7 @@ For **report viewing only**, the complete exported folder in `results/reports/` 
 
 ### Repository exclusions
 
-The root [.gitignore](../.gitignore) keeps weights, prepared datasets, captures, individual executions, interface sessions, caches, native builds, venvs, personal `.local.json` profiles, environment secrets, and editor files local. Suite results, exported reports, their logs, and `results/dashboard` remain eligible for version control. Rules do not remove files already tracked and do not alter the independent Git indexes of model submodules. Review changes within a submodule separately before committing there.
+The root [.gitignore](../.gitignore) keeps weights, prepared datasets, captures, individual executions, interface sessions, caches, native builds, venvs, personal `.local.json` profiles, environment secrets, and editor files local. Only the two selected evidence bundles, their logs, the report index and `results/dashboard` are eligible for version control. Other suites and exports remain ignored; see [retention policy](RESULTS.md). Rules do not remove files already tracked and do not alter the independent Git indexes of model submodules. Review changes within a submodule separately before committing there.
 
 ## Configure RealSense
 

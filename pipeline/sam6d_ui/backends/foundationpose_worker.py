@@ -1,4 +1,4 @@
-"""FoundationPose original: registro RGB-D y seguimiento de una grabación."""
+"""Original FoundationPose: RGB-D registration and recording tracking."""
 import sys as _sys
 from pathlib import Path as _Path
 _sys.path.insert(0, str(next(p for p in _Path(__file__).resolve().parents if (p / 'settings.py').is_file())))
@@ -28,7 +28,7 @@ def probe():
     available = not missing and weights and torch.cuda.is_available()
     return {'available': available, 'cuda': torch.cuda.is_available(), 'torch': str(torch.__version__),
             'missing_modules': missing, 'weights_available': weights, 'python': sys.executable,
-            'reason': None if available else 'Faltan dependencias, pesos o acceso a CUDA: ' + ', '.join(missing)}
+            'reason': None if available else 'Missing dependencies, weights or CUDA access: ' + ', '.join(missing)}
 
 
 def valid_pose(value):
@@ -38,7 +38,7 @@ def valid_pose(value):
             or not np.allclose(pose[3], [0, 0, 0, 1], atol=1e-5)
             or not np.allclose(pose[:3, :3].T @ pose[:3, :3], np.eye(3), atol=1e-3)
             or not np.isclose(np.linalg.det(pose[:3, :3]), 1, atol=1e-3)):
-        raise ValueError('FoundationPose devolvió una transformación no válida.')
+        raise ValueError('FoundationPose returned an invalid transformation.')
     return pose
 
 
@@ -46,7 +46,7 @@ def load_models():
     import logging
     import torch
     if not torch.cuda.is_available():
-        raise RuntimeError('FoundationPose requiere CUDA.')
+        raise RuntimeError('FoundationPose requires CUDA.')
     sys.path[:0] = [str(NATIVE), str(FOUNDATIONPOSE)]
     import mycpp
     install_sdu_compatibility(FOUNDATIONPOSE)
@@ -65,9 +65,9 @@ def estimate(args, runtime=None):
     import torch
     import trimesh
     if not torch.cuda.is_available():
-        raise RuntimeError('FoundationPose requiere GPU CUDA.')
+        raise RuntimeError('FoundationPose requires a CUDA GPU.')
     sys.path[:0] = [str(NATIVE), str(FOUNDATIONPOSE)]
-    # Precargar la extensión de esta versión de Python antes de importar Utils.
+    # Preload the extension for this Python version before importing Utils.
     import mycpp
     install_sdu_compatibility(FOUNDATIONPOSE)
     from estimater import FoundationPose, ScorePredictor, PoseRefinePredictor
@@ -79,7 +79,7 @@ def estimate(args, runtime=None):
     torch.set_num_threads(4)
     set_seed(0)
     mesh = trimesh.load(args.mesh, force='mesh')
-    mesh.apply_scale(.001)  # El motor SAM-6D entrega una malla en milímetros.
+    mesh.apply_scale(.001)  # The SAM-6D engine supplies a mesh in millimetres.
     camera = json.loads((args.folder / 'camera.json').read_text())
     K = np.asarray(camera['cam_K'], dtype=float).reshape(3, 3)
     depth_scale = float(camera['depth_scale']) * .001
@@ -89,7 +89,7 @@ def estimate(args, runtime=None):
     depth = raw.astype(np.float32) * depth_scale
     mask = np.asarray(Image.open(args.mask)) > 0
     if np.count_nonzero(mask & (depth > .001)) < 30:
-        raise ValueError('La máscara no contiene suficiente profundidad válida para estimar la pose.')
+        raise ValueError('The mask contains insufficient valid depth for pose estimation.')
     if "models" not in runtime:
         runtime["models"] = load_models()
     scorer, refiner, context = runtime["models"]
@@ -110,7 +110,7 @@ def estimate(args, runtime=None):
     loaded = time.perf_counter()
     pose = valid_pose(estimator.register(K=K, rgb=rgb, depth=depth, ob_mask=mask, iteration=5))
     if estimator.pose_last is None:
-        raise ValueError('FoundationPose no pudo registrar el objeto con la profundidad disponible.')
+        raise ValueError('FoundationPose could not register the object with the available depth.')
     torch.cuda.synchronize()
     registered = time.perf_counter()
 
@@ -141,11 +141,11 @@ def estimate(args, runtime=None):
         metadata = json.loads((args.recording / 'recording.json').read_text())
         rows = [json.loads(line) for line in (args.recording / 'frames.jsonl').read_text().splitlines() if line.strip()]
         if not rows:
-            raise ValueError('La grabación está vacía.')
+            raise ValueError('The recording is empty.')
         writer = cv2.VideoWriter(str(args.folder / 'pose_tracking.mp4'), cv2.VideoWriter_fourcc(*'mp4v'),
                                  metadata['fps'], (rgb.shape[1], rgb.shape[0]))
         if not writer.isOpened():
-            raise RuntimeError('No se pudo crear el vídeo de seguimiento.')
+            raise RuntimeError('Could not create the tracking video.')
         try:
             with (args.folder / 'pose_tracking.jsonl').open('w') as output:
                 for index, row in enumerate(rows):

@@ -93,7 +93,7 @@ class PeriodicTests(unittest.TestCase):
             return {**self.detector(frame,scratch,cancelled), 'cad_key':'new', 'display_name':'New'}
         def register(scratch):
             self.worker.registrations+=1
-            raise ValueError('No se pudo registrar el nuevo CAD')
+            raise ValueError('Failed to register the new CAD')
         self.worker.relocalize=register
         self.tracker.start(self.seed,1,detector)
         self.until(lambda:self.worker.registrations>=1)

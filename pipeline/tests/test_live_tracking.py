@@ -13,7 +13,7 @@ from sam6d_ui.camera.tracking import LivePoseTracker
 class Camera:
     def __init__(self):self.n=0;self.fail=False
     def frame(self):
-        if self.fail:raise RuntimeError('TEST: cámara desconectada')
+        if self.fail:raise RuntimeError('TEST: camera disconnected')
         self.n+=1
         return {'number':self.n,'timestamp':time.time(),'rgb':np.zeros((10,10,3),np.uint8),'depth':np.ones((10,10),np.uint16),'camera':{'cam_K':[100,0,5,0,100,5,0,0,1],'depth_scale':1}}
 
@@ -45,7 +45,7 @@ class LiveTrackingTests(unittest.TestCase):
     def test_camera_failure_stops_worker_and_preserves_error(self):
         self.tracker.start(self.seed);self.until(lambda:self.tracker.status()['frames']>=1)
         self.camera.fail=True;self.until(lambda:not self.tracker.busy())
-        self.assertIn('desconectada',self.tracker.status()['error'])
+        self.assertIn('disconnected',self.tracker.status()['error'])
         self.assertEqual(self.tracker.status()['state'],'error')
     def test_changed_calibration_requires_new_initialization(self):
         self.tracker.start(self.seed);self.until(lambda:self.tracker.status()['frames']>=1)
@@ -55,6 +55,6 @@ class LiveTrackingTests(unittest.TestCase):
         def changed():
             frame=original();frame['camera']['cam_K'][0]=200;return frame
         self.camera.frame=changed;self.until(lambda:not self.tracker.busy())
-        self.assertIn('calibración',self.tracker.status()['error'])
+        self.assertIn('Calibration',self.tracker.status()['error'])
 
 if __name__=='__main__':unittest.main()

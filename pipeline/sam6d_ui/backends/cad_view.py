@@ -41,5 +41,5 @@ def render_cad_view(mesh, pose, K, shape, mesh_tensors, glctx):
     draw_reference_axes(image, pose, intrinsics, min(float(mesh.extents.max()) / 2, .1))
     ok, encoded = cv2.imencode('.jpg', cv2.cvtColor(image, cv2.COLOR_RGB2BGR), [cv2.IMWRITE_JPEG_QUALITY, 85])
     if not ok:
-        raise RuntimeError('No se pudo codificar la vista del CAD.')
+        raise RuntimeError('Failed to encode the CAD view.')
     return encoded.tobytes()

@@ -1,1 +1,1 @@
-"""Adaptadores de estimación de pose; los modelos se ejecutan fuera del servidor."""
+"""Pose-estimation adapters; models run outside the server process."""

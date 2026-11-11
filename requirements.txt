@@ -1,0 +1,6 @@
+# Application Python packages. Read README.md and docs/INSTALLATION.md first.
+# CUDA wheels are pinned by the recorded runtime constraints.
+--extra-index-url https://download.pytorch.org/whl/cu124
+-c pipeline/setup/constraints-assembly-runtime.txt
+-r pipeline/setup/requirements-sam6d.txt
+# FoundationPose/native builds and robot hardware are separate optional steps.

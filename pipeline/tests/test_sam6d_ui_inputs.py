@@ -42,7 +42,7 @@ class UiInputs(unittest.TestCase):
         image = BytesIO()
         Image.fromarray(array).save(image, format="PNG")
         np.testing.assert_array_equal(read_depth(image.getvalue(), ".png", (16, 12)), array)
-        with self.assertRaisesRegex(ValueError, "mismo tamaño"):
+        with self.assertRaisesRegex(ValueError, "same size"):
             read_depth(image.getvalue(), ".png", (8, 12))
         image = BytesIO()
         Image.new("RGB", (16, 12)).save(image, format="PNG")

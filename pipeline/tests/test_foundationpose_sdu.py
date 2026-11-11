@@ -6,6 +6,7 @@ from pathlib import Path
 import tempfile
 import subprocess
 import unittest
+import xml.etree.ElementTree as ET
 
 from settings import ROOT, path
 
@@ -20,6 +21,24 @@ class FoundationPoseSDU(unittest.TestCase):
         provenance = json.loads((HERE / 'provenance.json').read_text())
         for name, expected in provenance['added_sha256'].items():
             self.assertEqual(hashlib.sha256((HERE / 'files' / name).read_bytes()).hexdigest(), expected)
+
+    def test_shared_meshes_keep_geometry_and_xml_identifiers(self):
+        provenance = json.loads((HERE / 'provenance.json').read_text())
+        folder = HERE / 'files/UR5eGripper'
+        records = provenance['supporting_assets']['deduplication']['removed_copies']
+        for record in records:
+            self.assertFalse((folder / record['removed']).exists())
+            self.assertEqual(hashlib.sha256((folder / record['canonical']).read_bytes()).hexdigest(), record['sha256'])
+        for filename in ('ur5e.xml', 'ur5ehande.xml', 'ur5ehande_2.xml', 'ur5e2f85.xml'):
+            model = ET.parse(folder / filename).getroot()
+            meshes = model.findall('.//asset/mesh')
+            names = {mesh.get('name', Path(mesh.get('file')).stem) for mesh in meshes}
+            self.assertEqual(len(names), len(meshes))
+            for mesh in meshes:
+                self.assertTrue((folder / mesh.get('file')).is_file(), mesh.attrib)
+            for geom in model.iter('geom'):
+                if geom.get('mesh'):
+                    self.assertIn(geom.get('mesh'), names, filename)
 
     def test_utils_patch_reproduces_sdu_without_modifying_official_source(self):
         official = path('foundationpose')

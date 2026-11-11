@@ -12,8 +12,8 @@ from PIL import Image
 import pytest
 import trimesh
 
-PROJECTS = Path(__file__).resolve().parents[3]
-PIPELINE = PROJECTS / "CADTracking/pipeline"
+ROOT = Path(__file__).resolve().parents[2]
+PIPELINE = ROOT / "pipeline"
 
 
 def load_module(name, path):
@@ -24,33 +24,33 @@ def load_module(name, path):
 
 
 prepare = load_module("prepare", PIPELINE / "tools/prepare.py")
-sam = load_module("sam_pddl", PROJECTS / "CADTracking/models/SAM-6D/pddl_pipeline.py")
+sam = load_module("sam_pddl", ROOT / "models/SAM-6D/pddl_pipeline.py")
 
 
 @pytest.fixture(scope="module")
-def prepared(tmp_path_factory):
+def prepared(tmp_path_factory, source_dataset):
     output = tmp_path_factory.mktemp("converted data with spaces")
-    data = prepare.prepare(PIPELINE.parent / "data/dataset.json", output, repair=False)
+    data = prepare.prepare(source_dataset, output, repair=False)
     return output, data
 
 
-def test_realsense_scale_is_millimetres_per_raw_integer():
-    source = PROJECTS / "PDDL/DINOPDDL/realsense_photos/control_board_depth.json"
+def test_realsense_scale_is_millimetres_per_raw_integer(source_dataset):
+    source = source_dataset.parent / "photos/control_board_depth.json"
     metadata = json.loads(source.read_text())
     depth = np.load(source.with_suffix(".npy"), allow_pickle=False)
-    camera = prepare.camera_from_metadata(metadata, depth, (640, 480))
+    camera = prepare.camera_from_metadata(metadata, depth, (64, 48))
     assert camera["depth_scale"] == pytest.approx(1.0)
     assert 500 * camera["depth_scale"] / 1000 == pytest.approx(0.5)
     assert camera["cam_K"][0] == metadata["intrinsics"]["fx"]
     wrong = copy.deepcopy(metadata)
     wrong["intrinsics"]["coefficients"][0] = 0.1
-    with pytest.raises(ValueError, match="distorsión"):
-        prepare.camera_from_metadata(wrong, depth, (640, 480))
-    with pytest.raises(ValueError, match="resoluciones"):
+    with pytest.raises(ValueError, match="distortion"):
+        prepare.camera_from_metadata(wrong, depth, (64, 48))
+    with pytest.raises(ValueError, match="resolutions"):
         prepare.camera_from_metadata(metadata, depth, (1280, 720))
     wrong = dict(metadata, aligned_to="depth")
-    with pytest.raises(ValueError, match="alineada"):
-        prepare.camera_from_metadata(wrong, depth, (640, 480))
+    with pytest.raises(ValueError, match="aligned"):
+        prepare.camera_from_metadata(wrong, depth, (64, 48))
 
 
 def test_real_dataset_inventory_and_lossless_depth(prepared):
@@ -66,7 +66,7 @@ def test_real_dataset_inventory_and_lossless_depth(prepared):
             np.testing.assert_array_equal(np.array(image), original)
     by_name = {f["name"]: f for f in data["frames"]}
     assert by_name["termal_fan"]["filename_hint_only"] == "thermal_core"
-    assert by_name["prueba 1"]["filename_hint_only"] is None
+    assert by_name["unlabelled_capture"]["filename_hint_only"] is None
 
 
 
@@ -97,7 +97,7 @@ def test_pose_transform_restores_the_original_local_cad_frame(prepared):
 
 
 def test_render_depth_unprojection_has_metric_scale_and_camera_axis_convention():
-    path = PROJECTS / "CADTracking/models/SAM-6D/SAM-6D/Render/render_pddl_templates.py"
+    path = ROOT / "models/SAM-6D/SAM-6D/Render/render_pddl_templates.py"
     tree = ast.parse(path.read_text())
     function = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == "xyz_from_depth_mm")
     namespace = {"np": np}
@@ -124,12 +124,12 @@ def test_sam_needs_metric_render_completion_markers(prepared):
 
 
 @pytest.mark.parametrize("script,arguments", [
-    ("CADTracking/models/SAM-6D/pddl_pipeline.py", ["segment", "--frame", "control_board"]),
-    ("CADTracking/models/SAM-6D/pddl_pipeline.py", ["render", "--part", "05_control_board"]),
+    ("models/SAM-6D/pddl_pipeline.py", ["segment", "--frame", "control_board"]),
+    ("models/SAM-6D/pddl_pipeline.py", ["render", "--part", "05_control_board"]),
 ])
 def test_launchers_accept_paths_with_spaces_without_running_models(prepared, script, arguments):
     output, _ = prepared
-    completed = subprocess.run([sys.executable, str(PROJECTS / script), *arguments,
+    completed = subprocess.run([sys.executable, str(ROOT / script), *arguments,
                                 "--manifest", str(output / "manifest.json"), "--dry-run"],
                                text=True, capture_output=True)
     assert completed.returncode == 0, completed.stderr
@@ -159,5 +159,5 @@ def test_vision_audit_rejects_modified_prepared_rgb(prepared,tmp_path):
     (copied/'manifest.json').write_text(json.dumps(manifest))
     rgb=copied/manifest['frames'][0]['rgb']
     Image.new('RGB',(640,480),'red').save(rgb)
-    with pytest.raises(ValueError,match='bytes RGB'):
+    with pytest.raises(ValueError,match='RGB bytes'):
         audit(copied/'manifest.json')

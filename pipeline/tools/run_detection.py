@@ -42,7 +42,7 @@ def main():
         base=PREPARED;data=json.loads((base/'manifest.json').read_text())
         frame=next((f for f in data['frames'] if f['name']==a.example),None)
         part=next((v for v in data['parts'] if v['key']==a.part),None)
-        if not frame or not part:p.error('Captura o CAD desconocidos.')
+        if not frame or not part:p.error('Unknown capture or CAD.')
         request={k:file(base/frame[src]) for k,src in (('rgb','rgb'),('depth','depth'),('camera','camera'))}
         request['cad']=file(base/part['source_stl'])
     else:
@@ -53,7 +53,7 @@ def main():
     request['options']=config
     stamp=datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     output=(a.output or RESULTS/'runs'/stamp).resolve()
-    if output.exists():p.error('La salida ya existe; elige una carpeta nueva para conservar los resultados.')
+    if output.exists():p.error('Output already exists; select a new directory to preserve results.')
     inputs=prepare_upload(request,output)
     from sam6d_ui.engine import Engine
     result=Engine(RESULTS/'interface').run(output,inputs,lambda text:print(text,flush=True))

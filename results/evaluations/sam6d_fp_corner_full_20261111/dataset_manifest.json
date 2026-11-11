@@ -1,0 +1,1518 @@
+{
+  "schema_version": 1,
+  "assembly_id": "converter_demo_v1",
+  "assembly_name": "printed_assembly",
+  "status": "data_prepared_not_inferred",
+  "parts": [
+    {
+      "category_id": 1,
+      "key": "00_rear_mounting_plate",
+      "name": "rear_mounting",
+      "fixed": true,
+      "optional": false,
+      "source_stl": "../../home/raca/projects/PDDL/Assembly CAD/Assembly parts/printed_assembly/00_rear_mounting_plate.stl",
+      "source_sha256": "50ac6086b2fb03112c89bb82587782de3092d162b55cfe2e2d5341746dad5885",
+      "sam_ply": "sam6d/models/obj_000001.ply",
+      "sam_obj": "sam6d/models/obj_000001.obj",
+      "sam_template_dir": "sam6d/templates/00_rear_mounting_plate/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          74.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          125.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          -110.0,
+          0.0,
+          0.0
+        ],
+        [
+          110.0,
+          148.0,
+          250.0
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": false,
+      "mesh_quality": {
+        "watertight": false,
+        "winding_consistent": true,
+        "nonmanifold_edges": 2,
+        "boundary_edges": 0,
+        "faces": 3116,
+        "volume_mm3": 1163249.1428800789
+      }
+    },
+    {
+      "category_id": 2,
+      "key": "01_front_housing",
+      "name": "front_housing",
+      "fixed": false,
+      "optional": false,
+      "source_stl": "../../home/raca/projects/PDDL/Assembly CAD/Assembly parts/printed_assembly/01_front_housing.stl",
+      "source_sha256": "d2e14fbc643e2739183604af7741eb0665c8c8878881924aceb9d9a5fb5dff8e",
+      "sam_ply": "sam6d/models/obj_000002.ply",
+      "sam_obj": "sam6d/models/obj_000002.obj",
+      "sam_template_dir": "sam6d/templates/01_front_housing/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          14.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          125.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          -85.5,
+          0.0,
+          15.0
+        ],
+        [
+          85.5,
+          28.0,
+          235.0
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": true,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 1160,
+        "volume_mm3": 379501.2510347565
+      }
+    },
+    {
+      "category_id": 3,
+      "key": "02_control_panel",
+      "name": "hmi_panel",
+      "fixed": false,
+      "optional": false,
+      "source_stl": "../../home/raca/projects/PDDL/Assembly CAD/Assembly parts/printed_assembly/02_control_panel.stl",
+      "source_sha256": "d27c7fa16cd41aaee32e8e5a4d557a1133f803669cdf06712ae1e5b0e04ab7e5",
+      "sam_ply": "sam6d/models/obj_000003.ply",
+      "sam_obj": "sam6d/models/obj_000003.obj",
+      "sam_template_dir": "sam6d/templates/02_control_panel/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          15.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          128.75
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          -72.19999694824219,
+          0.0,
+          26.0
+        ],
+        [
+          72.19999694824219,
+          30.0,
+          231.5
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": true,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 3548,
+        "volume_mm3": 258007.86973106978
+      }
+    },
+    {
+      "category_id": 4,
+      "key": "03_option_cassette",
+      "name": "option_cassette",
+      "fixed": false,
+      "optional": false,
+      "source_stl": "../../home/raca/projects/PDDL/Assembly CAD/Assembly parts/printed_assembly/03_option_cassette.stl",
+      "source_sha256": "dcde1a948fe4144220af2e195fe45235d418f1cb11afca99538833faefd26259",
+      "sam_ply": "sam6d/models/obj_000004.ply",
+      "sam_obj": "sam6d/models/obj_000004.obj",
+      "sam_template_dir": "sam6d/templates/03_option_cassette/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          15.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          134.75
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          -52.20000076293945,
+          0.0,
+          54.0
+        ],
+        [
+          52.20000076293945,
+          30.0,
+          215.5
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": true,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 4108,
+        "volume_mm3": 123314.30574424344
+      }
+    },
+    {
+      "category_id": 5,
+      "key": "03a_vertical_option_a",
+      "name": "sensor_module",
+      "fixed": false,
+      "optional": true,
+      "source_stl": "../../home/raca/projects/PDDL/Assembly CAD/Assembly parts/printed_assembly/03a_vertical_option_a.stl",
+      "source_sha256": "ab226ac853658c4762df5988b2e7b0975afe7027c5176ce7c34088dac3a0ac7c",
+      "sam_ply": "sam6d/models/obj_000005.ply",
+      "sam_obj": "sam6d/models/obj_000005.obj",
+      "sam_template_dir": "sam6d/templates/03a_vertical_option_a/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -24.999999046325684
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          9.5
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          161.9000015258789
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          -38.599998474121094,
+          3.5,
+          70.80000305175781
+        ],
+        [
+          -11.399999618530273,
+          15.5,
+          253.0
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": true,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 156,
+        "volume_mm3": 31267.7789921951
+      }
+    },
+    {
+      "category_id": 6,
+      "key": "03b_vertical_option_b",
+      "name": "communications_module",
+      "fixed": false,
+      "optional": true,
+      "source_stl": "../../home/raca/projects/PDDL/Assembly CAD/Assembly parts/printed_assembly/03b_vertical_option_b.stl",
+      "source_sha256": "5e29de8a511b0e924051debfcc6cf3f0388feba570ccff724e00a0a76a9b4cdd",
+      "sam_ply": "sam6d/models/obj_000006.ply",
+      "sam_obj": "sam6d/models/obj_000006.obj",
+      "sam_template_dir": "sam6d/templates/03b_vertical_option_b/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          24.999999046325684
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          10.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          161.9000015258789
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          9.399999618530273,
+          4.0,
+          70.80000305175781
+        ],
+        [
+          40.599998474121094,
+          16.0,
+          253.0
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": true,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 164,
+        "volume_mm3": 36358.65892776486
+      }
+    },
+    {
+      "category_id": 7,
+      "key": "04_io_terminals",
+      "name": "io_terminals",
+      "fixed": false,
+      "optional": false,
+      "source_stl": "../../home/raca/projects/PDDL/Assembly CAD/Assembly parts/printed_assembly/04_io_terminals.stl",
+      "source_sha256": "1393fd2295ab2b3abcd25fd5eca28ac01c88c99215ba5f06261ac728f8dc4ae4",
+      "sam_ply": "sam6d/models/obj_000007.ply",
+      "sam_obj": "sam6d/models/obj_000007.obj",
+      "sam_template_dir": "sam6d/templates/04_io_terminals/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          15.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          130.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          -56.0,
+          0.0,
+          44.0
+        ],
+        [
+          56.0,
+          30.0,
+          216.0
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": true,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 8056,
+        "volume_mm3": 182760.2740328672
+      }
+    },
+    {
+      "category_id": 8,
+      "key": "05_control_board",
+      "name": "control_board",
+      "fixed": false,
+      "optional": false,
+      "source_stl": "../../home/raca/projects/PDDL/Assembly CAD/Assembly parts/printed_assembly/05_control_board.stl",
+      "source_sha256": "4cbacb216dbd69065c8434f696292e196060d018e1d7780a554e5720ea598deb",
+      "sam_ply": "sam6d/models/obj_000008.ply",
+      "sam_obj": "sam6d/models/obj_000008.obj",
+      "sam_template_dir": "sam6d/templates/05_control_board/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          15.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          129.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          -65.0,
+          0.0,
+          34.0
+        ],
+        [
+          65.0,
+          30.0,
+          224.0
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": true,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 4634,
+        "volume_mm3": 175799.39390779182
+      }
+    },
+    {
+      "category_id": 9,
+      "key": "06_power_unit",
+      "name": "power_unit",
+      "fixed": false,
+      "optional": false,
+      "source_stl": "../../home/raca/projects/PDDL/Assembly CAD/Assembly parts/printed_assembly/06_power_unit.stl",
+      "source_sha256": "383daaa8b57b9df13cff313f089e96e63c7302048def77f040ce8076fb0b0244",
+      "sam_ply": "sam6d/models/obj_000009.ply",
+      "sam_obj": "sam6d/models/obj_000009.obj",
+      "sam_template_dir": "sam6d/templates/06_power_unit/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          16.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          128.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          -72.0,
+          0.0,
+          26.0
+        ],
+        [
+          72.0,
+          32.0,
+          230.0
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": true,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 6584,
+        "volume_mm3": 278776.06189950416
+      }
+    },
+    {
+      "category_id": 10,
+      "key": "07_thermal_core",
+      "name": "thermal_core",
+      "fixed": false,
+      "optional": false,
+      "source_stl": "../../home/raca/projects/PDDL/Assembly CAD/Assembly parts/printed_assembly/07_thermal_core.stl",
+      "source_sha256": "a736437d5791ecc49d77d6c26146fbb536fb4321d08a1d6315653ab0d63d8345",
+      "sam_ply": "sam6d/models/obj_000010.ply",
+      "sam_obj": "sam6d/models/obj_000010.obj",
+      "sam_template_dir": "sam6d/templates/07_thermal_core/templates",
+      "T_local_from_sam_mm": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          16.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          125.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bounds_local_mm": [
+        [
+          -76.0,
+          0.0,
+          18.0
+        ],
+        [
+          76.0,
+          32.0,
+          232.0
+        ]
+      ],
+      "topology_repair": null,
+      "source_watertight": true,
+      "mesh_quality": {
+        "watertight": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "faces": 5646,
+        "volume_mm3": 344172.9959546989
+      }
+    }
+  ],
+  "frames": [
+    {
+      "frame_id": 0,
+      "name": "cassette_far",
+      "rgb": "sam6d/frames/cassette_far/rgb.png",
+      "depth": "sam6d/frames/cassette_far/depth.png",
+      "camera": "sam6d/frames/cassette_far/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_far.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_far_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_far_depth.json",
+      "source_rgb_sha256": "3dfa3f918ebb49fd0e1ac19d752efa4dafbf80adb76f68ce1806c8189ea12105",
+      "prepared_rgb_sha256": "79468b4edded89e743dc804a2130439fdb8fdf8b1c747f88544e4a3117f83281",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.803466796875,
+      "depth_percentiles_mm": [
+        625.0000296859071,
+        736.0000349581242,
+        1526.0000724811107
+      ],
+      "expected_cad_key": "03_option_cassette"
+    },
+    {
+      "frame_id": 1,
+      "name": "cassette_rot_far",
+      "rgb": "sam6d/frames/cassette_rot_far/rgb.png",
+      "depth": "sam6d/frames/cassette_rot_far/depth.png",
+      "camera": "sam6d/frames/cassette_rot_far/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_rot_far.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_rot_far_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_rot_far_depth.json",
+      "source_rgb_sha256": "80e4eae03e80dd1ca76772bd396d89b55b1de7c162eb8f09106d087576a2520c",
+      "prepared_rgb_sha256": "aa4442438d9653a645cb33a357c41154b7e22897ba902a49e52f59875a409676",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.79806640625,
+      "depth_percentiles_mm": [
+        594.0000282134861,
+        736.0000349581242,
+        1530.0000726711005
+      ],
+      "expected_cad_key": "03_option_cassette"
+    },
+    {
+      "frame_id": 2,
+      "name": "cassette_rot_side",
+      "rgb": "sam6d/frames/cassette_rot_side/rgb.png",
+      "depth": "sam6d/frames/cassette_rot_side/depth.png",
+      "camera": "sam6d/frames/cassette_rot_side/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_rot_side.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_rot_side_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_rot_side_depth.json",
+      "source_rgb_sha256": "af23c0144a1db89353c72c601a13175050b130e19c548ca569fb1a27e379796e",
+      "prepared_rgb_sha256": "e48e961675d911a077d8ad6481ee5ba824f86db27096e902f31f16a2b34c0ae6",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7320377604166667,
+      "depth_percentiles_mm": [
+        443.0000210413709,
+        561.0000266460702,
+        727.0000345306471
+      ],
+      "expected_cad_key": "03_option_cassette"
+    },
+    {
+      "frame_id": 3,
+      "name": "cassette_side",
+      "rgb": "sam6d/frames/cassette_side/rgb.png",
+      "depth": "sam6d/frames/cassette_side/depth.png",
+      "camera": "sam6d/frames/cassette_side/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_side.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_side_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/cassette_side_depth.json",
+      "source_rgb_sha256": "4bd61195127e6d5bc108cf118642df94a98e1739d868b7905717708f15aa76c5",
+      "prepared_rgb_sha256": "72617d52e5c9313afa292d788ed87dcf32825778700cd46924cbd0dc467d6b9e",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7327278645833334,
+      "depth_percentiles_mm": [
+        444.0000210888684,
+        563.0000267410651,
+        721.0000342456624
+      ],
+      "expected_cad_key": "03_option_cassette"
+    },
+    {
+      "frame_id": 4,
+      "name": "control_far",
+      "rgb": "sam6d/frames/control_far/rgb.png",
+      "depth": "sam6d/frames/control_far/depth.png",
+      "camera": "sam6d/frames/control_far/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_far.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_far_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_far_depth.json",
+      "source_rgb_sha256": "cdb54e8fda8681e3d262b4259f57869325a47ca783838984e64b229c715ee8b4",
+      "prepared_rgb_sha256": "6015875ff7f97bb6c85f53c72003d8f4af6dd1323eb28cfc321d2b8f25a8787f",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.788193359375,
+      "depth_percentiles_mm": [
+        626.0000297334045,
+        736.0000349581242,
+        1526.0000724811107
+      ],
+      "expected_cad_key": "05_control_board"
+    },
+    {
+      "frame_id": 5,
+      "name": "control_far_ro",
+      "rgb": "sam6d/frames/control_far_ro/rgb.png",
+      "depth": "sam6d/frames/control_far_ro/depth.png",
+      "camera": "sam6d/frames/control_far_ro/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_far_ro.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_far_ro_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_far_ro_depth.json",
+      "source_rgb_sha256": "834b181531f6128add9a3ddcc527d59106421def77a20e29959aeb81237094ea",
+      "prepared_rgb_sha256": "0a8e1b74bc542ee57c536e3f0bf50cd5ebce5125231e1ab64b9005e1e31955ff",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.8017936197916666,
+      "depth_percentiles_mm": [
+        613.0000291159377,
+        736.0000349581242,
+        1526.0000724811107
+      ],
+      "expected_cad_key": "05_control_board"
+    },
+    {
+      "frame_id": 6,
+      "name": "control_rot_side",
+      "rgb": "sam6d/frames/control_rot_side/rgb.png",
+      "depth": "sam6d/frames/control_rot_side/depth.png",
+      "camera": "sam6d/frames/control_rot_side/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_rot_side.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_rot_side_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_rot_side_depth.json",
+      "source_rgb_sha256": "446e87a7ff339e8966afd3def0cc5da08a289ba41855f3c280245d3270246b3a",
+      "prepared_rgb_sha256": "6dcec2b072e7005434494ee485b7a5880f561ae07f97e978248597c62afce04d",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7360579427083334,
+      "depth_percentiles_mm": [
+        456.0000216588378,
+        568.0000269785523,
+        719.0000341506675
+      ],
+      "expected_cad_key": "05_control_board"
+    },
+    {
+      "frame_id": 7,
+      "name": "control_side",
+      "rgb": "sam6d/frames/control_side/rgb.png",
+      "depth": "sam6d/frames/control_side/depth.png",
+      "camera": "sam6d/frames/control_side/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_side.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_side_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/control_side_depth.json",
+      "source_rgb_sha256": "ec03ff54da2d7f5cf4219e7e3a4929e9586e08b3957cf64b4e972d06bcd67b2b",
+      "prepared_rgb_sha256": "dc93b63c0af495ec4674753d78c8550279e6592006f5c90092a8860501987056",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.752880859375,
+      "depth_percentiles_mm": [
+        422.00002004392445,
+        566.0000268835574,
+        720.0000341981649
+      ],
+      "expected_cad_key": "05_control_board"
+    },
+    {
+      "frame_id": 8,
+      "name": "front_far",
+      "rgb": "sam6d/frames/front_far/rgb.png",
+      "depth": "sam6d/frames/front_far/depth.png",
+      "camera": "sam6d/frames/front_far/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_far.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_far_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_far_depth.json",
+      "source_rgb_sha256": "ed808fb2916510ea68ba4f38e2494a38fca0df93fe7930767fb2dd9e1c12300b",
+      "prepared_rgb_sha256": "1d6da5953106e8495df2e3b90e1ebc1b51654ed43da034e34e70a7615260c947",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.8193489583333333,
+      "depth_percentiles_mm": [
+        570.0000270735472,
+        736.0000349581242,
+        1549.000073573552
+      ],
+      "expected_cad_key": "01_front_housing"
+    },
+    {
+      "frame_id": 9,
+      "name": "front_far_rot",
+      "rgb": "sam6d/frames/front_far_rot/rgb.png",
+      "depth": "sam6d/frames/front_far_rot/depth.png",
+      "camera": "sam6d/frames/front_far_rot/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_far_rot.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_far_rot_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_far_rot_depth.json",
+      "source_rgb_sha256": "4b4bbd48dee6bee99df7c5b44257952581ee4eb50eddf7c5a4015abf889b332b",
+      "prepared_rgb_sha256": "275202daa9ab97b48791509ff94950d57915aa90bf9344838633e365ce81515a",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.832109375,
+      "depth_percentiles_mm": [
+        571.0000271210447,
+        736.0000349581242,
+        1557.0000739535317
+      ],
+      "expected_cad_key": "01_front_housing"
+    },
+    {
+      "frame_id": 10,
+      "name": "front_rot_side",
+      "rgb": "sam6d/frames/front_rot_side/rgb.png",
+      "depth": "sam6d/frames/front_rot_side/depth.png",
+      "camera": "sam6d/frames/front_rot_side/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_rot_side.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_rot_side_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_rot_side_depth.json",
+      "source_rgb_sha256": "ef7dbf23c640d154bc9f5e3023981da16471c084a960a934c18559e5302ccc0e",
+      "prepared_rgb_sha256": "2256fb0ff7c161867d38cd1b7829355c4de600814179cb8b6926f81757eb7301",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.722197265625,
+      "depth_percentiles_mm": [
+        449.00002132635564,
+        560.0000265985727,
+        726.0000344831496
+      ],
+      "expected_cad_key": "01_front_housing"
+    },
+    {
+      "frame_id": 11,
+      "name": "front_side",
+      "rgb": "sam6d/frames/front_side/rgb.png",
+      "depth": "sam6d/frames/front_side/depth.png",
+      "camera": "sam6d/frames/front_side/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_side.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_side_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/front_side_depth.json",
+      "source_rgb_sha256": "ee796ec31df4d10065981833b93ee8352f592815e67440d98eb64330312c3966",
+      "prepared_rgb_sha256": "4f350284bc4f3a1cca2cb83ab592f3976999b6cc7738bd4e842d16361e5fcd86",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7700846354166667,
+      "depth_percentiles_mm": [
+        422.00002004392445,
+        552.0000262185931,
+        721.0000342456624
+      ],
+      "expected_cad_key": "01_front_housing"
+    },
+    {
+      "frame_id": 12,
+      "name": "hmi_far",
+      "rgb": "sam6d/frames/hmi_far/rgb.png",
+      "depth": "sam6d/frames/hmi_far/depth.png",
+      "camera": "sam6d/frames/hmi_far/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_far.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_far_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_far_depth.json",
+      "source_rgb_sha256": "e825cea8c4ac5500c891878b83e1659df27123833612170192988e3aaf183510",
+      "prepared_rgb_sha256": "9bb2981aa0299939a8f4416fef0bd36fba2f01cfe3023b590b1593379df0c9a1",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7877278645833333,
+      "depth_percentiles_mm": [
+        586.0000278335065,
+        736.0000349581242,
+        1561.0000741435215
+      ],
+      "expected_cad_key": "02_control_panel"
+    },
+    {
+      "frame_id": 13,
+      "name": "hmi_far_rot",
+      "rgb": "sam6d/frames/hmi_far_rot/rgb.png",
+      "depth": "sam6d/frames/hmi_far_rot/depth.png",
+      "camera": "sam6d/frames/hmi_far_rot/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_far_rot.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_far_rot_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_far_rot_depth.json",
+      "source_rgb_sha256": "2678b1fca6b0bc3c0188ab4d50a4eaf4eb29e9d7ad38284939f04d9009cbe8ce",
+      "prepared_rgb_sha256": "d8ac4581fbe1edac9a96ff0661a4547a7073266011bec7254070c92065f08ec7",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7943033854166667,
+      "depth_percentiles_mm": [
+        592.0000281184912,
+        736.0000349581242,
+        1522.000072291121
+      ],
+      "expected_cad_key": "02_control_panel"
+    },
+    {
+      "frame_id": 14,
+      "name": "hmi_rot_side",
+      "rgb": "sam6d/frames/hmi_rot_side/rgb.png",
+      "depth": "sam6d/frames/hmi_rot_side/depth.png",
+      "camera": "sam6d/frames/hmi_rot_side/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_rot_side.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_rot_side_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_rot_side_depth.json",
+      "source_rgb_sha256": "b889d9f4efcf871e6abba3aed61f7ada1a25f421187362f65d41a1d1b82074cf",
+      "prepared_rgb_sha256": "3d01d4d4a4b32f11a43934a9a8fcfe54d092f6fda7cdefc4bc9f6cc11bc669ae",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7118782552083334,
+      "depth_percentiles_mm": [
+        440.0000208988786,
+        559.0000265510753,
+        722.0000342931598
+      ],
+      "expected_cad_key": "02_control_panel"
+    },
+    {
+      "frame_id": 15,
+      "name": "hmi_side",
+      "rgb": "sam6d/frames/hmi_side/rgb.png",
+      "depth": "sam6d/frames/hmi_side/depth.png",
+      "camera": "sam6d/frames/hmi_side/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_side.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_side_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/hmi_side_depth.json",
+      "source_rgb_sha256": "da579b6e60b1b497a9c65a66ca548e13bb3b94e37e3d460440c3cdaf4146f2c4",
+      "prepared_rgb_sha256": "c54f6dd4886f333016f5dbb63d9d857bcc8d928319c0c9fa3a001162f9244e92",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7280078125,
+      "depth_percentiles_mm": [
+        435.0000206613913,
+        558.0000265035778,
+        723.0000343406573
+      ],
+      "expected_cad_key": "02_control_panel"
+    },
+    {
+      "frame_id": 16,
+      "name": "inverse_cassette",
+      "rgb": "sam6d/frames/inverse_cassette/rgb.png",
+      "depth": "sam6d/frames/inverse_cassette/depth.png",
+      "camera": "sam6d/frames/inverse_cassette/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_cassette.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_cassette_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_cassette_depth.json",
+      "source_rgb_sha256": "189bdbb61b3e9e9f87f9a80d308e1e50254eb1f071856d7567a48d49be28f6c6",
+      "prepared_rgb_sha256": "87bf3fc4bf8c090f26c5903f2b5bb038f4c32d76ff0771b64b147668e836bc28",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.8014192708333333,
+      "depth_percentiles_mm": [
+        499.0000237012282,
+        521.0000247461721,
+        550.0000261235982
+      ],
+      "expected_cad_key": "03_option_cassette"
+    },
+    {
+      "frame_id": 17,
+      "name": "inverse_control",
+      "rgb": "sam6d/frames/inverse_control/rgb.png",
+      "depth": "sam6d/frames/inverse_control/depth.png",
+      "camera": "sam6d/frames/inverse_control/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_control.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_control_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_control_depth.json",
+      "source_rgb_sha256": "21da8b9f363008f3a324086d7d410bc98af88e40a346e8659988a4ed94f3378f",
+      "prepared_rgb_sha256": "b1c0f9ccc6e48e308440ab9f45b5d67ebb9bc6357a0cd32200a3842836ac1549",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.81900390625,
+      "depth_percentiles_mm": [
+        499.0000237012282,
+        521.0000247461721,
+        550.0000261235982
+      ],
+      "expected_cad_key": "05_control_board"
+    },
+    {
+      "frame_id": 18,
+      "name": "inverse_front",
+      "rgb": "sam6d/frames/inverse_front/rgb.png",
+      "depth": "sam6d/frames/inverse_front/depth.png",
+      "camera": "sam6d/frames/inverse_front/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_front.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_front_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_front_depth.json",
+      "source_rgb_sha256": "be52b4873b11a3fb2db8dcda4627541cf0d3f1504db387c71d35e89286b2ec3e",
+      "prepared_rgb_sha256": "49209ad59dc4c68b8e80011c306403375cf0315f7d0c6da58ae7e2505c38db16",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.80548828125,
+      "depth_percentiles_mm": [
+        493.0000234162435,
+        522.0000247936696,
+        550.0000261235982
+      ],
+      "expected_cad_key": "01_front_housing"
+    },
+    {
+      "frame_id": 19,
+      "name": "inverse_hmi",
+      "rgb": "sam6d/frames/inverse_hmi/rgb.png",
+      "depth": "sam6d/frames/inverse_hmi/depth.png",
+      "camera": "sam6d/frames/inverse_hmi/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_hmi.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_hmi_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_hmi_depth.json",
+      "source_rgb_sha256": "dc8c3d842e8ce5bc1cc45431529853e6af3da5e8d206c8a865c5a7c8f2448b62",
+      "prepared_rgb_sha256": "39d01ff37bc6dc2597e8285fdf9c8608c5d7e50e08f6b1f84383890c1981516c",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.8154264322916667,
+      "depth_percentiles_mm": [
+        495.0000235112384,
+        521.0000247461721,
+        550.0000261235982
+      ],
+      "expected_cad_key": "02_control_panel"
+    },
+    {
+      "frame_id": 20,
+      "name": "inverse_io",
+      "rgb": "sam6d/frames/inverse_io/rgb.png",
+      "depth": "sam6d/frames/inverse_io/depth.png",
+      "camera": "sam6d/frames/inverse_io/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_io.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_io_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_io_depth.json",
+      "source_rgb_sha256": "87a4459d0f3c43f92b944ee3c28e7f73e6f3deb33da76e74d31ca49c191f73e4",
+      "prepared_rgb_sha256": "b289960971cd212669f5cf39b293cf15b5eab28e3d89ac1d6cfef38fc0a504a1",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.8099479166666667,
+      "depth_percentiles_mm": [
+        499.0000237012282,
+        522.0000247936696,
+        550.0000261235982
+      ],
+      "expected_cad_key": "04_io_terminals"
+    },
+    {
+      "frame_id": 21,
+      "name": "inverse_power",
+      "rgb": "sam6d/frames/inverse_power/rgb.png",
+      "depth": "sam6d/frames/inverse_power/depth.png",
+      "camera": "sam6d/frames/inverse_power/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_power.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_power_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_power_depth.json",
+      "source_rgb_sha256": "823822d33f0410b0d6ecd743b10e700dc29d4c8361bf99075b6320762a9238bf",
+      "prepared_rgb_sha256": "c3a487aef2c9b4696eae9ef43a6002d289428121a086f164ae2eba8404e38e59",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.8115755208333333,
+      "depth_percentiles_mm": [
+        498.00002365373075,
+        521.0000247461721,
+        550.0000261235982
+      ],
+      "expected_cad_key": "06_power_unit"
+    },
+    {
+      "frame_id": 22,
+      "name": "inverse_rear",
+      "rgb": "sam6d/frames/inverse_rear/rgb.png",
+      "depth": "sam6d/frames/inverse_rear/depth.png",
+      "camera": "sam6d/frames/inverse_rear/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_rear.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_rear_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_rear_depth.json",
+      "source_rgb_sha256": "5569ff1ce95d18ee4d095b64574655bbcb665a87dd6f3b855cc0f43de4f7708b",
+      "prepared_rgb_sha256": "ea163b7c5e9de4019c4604682b07df41fdbf01cba5d7e83df5bab9f8361717da",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.65970703125,
+      "depth_percentiles_mm": [
+        372.0000176690519,
+        521.0000247461721,
+        578.0000274535269
+      ],
+      "expected_cad_key": "00_rear_mounting_plate"
+    },
+    {
+      "frame_id": 23,
+      "name": "inverse_sensor",
+      "rgb": "sam6d/frames/inverse_sensor/rgb.png",
+      "depth": "sam6d/frames/inverse_sensor/depth.png",
+      "camera": "sam6d/frames/inverse_sensor/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_sensor.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_sensor_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_sensor_depth.json",
+      "source_rgb_sha256": "a34a2a56999ffa000418ad155623c7fc8234455e7403b9a1407620730f3c0bf6",
+      "prepared_rgb_sha256": "53ca3b0cf82ddce96b6caac31e9f668508f5635cd45ff91913182e57f3760f20",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.8020670572916667,
+      "depth_percentiles_mm": [
+        501.0000237962231,
+        523.000024841167,
+        550.0000261235982
+      ],
+      "expected_cad_key": "03a_vertical_option_a"
+    },
+    {
+      "frame_id": 24,
+      "name": "inverse_termal",
+      "rgb": "sam6d/frames/inverse_termal/rgb.png",
+      "depth": "sam6d/frames/inverse_termal/depth.png",
+      "camera": "sam6d/frames/inverse_termal/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_termal.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_termal_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/inverse_termal_depth.json",
+      "source_rgb_sha256": "3aea8267f8f8dc3ee448a204e00c725457bc21d1e17089b6a6f52b6602c20e9c",
+      "prepared_rgb_sha256": "2c1199459a5a791d778a8d81eba932451b6e606cff047d5dbd9ce1b7ef87ce49",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.824306640625,
+      "depth_percentiles_mm": [
+        498.00002365373075,
+        520.0000246986747,
+        551.0000261710957
+      ],
+      "expected_cad_key": "07_thermal_core"
+    },
+    {
+      "frame_id": 25,
+      "name": "io_far",
+      "rgb": "sam6d/frames/io_far/rgb.png",
+      "depth": "sam6d/frames/io_far/depth.png",
+      "camera": "sam6d/frames/io_far/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_far.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_far_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_far_depth.json",
+      "source_rgb_sha256": "d59ac74d98d3cbbb0065fcbaa7e268bcbc24e2021452a9470216d3db4b5bde85",
+      "prepared_rgb_sha256": "9436c24609af57ff866e5665c725fe5ee6d8a3dae555586bf8ee8bf5653b346c",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7871809895833334,
+      "depth_percentiles_mm": [
+        637.0000302558765,
+        736.0000349581242,
+        1545.0000733835623
+      ],
+      "expected_cad_key": "04_io_terminals"
+    },
+    {
+      "frame_id": 26,
+      "name": "io_rot_far",
+      "rgb": "sam6d/frames/io_rot_far/rgb.png",
+      "depth": "sam6d/frames/io_rot_far/depth.png",
+      "camera": "sam6d/frames/io_rot_far/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_rot_far.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_rot_far_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_rot_far_depth.json",
+      "source_rgb_sha256": "e4aa038592e987241fbc907ef2daf48579ce2d820e8cec6223208c8024af6390",
+      "prepared_rgb_sha256": "6fc3769857cb657a92990ea67d7b6f778571f224e7909fc0725fcece05d1e243",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7956087239583334,
+      "depth_percentiles_mm": [
+        591.1000280757434,
+        736.0000349581242,
+        1530.0000726711005
+      ],
+      "expected_cad_key": "04_io_terminals"
+    },
+    {
+      "frame_id": 27,
+      "name": "io_rot_side",
+      "rgb": "sam6d/frames/io_rot_side/rgb.png",
+      "depth": "sam6d/frames/io_rot_side/depth.png",
+      "camera": "sam6d/frames/io_rot_side/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_rot_side.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_rot_side_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_rot_side_depth.json",
+      "source_rgb_sha256": "aabf5988fa2ea8c4b8c759b5a446908d28567ff6c8d61a54a2399e1653a064ba",
+      "prepared_rgb_sha256": "1701f395e20805809584b7b9d015d6dd30678435e40b8145eb5fd96e6478b7b4",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7301692708333334,
+      "depth_percentiles_mm": [
+        444.0000210888684,
+        561.0000266460702,
+        723.0000343406573
+      ],
+      "expected_cad_key": "04_io_terminals"
+    },
+    {
+      "frame_id": 28,
+      "name": "io_side",
+      "rgb": "sam6d/frames/io_side/rgb.png",
+      "depth": "sam6d/frames/io_side/depth.png",
+      "camera": "sam6d/frames/io_side/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_side.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_side_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/io_side_depth.json",
+      "source_rgb_sha256": "f8e35eb0dc730de3420a496f118b8253a5f884f86703538bd841b3a5fd45a43b",
+      "prepared_rgb_sha256": "2d8dd7974e5fc2b2fe4251920556c79d43f0708b18d62e74436310afc91e5722",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7468522135416666,
+      "depth_percentiles_mm": [
+        424.00002013891935,
+        563.0000267410651,
+        724.0000343881547
+      ],
+      "expected_cad_key": "04_io_terminals"
+    },
+    {
+      "frame_id": 29,
+      "name": "power_far",
+      "rgb": "sam6d/frames/power_far/rgb.png",
+      "depth": "sam6d/frames/power_far/depth.png",
+      "camera": "sam6d/frames/power_far/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_far.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_far_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_far_depth.json",
+      "source_rgb_sha256": "89302d4f55c12574c2a3bf10792ecc6b6aa2be162edf9b3ae09a4d8d6aa10d4a",
+      "prepared_rgb_sha256": "cba04910db7848cf5232a4e22e5de1e736a04c64a701d2b147565d017e4a7316",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.782197265625,
+      "depth_percentiles_mm": [
+        645.0000306358561,
+        736.0000349581242,
+        1533.0000728135929
+      ],
+      "expected_cad_key": "06_power_unit"
+    },
+    {
+      "frame_id": 30,
+      "name": "power_far_rot",
+      "rgb": "sam6d/frames/power_far_rot/rgb.png",
+      "depth": "sam6d/frames/power_far_rot/depth.png",
+      "camera": "sam6d/frames/power_far_rot/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_far_rot.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_far_rot_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_far_rot_depth.json",
+      "source_rgb_sha256": "84c107ddfefc7773b81c6d7fc95beae510b6c097b8788f567362d19c28422eee",
+      "prepared_rgb_sha256": "5eb2187a52f396417fae0a8863589876be6693554abd0600ae19b8ad99cdbd79",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7874967447916666,
+      "depth_percentiles_mm": [
+        607.0000288309529,
+        736.0000349581242,
+        1557.0000739535317
+      ],
+      "expected_cad_key": "06_power_unit"
+    },
+    {
+      "frame_id": 31,
+      "name": "power_rot_side",
+      "rgb": "sam6d/frames/power_rot_side/rgb.png",
+      "depth": "sam6d/frames/power_rot_side/depth.png",
+      "camera": "sam6d/frames/power_rot_side/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_rot_side.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_rot_side_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_rot_side_depth.json",
+      "source_rgb_sha256": "681cfb69c2223ef16cd8350a7bcb08f827e2ebb2ef41a54b2b2ffd40485271b4",
+      "prepared_rgb_sha256": "312033e5e64a22bf09427f177d42b309485583959b59e64a6fbf645e3cf1b325",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.734931640625,
+      "depth_percentiles_mm": [
+        455.00002161134034,
+        574.000027263537,
+        726.0000344831496
+      ],
+      "expected_cad_key": "06_power_unit"
+    },
+    {
+      "frame_id": 32,
+      "name": "power_side",
+      "rgb": "sam6d/frames/power_side/rgb.png",
+      "depth": "sam6d/frames/power_side/depth.png",
+      "camera": "sam6d/frames/power_side/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_side.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_side_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/power_side_depth.json",
+      "source_rgb_sha256": "0cf7e47110ee14c465d299019369f707eced50f20cb8cc1dfd6cc07acad78280",
+      "prepared_rgb_sha256": "2cec2ecdddbde7ab1dd7d0089b96b43189a03bd7fa2533c9af1e62ffe7aaafec",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7415690104166667,
+      "depth_percentiles_mm": [
+        438.0000208038837,
+        574.000027263537,
+        713.0000338656828
+      ],
+      "expected_cad_key": "06_power_unit"
+    },
+    {
+      "frame_id": 33,
+      "name": "rear_far",
+      "rgb": "sam6d/frames/rear_far/rgb.png",
+      "depth": "sam6d/frames/rear_far/depth.png",
+      "camera": "sam6d/frames/rear_far/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_far.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_far_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_far_depth.json",
+      "source_rgb_sha256": "90cc6f4d55db969d68873bfe41300bbd61af6767741b3fcdeda8b88727456983",
+      "prepared_rgb_sha256": "98be5595a3dd8d54d0f9c653a3a82465917a23acd998f6239e1373a6addb0dd9",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7934342447916667,
+      "depth_percentiles_mm": [
+        653.0000310158357,
+        736.0000349581242,
+        1565.0000743335113
+      ],
+      "expected_cad_key": "00_rear_mounting_plate"
+    },
+    {
+      "frame_id": 34,
+      "name": "rear_far_rot",
+      "rgb": "sam6d/frames/rear_far_rot/rgb.png",
+      "depth": "sam6d/frames/rear_far_rot/depth.png",
+      "camera": "sam6d/frames/rear_far_rot/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_far_rot.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_far_rot_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_far_rot_depth.json",
+      "source_rgb_sha256": "e5dc22f7af6f823d422d8799b844133816ec921cf70c3e5890cea03cea87a69a",
+      "prepared_rgb_sha256": "7450d5e7a6dbea48fec1cc350e38bbde5cba95cb9a80dc0805f8e876e6d7dade",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7905403645833333,
+      "depth_percentiles_mm": [
+        602.0000285934657,
+        736.0000349581242,
+        1569.000074523501
+      ],
+      "expected_cad_key": "00_rear_mounting_plate"
+    },
+    {
+      "frame_id": 35,
+      "name": "rear_rot_side",
+      "rgb": "sam6d/frames/rear_rot_side/rgb.png",
+      "depth": "sam6d/frames/rear_rot_side/depth.png",
+      "camera": "sam6d/frames/rear_rot_side/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_rot_side.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_rot_side_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_rot_side_depth.json",
+      "source_rgb_sha256": "25c62c62b9fe97b9edf35ffc5067a692c78e9621d819047eeee43fd6ec8baa4d",
+      "prepared_rgb_sha256": "2d47cf2ec2314e0d877492aca9bed7add7ce4db4df268cfd0ababaaa541925db",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7310872395833333,
+      "depth_percentiles_mm": [
+        452.000021468848,
+        578.0000274535269,
+        729.000034625642
+      ],
+      "expected_cad_key": "00_rear_mounting_plate"
+    },
+    {
+      "frame_id": 36,
+      "name": "rear_side",
+      "rgb": "sam6d/frames/rear_side/rgb.png",
+      "depth": "sam6d/frames/rear_side/depth.png",
+      "camera": "sam6d/frames/rear_side/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_side.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_side_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/rear_side_depth.json",
+      "source_rgb_sha256": "cf8079281cd66c374ca3d8994884bb803def0688765ebbfc71327f79ea21199d",
+      "prepared_rgb_sha256": "cdd98fa8a0d8df02b84abb470206ad03ec8ee4953f41003cb93306bf7c99c219",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7390885416666667,
+      "depth_percentiles_mm": [
+        441.000020946376,
+        579.0000275010243,
+        718.00003410317
+      ],
+      "expected_cad_key": "00_rear_mounting_plate"
+    },
+    {
+      "frame_id": 37,
+      "name": "sensor_module_far",
+      "rgb": "sam6d/frames/sensor_module_far/rgb.png",
+      "depth": "sam6d/frames/sensor_module_far/depth.png",
+      "camera": "sam6d/frames/sensor_module_far/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_module_far.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_module_far_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_module_far_depth.json",
+      "source_rgb_sha256": "f21421ab9d574af1e84c8cb52013178f16ae4c59f01a59a7d2b14781c5147e25",
+      "prepared_rgb_sha256": "3bfda35f4b08c33f7ad89a0ca5cf1fcdae43717d2604628f2c361904b36cd54d",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7908723958333334,
+      "depth_percentiles_mm": [
+        617.0000293059275,
+        736.0000349581242,
+        1573.000074713491
+      ],
+      "expected_cad_key": "03a_vertical_option_a"
+    },
+    {
+      "frame_id": 38,
+      "name": "sensor_rot_far",
+      "rgb": "sam6d/frames/sensor_rot_far/rgb.png",
+      "depth": "sam6d/frames/sensor_rot_far/depth.png",
+      "camera": "sam6d/frames/sensor_rot_far/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_rot_far.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_rot_far_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_rot_far_depth.json",
+      "source_rgb_sha256": "a3bcaba7f60d3335101b3c3affa7741a2b8635b68ef642e4b2819c66e9ed3ade",
+      "prepared_rgb_sha256": "d78a560c2a1970efd2709928776230e20ad35d3819877f527a06ba20bc420887",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.8030631510416667,
+      "depth_percentiles_mm": [
+        605.000028735958,
+        735.0000349106267,
+        1522.000072291121
+      ],
+      "expected_cad_key": "03a_vertical_option_a"
+    },
+    {
+      "frame_id": 39,
+      "name": "sensor_rot_side",
+      "rgb": "sam6d/frames/sensor_rot_side/rgb.png",
+      "depth": "sam6d/frames/sensor_rot_side/depth.png",
+      "camera": "sam6d/frames/sensor_rot_side/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_rot_side.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_rot_side_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_rot_side_depth.json",
+      "source_rgb_sha256": "5903311988863caf416ed01ba3bc13f5159825517de6f5577c83b9dbb2a76f10",
+      "prepared_rgb_sha256": "f9b5b8d8c6b5d343c8754177cfd4ac99054cf2581dd85f97433145c4578feb21",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7340266927083333,
+      "depth_percentiles_mm": [
+        464.0000220388174,
+        566.0000268835574,
+        729.000034625642
+      ],
+      "expected_cad_key": "03a_vertical_option_a"
+    },
+    {
+      "frame_id": 40,
+      "name": "sensor_side",
+      "rgb": "sam6d/frames/sensor_side/rgb.png",
+      "depth": "sam6d/frames/sensor_side/depth.png",
+      "camera": "sam6d/frames/sensor_side/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_side.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_side_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/sensor_side_depth.json",
+      "source_rgb_sha256": "86df9d91b17d26bc15070aa2d7f044118205dc4b9443d4e3da3558fd93b64162",
+      "prepared_rgb_sha256": "1174a63ffa7d072a40b7dc59b4f312063797f1fd19429c3f3957cdd134a0e976",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7293717447916667,
+      "depth_percentiles_mm": [
+        440.6200209283269,
+        562.0000266935676,
+        722.0000342931598
+      ],
+      "expected_cad_key": "03a_vertical_option_a"
+    },
+    {
+      "frame_id": 41,
+      "name": "termal_far",
+      "rgb": "sam6d/frames/termal_far/rgb.png",
+      "depth": "sam6d/frames/termal_far/depth.png",
+      "camera": "sam6d/frames/termal_far/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_far.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_far_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_far_depth.json",
+      "source_rgb_sha256": "a284607c3c57e2214b58d8eddc4d896338465acfbbfc83379622707fc0a8d6ea",
+      "prepared_rgb_sha256": "c4163f2a3bd70d7363b4343ba4bbcf8e67adf0651029dba9d1b094d7404e6a42",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.7888639322916666,
+      "depth_percentiles_mm": [
+        669.0000317757949,
+        736.0000349581242,
+        1561.0000741435215
+      ],
+      "expected_cad_key": "07_thermal_core"
+    },
+    {
+      "frame_id": 42,
+      "name": "termal_far_rot",
+      "rgb": "sam6d/frames/termal_far_rot/rgb.png",
+      "depth": "sam6d/frames/termal_far_rot/depth.png",
+      "camera": "sam6d/frames/termal_far_rot/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_far_rot.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_far_rot_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_far_rot_depth.json",
+      "source_rgb_sha256": "ab86f414fe18c47b6bec0063c76b30edc40be8a6c013ed13e6b58895a59ff7d8",
+      "prepared_rgb_sha256": "549e851112fbbc755aa18262e03f15fd7dae7652d62d1be8c7ee265b758768a2",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.8005729166666666,
+      "depth_percentiles_mm": [
+        607.0000288309529,
+        735.0000349106267,
+        1557.0000739535317
+      ],
+      "expected_cad_key": "07_thermal_core"
+    },
+    {
+      "frame_id": 43,
+      "name": "termal_rot_side",
+      "rgb": "sam6d/frames/termal_rot_side/rgb.png",
+      "depth": "sam6d/frames/termal_rot_side/depth.png",
+      "camera": "sam6d/frames/termal_rot_side/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_rot_side.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_rot_side_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_rot_side_depth.json",
+      "source_rgb_sha256": "57f931f3ea97f32b1ca2ef25a85ab8358cec1f384cd8b5fd1dabdb8e30bda870",
+      "prepared_rgb_sha256": "6bf3c9d90e284e28c10c937301dd6529a0e237f8d6dfd3c578b4904d394aa7ec",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.735576171875,
+      "depth_percentiles_mm": [
+        461.00002189632505,
+        579.0000275010243,
+        730.0000346731395
+      ],
+      "expected_cad_key": "07_thermal_core"
+    },
+    {
+      "frame_id": 44,
+      "name": "termal_side",
+      "rgb": "sam6d/frames/termal_side/rgb.png",
+      "depth": "sam6d/frames/termal_side/depth.png",
+      "camera": "sam6d/frames/termal_side/camera.json",
+      "source_rgb": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_side.jpg",
+      "source_depth": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_side_depth.npy",
+      "source_metadata": "../../home/raca/projects/PDDL/DINOPDDL/realsense_photos/termal_side_depth.json",
+      "source_rgb_sha256": "77233457dd11fe3611048056a4e83fd009429cc8a5515e13fcaace225e35b959",
+      "prepared_rgb_sha256": "b865581c0fa2576a88140b018b19e420c7c39145157ac7f8508206174092a8cc",
+      "filename_hint_only": null,
+      "valid_depth_fraction": 0.740263671875,
+      "depth_percentiles_mm": [
+        443.0000210413709,
+        580.0000275485218,
+        721.0000342456624
+      ],
+      "expected_cad_key": "07_thermal_core"
+    }
+  ],
+  "warnings": [
+    "Malla CAD no cerrada; revisar antes de usarla en simulación: 00_rear_mounting_plate"
+  ],
+  "provenance": {
+    "catalog": "e41d6096e59cf31ae2ce9c9d761f8c88e7425a38a748aedadc7edb755bb136ca",
+    "assembly_registry": "3e375056f6461c9ceda22923a07ea0029b721d1e6ff07ec219a47182155c1e7e"
+  },
+  "unpaired_rgb": []
+}
