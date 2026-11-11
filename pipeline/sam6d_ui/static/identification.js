@@ -38,7 +38,7 @@ function tracking(value){
     key=value.cad_key;name=value.display_name||value.cad_key;
     if(Number.isFinite(value.last_detection_score))score=value.last_detection_score;
     detail=value.sam_running?'Tracking this part · SAM is checking the assembly…':
-      'Seguimiento activo · '+(value.component_changes||0)+' part changes'+
+      'Tracking active · '+(value.component_changes||0)+' part changes'+
       (value.last_redetect_at?' · Last check: '+new Date(value.last_redetect_at*1000).toLocaleTimeString():'');
   }else detail=value.error||value.redetect_error||(value.running?'Finding and confirming the current part…':'Tracking stopped.');
   render();

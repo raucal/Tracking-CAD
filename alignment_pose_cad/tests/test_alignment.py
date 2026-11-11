@@ -17,13 +17,16 @@ from scipy.spatial.transform import Rotation
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from alignment_pose_cad.config import load, DEFAULT
 from alignment_pose_cad.geometry import build_plan, from_pose, to_pose, difference, plane_frame
-from alignment_pose_cad.robot import RTDERobot
+from alignment_pose_cad.robot import RTDERobot, JointPathError
 from alignment_pose_cad.service import AlignmentService
 
 
 def config():
     cfg, _ = load()
-    cfg['alignment'].update(plane_normal_cad=[0, 0, -1], plane_x_cad=[1, 0, 0], plane_origin_cad_mm=[0,0,0])
+    # This fixture explicitly tests the legacy path with synthetic transforms.
+    # Production defaults use the shared hand-eye YAML in preview-only mode.
+    cfg['robot'].update(hand_eye_file='', preview_only=False, execution_mode='validated')
+    cfg['alignment'].update(orientation_mode='plane_frame', plane_normal_cad=[0, 0, -1], plane_x_cad=[1, 0, 0], plane_origin_cad_mm=[0,0,0])
     cfg['robot']['tcp_from_camera_m_rad'] = [0,0,0,0,0,0]
     cfg['motion'].update(max_translation_m=3, max_rotation_deg=180, workspace_min_m=[-5,-5,-5], workspace_max_m=[5,5,5])
     return cfg
@@ -35,6 +38,116 @@ def visual():
 
 
 class GeometryTests(unittest.TestCase):
+    def test_180_degree_allowance_has_no_axis_or_downward_direction_restriction(self):
+        cfg=config();cfg['alignment'].update(plane_normal_cad=[0,1,0],orientation_mode='plane_frame')
+        mapping=np.array([[1,0,0],[0,0,-1],[0,1,0]])
+        T=visual();T[:3,:3]=Rotation.from_euler('x',-90,degrees=True).as_matrix()
+        for axis in 'xyz':
+            for angle in (0,45,120,179.9,180):
+                tcp_camera=np.eye(4)
+                tcp_camera[:3,:3]=Rotation.from_euler(axis,angle,degrees=True).as_matrix()@(T[:3,:3]@mapping).T
+                plan=build_plan(T,[0]*6,cfg,[[-1]*3,[1]*3],'part',tcp_from_camera=tcp_camera)
+                self.assertAlmostEqual(plan['rotation_deg'],angle,places=6)
+                self.assertFalse(plan['rotation_limit_exceeded'])
+                self.assertEqual(plan['rotation_limit_deg'],180)
+
+    def test_positive_tcp_y_aligns_with_positive_cad_z_and_tool_z_points_inward(self):
+        for tcp in ([0]*6, [.2,-.1,.3,.3,-.7,1.1]):
+            cfg=config()
+            cfg['alignment'].update(orientation_mode='plane_frame',plane_normal_cad=[0,1,0],
+                                    plane_x_cad=[1,0,0],tool_yaw_deg=0)
+            cfg['motion']['max_rotation_deg']=90
+            mapping=np.array([[1,0,0],[0,0,-1],[0,1,0]])
+            T=visual();T[:3,:3]=Rotation.from_euler('z',-55,degrees=True).as_matrix()@mapping.T
+            p=build_plan(T,tcp,cfg,[[-72.2,0,26],[72.2,30,231.5]],'02_control_panel')
+            cad=np.asarray(p['T_base_from_cad']);goal=np.asarray(p['T_base_from_tcp_target'])
+            np.testing.assert_allclose(goal[:3,0],cad[:3,0],atol=1e-10)
+            np.testing.assert_allclose(goal[:3,1],cad[:3,2],atol=1e-10)
+            np.testing.assert_allclose(goal[:3,2],-cad[:3,1],atol=1e-10)
+            np.testing.assert_allclose(goal[:3,3],(cad@np.array([0,.23,.12875,1]))[:3],atol=1e-10)
+            self.assertAlmostEqual(p['rotation_deg'],55)
+            self.assertAlmostEqual(np.linalg.det(goal[:3,:3]),1)
+            self.assertFalse(p['rotation_limit_exceeded'])
+
+    def test_inward_axes_need_only_the_expected_tool_z_rotation(self):
+        cfg=config()
+        cfg['alignment'].update(orientation_mode='cad_axes_inward',plane_normal_cad=[0,1,0])
+        cfg['motion']['max_rotation_deg']=90
+        mapping=np.array([[0,1,0],[0,0,-1],[-1,0,0]])
+        T=visual();T[:3,:3]=Rotation.from_euler('z',-35,degrees=True).as_matrix()@mapping.T
+        p=build_plan(T,[0]*6,cfg,[[-72.2,0,26],[72.2,30,231.5]],'02_control_panel')
+        cad=np.asarray(p['T_base_from_cad']);goal=np.asarray(p['T_base_from_tcp_target'])
+        np.testing.assert_allclose(-goal[:3,0],cad[:3,2],atol=1e-10)
+        np.testing.assert_allclose(goal[:3,1],cad[:3,0],atol=1e-10)
+        np.testing.assert_allclose(goal[:3,2],-cad[:3,1],atol=1e-10)
+        np.testing.assert_allclose(goal[:3,3],(cad@np.array([0,.23,.12875,1]))[:3],atol=1e-10)
+        np.testing.assert_allclose(p['tcp_target_m_rad'][3:],[0,0,np.deg2rad(-35)],atol=1e-10)
+        self.assertAlmostEqual(p['rotation_deg'],35)
+        self.assertFalse(p['rotation_limit_exceeded'])
+        cfg['alignment']['orientation_mode']='cad_axes'
+        with self.assertRaisesRegex(ValueError,'step limit'):
+            build_plan(T,[0]*6,cfg,[[-1]*3,[1]*3],'02_control_panel')
+
+    def test_requested_tcp_axes_use_original_cad_axes_and_keep_front_center(self):
+        for tcp in ([0]*6, [.2,-.1,.3,.3,-.7,1.1]):
+            cfg=config()
+            cfg['alignment'].update(orientation_mode='cad_axes',plane_normal_cad=[0,1,0],tool_yaw_deg=37)
+            cfg['robot']['tcp_from_camera_m_rad']=[.03,.04,-.02,.2,.1,-.3]
+            T=visual();T[:3,:3]=Rotation.from_euler('x',-90,degrees=True).as_matrix()
+            p=build_plan(T,tcp,cfg,[[-72.2,0,26],[72.2,30,231.5]],'02_control_panel')
+            cad=np.asarray(p['T_base_from_cad']);goal=np.asarray(p['T_base_from_tcp_target'])
+            np.testing.assert_allclose(-goal[:3,0],cad[:3,2],atol=1e-10)
+            np.testing.assert_allclose(-goal[:3,1],cad[:3,0],atol=1e-10)
+            np.testing.assert_allclose(goal[:3,2],cad[:3,1],atol=1e-10)
+            np.testing.assert_allclose(goal[:3,3],(cad@np.array([0,.23,.12875,1]))[:3],atol=1e-10)
+            self.assertAlmostEqual(np.linalg.det(goal[:3,:3]),1.)
+            self.assertEqual(p['speed_m_s'],cfg['motion']['speed_m_s'])
+        cfg['motion']['max_rotation_deg']=1
+        with self.assertRaisesRegex(ValueError,'step limit'):
+            build_plan(T,tcp,cfg,[[-1]*3,[1]*3],'02_control_panel')
+
+    def test_minimum_z_preserves_already_aligned_yaw_and_uses_cad_origin(self):
+        cfg=config()
+        cfg['alignment'].update(orientation_mode='minimum_z', plane_normal_cad=[0,0,1])
+        T=visual(); T[:3,:3]=Rotation.from_euler('x',180,degrees=True).as_matrix()
+        tcp=[0,0,0,0,0,1.2]
+        plan=build_plan(T,tcp,cfg,[[-1,-1,-1],[1,1,1]],'part')
+        cad=np.asarray(plan['T_base_from_cad']);goal=np.asarray(plan['T_base_from_tcp_target'])
+        np.testing.assert_allclose(goal[:3,3],cad[:3,3]+.2*cad[:3,2],atol=1e-10)
+        np.testing.assert_allclose(goal[:3,:3],from_pose(tcp)[:3,:3],atol=1e-10)
+        self.assertAlmostEqual(plan['rotation_deg'],0.)
+
+    def test_hmi_override_targets_front_center_plus_200mm(self):
+        cfg=config()
+        cfg['alignment'].update(orientation_mode='minimum_z',plane_normal_cad=[0,1,0])
+        cfg['alignment']['cad_overrides']['02_control_panel']={'plane_origin_cad_mm':[0,30,128.75]}
+        T=visual();T[:3,:3]=Rotation.from_euler('x',-90,degrees=True).as_matrix()
+        plan=build_plan(T,[0,0,0,0,0,0],cfg,[[-72.2,0,26],[72.2,30,231.5]],'02_control_panel')
+        cad=np.asarray(plan['T_base_from_cad']);goal=np.asarray(plan['T_base_from_tcp_target'])
+        np.testing.assert_allclose(goal[:3,3],(cad@np.array([0,.23,.12875,1]))[:3],atol=1e-10)
+        np.testing.assert_allclose(goal[:3,2],-cad[:3,1],atol=1e-10)
+
+    def test_xz_plane_standoff_and_minimum_tool_z_against_cad_y(self):
+        cfg=config()
+        cfg['alignment'].update(orientation_mode='minimum_z',plane_normal_cad=[0,1,0])
+        T=visual();T[:3,:3]=Rotation.from_euler('x',-90,degrees=True).as_matrix()
+        plan=build_plan(T,[0,0,0,0,0,.7],cfg,[[-1,-1,-1],[1,1,1]],'part')
+        cad=np.asarray(plan['T_base_from_cad']);goal=np.asarray(plan['T_base_from_tcp_target'])
+        np.testing.assert_allclose(goal[:3,3],cad[:3,3]+.2*cad[:3,1],atol=1e-10)
+        np.testing.assert_allclose(goal[:3,2],-cad[:3,1],atol=1e-10)
+        self.assertAlmostEqual(plan['rotation_deg'],0.)
+
+    def test_z_alignment_uses_shortest_tilt_and_handles_opposite_axes(self):
+        from alignment_pose_cad.geometry import align_z_minimum_rotation
+        current=Rotation.from_euler('z',73,degrees=True).as_matrix()
+        desired=Rotation.from_euler('x',25,degrees=True).apply([0,0,1])
+        target=align_z_minimum_rotation(current,desired)
+        np.testing.assert_allclose(target[:,2],desired,atol=1e-10)
+        self.assertAlmostEqual(np.rad2deg(Rotation.from_matrix(target@current.T).magnitude()),25.)
+        target=align_z_minimum_rotation(current,[0,0,-1])
+        np.testing.assert_allclose(target[:,2],[0,0,-1],atol=1e-10)
+        self.assertAlmostEqual(np.linalg.det(target),1.)
+
     def test_200mm_standoff_is_along_cad_normal_not_base_z(self):
         cfg=config();tcp=[.2,-.1,.4,.3,.2,-.4]
         cfg['robot']['tcp_from_camera_m_rad']=[.02,.11,-.13,.78,0,0]
@@ -145,6 +258,47 @@ class RobotTests(unittest.TestCase):
         with self.assertRaises(RuntimeError):self.robot.move(self.plan,self.ref)
         self.assertEqual([n for n,_ in self.robot.control.calls],['stopL'])
 
+    def test_direct_move_respects_configured_rotation_limit(self):
+        plan={**self.plan,'tcp_target_m_rad':[0,0,.2,np.pi,0,0],
+              'path_samples_m_rad':[[0,0,.2*t,np.pi*t,0,0] for t in np.linspace(0,1,21)]}
+        self.robot.cfg['motion']['max_rotation_deg']=90
+        with self.assertRaisesRegex(RuntimeError,'angular allowance'):
+            self.robot.move(plan,self.ref)
+        self.assertFalse(self.robot.control.calls)
+        self.robot.cfg['motion']['max_rotation_deg']=180
+        def dispatch(target,*args):
+            self.robot.control.calls.append(('moveL',target))
+            self.robot.receive.pose=target;self.robot.control.progress=-2;return True
+        self.robot.control.moveL=dispatch
+        self.assertEqual(self.robot.move(plan,self.ref)['status'],'completed')
+
+    def test_joint_excursion_is_distinguished_from_an_adjacent_ik_jump(self):
+        count=[-1]
+        def continuous(*args):
+            count[0]+=1
+            return [0,0,0,0,0,.11*count[0]]
+        self.robot.control.getInverseKinematics=continuous
+        with self.assertRaises(JointPathError) as caught:self.robot.validate_path(self.plan,self.ref)
+        detail=caught.exception.details
+        self.assertEqual(detail['rejection_type'],'joint_excursion_from_start')
+        self.assertEqual(detail['joint_name'],'wrist_3')
+        self.assertAlmostEqual(detail['adjacent_delta_rad'][5],.11)
+        self.assertGreater(detail['from_initial_delta_rad'][5],1.5)
+        self.assertIn('starting posture',str(caught.exception))
+        self.assertFalse(self.robot.control.calls)
+        self.robot.control.getInverseKinematics=lambda *args:[0,0,0,0,0,2.]
+        with self.assertRaises(JointPathError) as caught:self.robot.validate_path(self.plan,self.ref)
+        self.assertEqual(caught.exception.details['rejection_type'],'adjacent_joint_step')
+        self.assertEqual(caught.exception.details['sample_index'],0)
+        self.assertIn('joint 6',str(caught.exception))
+        self.assertFalse(self.robot.control.calls)
+
+    def test_authorization_revoked_during_controller_checks_never_moves(self):
+        def expired():raise ValueError('The plan expired during checks')
+        with self.assertRaisesRegex(ValueError,'expired'):
+            self.robot.move(self.plan,self.ref,before_dispatch=expired)
+        self.assertFalse(self.robot.control.calls)
+
     def test_accepted_motion_waits_for_feedback(self):
         c=self.robot.control;r=self.robot.receive
         def dispatch(p,*args):
@@ -176,6 +330,27 @@ class ServiceTests(unittest.TestCase):
         _,digest=load(self.file)
         return {'id':'preview','settings_sha256':digest,'camera_serial':'123','planned_at':time.time(),
                 'capture_timestamp':time.time(),'artifact_folder':self.tmp.name}
+
+    def test_check_path_in_preview_sends_no_motion_and_rejects_unsafe_path(self):
+        self.cfg['robot'].update(preview_only=True,motion_enabled=False,calibration_confirmed=False)
+        self.file.write_text(json.dumps(self.cfg));self.service.robot.cfg=self.cfg
+        plan=self.plan();plan.update(reference=self.service.robot.snapshot(stationary=True),
+                                    path_samples_m_rad=[[0]*6,[.01,0,0,0,0,0]])
+        self.service.plan=plan
+        self.service.action('/api/alignment/check-path',{'plan_id':'preview'})
+        self.service.pool.submit(lambda:None).result(timeout=3)
+        self.assertTrue(plan['controller_path_checked'])
+        self.assertFalse(plan['controller_check']['motion_sent'])
+        self.assertFalse(plan['controller_check']['collision_checked'])
+        self.assertEqual(self.service.robot.control.calls,[])
+        with self.assertRaisesRegex(ValueError,'Preview-only'):
+            self.service._authorize_motion(self.cfg,plan)
+        self.service.robot.control.safe=False
+        self.service.action('/api/alignment/check-path',{'plan_id':'preview'})
+        self.service.pool.submit(lambda:None).result(timeout=3)
+        self.assertFalse(plan['controller_path_checked'])
+        self.assertIn('rejects',plan['controller_check_error'])
+        self.assertEqual(self.service.robot.control.calls,[])
 
     def test_expiry_serial_calibration_and_settings_changes_block(self):
         p=self.plan();p['planned_at']-=100

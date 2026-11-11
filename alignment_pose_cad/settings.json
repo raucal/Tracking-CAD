@@ -20,7 +20,10 @@
     ],
     "camera_serial": "",
     "calibration_confirmed": false,
-    "motion_enabled": false
+    "motion_enabled": true,
+    "hand_eye_file": "../../PDDL/DINOPDDL/config/hand_eye_ur10.yaml",
+    "preview_only": false,
+    "execution_mode": "supervised_trial"
   },
   "alignment": {
     "offset_m": 0.2,
@@ -39,15 +42,24 @@
       0.0,
       0.0
     ],
-    "tool_yaw_deg": 180.0,
-    "cad_overrides": {}
+    "tool_yaw_deg": 0.0,
+    "cad_overrides": {
+      "02_control_panel": {
+        "plane_origin_cad_mm": [
+          0.0,
+          30.0,
+          128.75
+        ]
+      }
+    },
+    "orientation_mode": "plane_frame"
   },
   "motion": {
-    "speed_m_s": 0.03,
-    "acceleration_m_s2": 0.05,
+    "speed_m_s": 0.25,
+    "acceleration_m_s2": 0.01,
     "stop_deceleration_m_s2": 0.5,
     "max_translation_m": 0.3,
-    "max_rotation_deg": 90.0,
+    "max_rotation_deg": 180.0,
     "max_joint_delta_rad": 1.5,
     "workspace_min_m": [
       -0.8,
@@ -70,7 +82,7 @@
     "position_tolerance_m": 0.002,
     "rotation_tolerance_deg": 1.0,
     "settle_timeout_s": 3.0,
-    "move_timeout_s": 30.0,
+    "move_timeout_s": 90.0,
     "inference_timeout_s": 300.0
   }
 }

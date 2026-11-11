@@ -1,101 +1,248 @@
-# Align the robot TCP to a CAD plane
+# UR10 alignment: detect pose and execute
 
-This extension adds a robot panel to the existing CADTracking browser interface. All robot configuration, geometry, RTDE control, UI code, and dedicated tests live here. The existing server, HTML, and browser request builder contain small integration hooks.
+The interface has two alignment actions: **Detect pose** and **Execute alignment**.
+Connect the robot and open the live RealSense camera first. Detect pose captures
+fresh RGB-D and runs SAM-6D + FoundationPose with the CAD source selected in
+the vision controls. It checks controller IK and joint limits automatically. Review the overlay
+and target, then select Execute alignment and accept the final motion confirmation.
+The manual review form, supervisor field and separate path-check button have
+been removed following the operator's report that the physical path was checked.
+This report does not automatically certify collision clearance or calibration accuracy.
 
-The requested target is the **TCP/tool**, **0.20 m perpendicular to the CAD plane**, on its outward-normal side. The tool's positive Z axis points toward the plane; X follows the plane's X direction with the configured yaw. This is a single capture, preview, and linear movement, not continuous visual servoing or replay of a saved demonstration.
+## Configuration and target
 
-## Configure
+The selected mode is `execution_mode: supervised_trial`, with
+`preview_only: false`, `motion_enabled: true`, and `calibration_confirmed: false`.
+The shared YAML at `../../PDDL/DINOPDDL/config/hand_eye_ur10.yaml` remains
+**provisional**. Its initial solution is used; iterative SDU optimization is not
+required for this experimental mode. The normal `validated` mode still requires
+validated calibration. Either `preview_only: true` or `motion_enabled: false`
+blocks motion in both modes.
 
-Edit [settings.json](settings.json). It is the only settings file for this feature. No connection or movement happens when the application imports this module or starts.
+## Select different CADs in one session
 
-| Section | Settings |
-| --- | --- |
-| `robot` | Controller IP/frequency, expected active TCP offset, camera pose relative to that TCP, camera serial, calibration confirmation, and motion enable. |
-| `alignment` | Normal and X axis expressed in the original CAD frame, plane origin, 0.20 m offset, optional in-plane offsets and tool yaw, and per-CAD overrides. |
-| `motion` | Speed, acceleration, stop deceleration, workspace box, maximum Cartesian/angular/joint changes, sampled IK checks, expiry, drift, standstill, and endpoint tolerances. |
+The alignment panel follows the existing **CAD source** controls:
 
-The initial left-robot IP (`192.168.1.11`), TCP (`[0,0,0.15,0,0,0]`), and camera transform (`[0,0.115,-0.13,0.78,0,0]`) were taken from the existing DINOBOT demo setup. They are **reference settings, not a newly measured or verified hand–eye calibration**. Verify them against the actual tool and camera mount. `tcp_from_camera_m_rad` maps camera coordinates into TCP coordinates and must correspond to the configured active TCP. The module checks the controller's TCP without changing it.
+- **Server file:** choose an assembly part or browse to an STL/OBJ/PLY.
+- **Upload from browser:** upload the CAD and select its units.
+- **Identify assembly part:** select a prepared assembly. SAM6D compares its
+  parts; FoundationPose registers the accepted winner. The alignment uses that
+  winner's CAD frame, mesh and bounds, including when it differs from the first
+  catalog entry. Unknown winners or a missing accepted detection produce no target.
 
-Set `camera_serial` to the calibrated RealSense device's serial. After verifying the calibration and operating limits, set `calibration_confirmed` and `motion_enabled` to `true` to enable the panel's execution button. These start as `false`; preview calculation still works with them disabled. Reconnect after changing settings. Editing settings invalidates existing plans.
+Keep the RTDE connection open while changing CADs. Stop continuous detection and
+tracking before alignment, then select **Detect pose** (or **Identify CAD and
+ detect pose** in automatic mode). Each attempt uses a new RGB-D capture and a
+stationary contemporaneous TCP. Review the identified CAD and overlay before
+**Execute alignment**. Detection never starts motion or switches the target of
+an executing move. This is per-capture automatic identification, not continuous
+robot following.
 
-A default normal of original CAD **+Y** and plane X of **+X** is appropriate to the intended frontal XZ plane of the supplied printed-assembly CADs, but must be checked for each model. With `plane_origin_cad_mm: null`, the plane origin is the center of the bounding-box face on the normal side. This is a geometrical convention, not automatic detection of a physical planar surface. For another plane, set its point and axes explicitly, or add `alignment.cad_overrides` keyed by the CAD key. Oblique planes require an explicit origin. The normal must face the observing camera.
+Changing the source, selected file, assembly, upload or units disables execution
+and invalidates the previous target. A new target does not inherit rotation
+approval or execution consent. Execution is bound to the displayed plan ID and
+selection signature. CAD file and catalog hashes are rechecked before motion.
 
-Example override (replace the values with the intended CAD plane):
+## CAD face center and orientation
 
-```json
-{
-  "cad_overrides": {
-    "uploaded_cad": {
-      "plane_normal_cad": [0, 0, -1],
-      "plane_x_cad": [1, 0, 0],
-      "plane_origin_cad_mm": [0, 0, 0]
-    }
-  }
-}
+The default target is 200 mm along CAD +Y from the center of the +Y face of the
+CAD bounding box. This is a geometric convention, not independent confirmation
+that +Y is the physical front of every imported CAD. Review the target plane in
+the preview; `alignment.cad_overrides` can supply a part-specific point.
+The HMI `02_control_panel` retains `[0,30,128.75]` mm and its target
+`[0,230,128.75]` mm. The prepared `03_option_cassette` has default face center
+`[0,30,134.75]` mm and target `[0,230,134.75]` mm. Changing objects recomputes
+the point; the HMI override is never copied to the cassette or an unknown upload.
+
+The selected `plane_frame` mode, CAD +X as plane X and zero yaw implement
+**+TCP Y = +CAD Z**, **+TCP Z = −CAD Y**, and **+TCP X = +CAD X**.
+All axes follow the measured CAD pose. Legacy orientation modes are retained for
+reproducibility. The plan records the chosen CAD, selection mode, mesh/catalog
+hashes, face-center coordinates and whether that point came from the bounding
+box or a configured override. Source thresholds remain unchanged; a failed
+estimate reports the selected CAD, best available SAM6D score and threshold.
+
+## Change alignment speed from the interface
+
+Set **Alignment speed (mm/s)** and select **Apply speed**. The backend converts
+to m/s, validates a positive finite value up to the existing module limit of
+250 mm/s and persists only `motion.speed_m_s`. Acceleration and all controller
+safety settings are unchanged. This ceiling is an application limit, not a claim
+that the maximum is suitable for the physical installation.
+
+Applying speed clears the current target. Select **Detect pose** again before
+executing. Changes are rejected while alignment is busy, when connected telemetry
+reports motion, or if settings have changed since the interface last read them.
+A stationary connected robot uses the new speed without reconnecting. The plan
+records the speed and acceleration that will be passed to `moveL`.
+
+## Rotation allowance and parameter reference
+
+`motion.max_rotation_deg` is now **180**. Any shortest-arc TCP orientation change
+up to 180 degrees is allowed by this application check, independently of tool-Z
+direction. The interrupted downward-only change is not enabled. No extra per-plan
+rotation-override button is needed; the final execution confirmation remains.
+This orientation allowance does not request multiple revolutions of a joint.
+IK, joint continuity/delta, controller limits, workspace, freshness and stopping
+remain active. A feasible endpoint alone does not validate the physical swept path.
+
+Robot alignment settings belong in `alignment_pose_cad/settings.json`:
+
+| Key | Meaning | Current configuration |
+| --- | --- | --- |
+| `motion.speed_m_s` | Requested linear TCP speed; UI displays mm/s | 0.25 m/s = 250 mm/s |
+| `motion.acceleration_m_s2` | Requested moveL acceleration | 0.01 m/s² = 10 mm/s² |
+| `motion.max_rotation_deg` | Maximum shortest-arc orientation change | 180 degrees |
+| `motion.max_translation_m` | Maximum capture-to-target translation | 0.30 m |
+| `motion.max_joint_delta_rad` | Maximum sampled IK change per joint, from initial and preceding solutions; no 2π wrapping | 1.5 rad, about 86 degrees |
+| `motion.workspace_min_m` / `workspace_max_m` | TCP box in robot-base coordinates | [-0.8,-0.8,0.05] to [0.8,0.8,0.9] m |
+| `motion.path_samples` | Number of sampled controller IK/limit queries | 21 |
+| `motion.max_plan_age_s` | Time allowed after plan calculation | 30 s |
+| `motion.max_capture_age_s` | Maximum age of the image used for the target | 120 s |
+| `motion.position_tolerance_m` | Endpoint position acceptance tolerance | 0.002 m |
+| `motion.rotation_tolerance_deg` | Endpoint orientation acceptance tolerance | 1 degree |
+| `motion.move_timeout_s` | Movement timeout | 90 s |
+| `motion.inference_timeout_s` | Pose-estimation timeout | 300 s |
+| `motion.stop_deceleration_m_s2` | Requested software-stop deceleration | 0.5 m/s² |
+| `alignment.offset_m` | Standoff along the outward CAD plane normal | 0.20 m |
+
+The loader accepts positive finite speed up to 0.25 m/s, acceleration up to
+0.5 m/s², rotation up to 180 degrees and 2–101 path samples. These are application
+bounds, not a suitability assessment of those values for the real cell. Joint-delta
+limits are separate from the physical joint limits enforced by the controller.
+
+Requested speed may not be reached on short moves because acceleration is low.
+For an ideal symmetric acceleration/braking profile, 0.10 m travel with
+0.01 m/s² acceleration peaks near 0.0316 m/s (31.6 mm/s), even if 250 mm/s is
+requested. Actual controller execution may differ. Acceleration has not been
+increased as part of this change.
+
+Speed can be applied from the UI while stationary. After other JSON edits,
+disconnect/reconnect RTDE and calculate a new target to reload robot settings.
+Restart the server when Python code changed, then refresh with Ctrl+F5.
+Changing calibration/TCP fields requires their corresponding device verification.
+
+`config/interface.json` configures vision UI defaults (camera resolution/FPS,
+inference thresholds, preload and port). `config/settings.json` configures paths,
+model environments/checkpoints and runtime settings. Neither is the robot motion
+configuration. `config/suite.json` belongs to the offline evaluation suite.
+
+## Automatic interlocks retained
+
+- Active TCP must match the configured TCP and the full calibration TCP
+  `[0,0,0.150,0,0,0]`, within 0.1 mm and 0.1 degrees. The application never sets TCP.
+- Camera serial and optical frame must match the existing calibration binding;
+  RGB-D must be fresh, rectified and aligned to color.
+- The robot must remain stationary through capture and inference. TCP or joint
+  drift invalidates the target.
+- Workspace, displacement, orientation, controller safety state, IK, joint
+  continuity and controller joint limits are checked automatically for 21 samples.
+  Failed checks prevent publishing an executable target.
+- The plan expires after 30 seconds; capture age is limited to 120 seconds.
+  Changed settings, YAML or CAD invalidate it. Detect the pose again after expiry.
+- Execute requires `confirmed: true` for the current plan ID. The plan is single-use.
+  Before dispatch, the backend repeats controller checks and rechecks settings,
+  calibration, TCP, freshness and authorization immediately before `moveL`.
+- Controller protections, speed/acceleration, stopping and timeout mechanisms
+  remain unchanged. The selected speed is shown in mm/s and recorded in every plan.
+
+These checks do not compute obstacle avoidance or certify the continuous swept
+volume of the arm, tool, camera and cables. `collision_checked` and
+`accuracy_validated` remain `false`. The manual review form is no longer a gate;
+physical scene changes still require the operator to reconsider the path.
+The final controller TCP error measures command tracking, not independent HMI
+alignment accuracy. No completion changes the calibration to `validated`.
+
+## Diagnose joint-path rejection
+
+`motion.max_joint_delta_rad` is separate from the 180-degree TCP orientation
+allowance. It is checked twice for each sampled IK solution: against the preceding
+solution and against the robot's starting joint configuration. The current
+1.5 rad threshold is about 85.9 degrees per joint. A path can therefore be smooth
+between samples and still exceed the allowed excursion from its start.
+
+Errors now distinguish **Adjacent IK step** from **Joint change from starting
+posture**, and report the joint name/number, waypoint, measured delta in radians
+and degrees, and the configured threshold. No angle is wrapped by 2π to hide
+an extra physical turn. Controller joint limits remain a separate check.
+
+`robot_alignment_candidate.json` saves the proposed target before controller
+validation; it is not an executable or approved plan. On rejection,
+`robot_alignment_error.json` includes `controller_check_details`: initial,
+previous and rejected IK joints, both delta arrays, sample index and accepted
+samples. Failed explicit rechecks save `controller_rejection_*.json` as well.
+Old generic errors cannot identify the rejected joint retrospectively because
+those intermediate IK solutions were not recorded. After loading the update,
+perform a fresh detection/check without execution to obtain that evidence.
+
+## Frames and provenance
+
+```text
+T_base_cad = T_base_tcp_capture @ T_tcp_camera_yaml @ T_camera_input_cad
+T_base_target = T_base_cad @ T_cad_plane @ T_plane_target
 ```
 
-Distances are meters in robot settings, outputs, and control; the original CAD plane point is in millimeters. The selected upload units are honored when converting a fixed CAD; prepared assembly identification uses millimeters. Robot pose angles are rotation vectors in radians, never Euler angles. `tool_yaw_deg` is an explicit angle in degrees around the plane normal. Its initial value is 180° for the supplied assembly convention, avoiding the opposite in-plane heading; verify this choice for your tool. Limits initially allow at most 90° of Cartesian rotation and 1.5 rad change per joint; plans exceeding a limit are rejected rather than automatically changing it.
+The shared YAML declares meters, `calibration_tcp`, `parent_from_camera` and the
+RealSense color optical frame. CAD pose translation is converted from mm to m;
+UR orientation uses rotation vectors in radians. The original CAD origin is
+restored after the estimator's internal centering. The YAML's `base_frame_id`
+is still unspecified; no independent physical frame validation is claimed.
 
-## Dependencies and startup
+Each result stores capture and plan metadata, calibration/CAD hashes, active TCP,
+21 sampled IK solutions in `controller_check_*.json`, explicit execution consent
+in `trial_authorization_*.json`, repeated pre-dispatch controller checks and any
+execution outcome. No supervisor name or evidence text is required by the API.
 
-Use the configured SAM6D/UI environment after the main [installation](../docs/INSTALLATION.md):
+## Start and use
 
 ```bash
-../.venvs/assembly-runtime/bin/python -m pip install --constraint pipeline/setup/constraints-assembly-runtime.txt -r alignment_pose_cad/requirements.txt
+cd /home/raca/projects/CADTracking
 bash run.sh ui
 ```
 
-The adapter uses `ur-rtde` 1.6.5. The robot controller must be configured for the connection and execution mode supported by that installation. Opening RTDE control may load its control script; the extension does not power on the robot, unlock protective stops, reset safety, change TCP calibration, operate the gripper, or start any motion on connection.
+Open http://127.0.0.1:8770/ and reload with Ctrl+F5 after restarting an older
+server. Open **Live Intel RealSense**, stop continuous detection/tracking, and
+select **Connect robot → Detect pose → Execute alignment**. The alignment panel
+uses the same CAD source as the vision controls and displays the resulting CAD identity.
+Starting or restarting the server never connects or moves the robot automatically.
 
-## Workflow
+## Historical no-motion result
 
-1. In CADTracking select **Live Intel RealSense**, open the calibrated camera, and select the CAD or prepared assembly. Stop fast tracking and continuous detection.
-2. In **Align robot to CAD**, click **Connect robot** with the robot stationary.
-3. Click **Capture and calculate target**. The service brackets a fresh RGB-D capture with robot telemetry, forces SAM + FoundationPose RGB-D inference, and verifies that the TCP stays still during inference.
-4. Review the pose image, target TCP pose in the robot base, CAD plane transform, movement distance, and rotation. Failed detection/pose, wrong-facing normal, movement limits, or rejected IK yield an error rather than a destination.
-5. Click **Execute displayed target**. The service rechecks settings, serial binding, plan/capture age, standstill, unchanged TCP/joints, and sampled controller safety/IK checks, then sends one asynchronous `moveL`. Plans are single-use.
-6. The service reports completion only after checking actual endpoint position/orientation and standstill. Capture again for visual verification. **Stop robot** cancels planning or sends `stopL` for active motion; shutdown also requests a stop before disconnecting.
+### Comprobación real realizada el 11 de noviembre de 2026
 
-A timeout, safety fault, disconnection, or cancellation does not automatically retry or resume a movement. Calculate a new plan after resolving it. A new capture is required after the robot moves.
+A las 18:11 CET se capturó el HMI fijo con RealSense `831612072516` y se
+consultó el controlador real, sin enviar movimiento. El intento inicial había
+sido rechazado por `ur_rtde: Please enable remote control on the robot!`;
+la conexión posterior funcionó. No se cambió ese modo desde la aplicación.
 
-## Transform convention
-
-`T_A_from_B` maps a homogeneous point in frame B into frame A. The visual estimate uses the **original CAD transform**, not the centered-model overlay axes.
+El TCP activo coincidió con `[0,0,0.150,0,0,0]`. El controlador aceptó las
+21 muestras, con salto máximo entre muestras de 0.02223 rad y desviación máxima
+respecto a la solución inicial de 0.38756 rad (límite configurado 1.5 rad).
+El objetivo TCP en base fue:
 
 ```text
-T_base_from_cad = T_base_from_tcp_capture
-                @ T_tcp_from_camera
-                @ T_camera_from_input_cad
-
-T_base_from_tcp_target = T_base_from_cad
-                      @ T_cad_from_plane
-                      @ T_plane_from_tcp_target
+[-0.3488959871, 0.2666617246, 0.3003585279,
+  2.2166864048, -2.2168240301, -0.0385856026]  [m, rad rotvec]
 ```
 
-SAM/FoundationPose's CAD translation is converted from millimeters to meters once. The plane target translation is `[in_plane_x, in_plane_y, 0.20]` meters. At zero yaw its rotation in the plane is `diag(1, -1, -1)`, making tool Z point toward the plane. Both rotations are right-handed.
+Desplazamiento desde captura: 0.14419 m; giro: 1.45764 grados.
+Informe: [supervised_trial_preflight.json](../results/interface/jobs/foundationpose/c44d1d9f08e64416afdb3deeb6496910/supervised_trial_preflight.json).
+El YAML conservó SHA256 `88867ba0bd2d4b96af596cc1a674f78296b57ee46b17be7b8cdd45a54b1e1a6e`
+y estado provisional. No hay revisión física completada ni autorización del
+operador ni validación de precisión/colisiones. Este objetivo caduca a los 30 s;
+es evidencia de comprobación, no una consigna reutilizable para ejecutar.
 
-## Outputs
-
-Artifacts are saved alongside the normal vision job in `results/interface/jobs/foundationpose/<job-id>/`, which remains excluded from Git:
-
-- `robot_capture.json`: robot TCP/joints, capture ID/timestamp, serial, and settings hash.
-- `robot_alignment_plan.json`: full transform chain, source image, target, sampled path, and expiry.
-- `robot_alignment_execution.json`: actual endpoint/error information, created only after an execution request.
-- `robot_alignment_error.json`: planning failure, if any.
-
-Regular input images, masks, FoundationPose output, and the pose overlay are retained by the existing vision engine. No original CAD or saved demo is modified.
-
-## Limits and validation
-
-This is a direct linear move, **not collision-aware planning**. The workspace box, step limits, and sampled controller checks cannot establish that the arm/tool path is free of fixtures or obstacles. CAD-frame ambiguity, symmetry, a loose mask, or inaccurate depth/hand–eye calibration can produce a geometrically valid but wrong target. The scene and object must remain fixed between capture and execution.
-
-The web stop is a software request dependent on the connection and controller; it does not replace the robot's physical emergency stop. A hanging or lost RTDE connection can prevent that request from reaching the robot. Do not run another application that commands the same robot concurrently. Hardware acceptance remains necessary before enabling motion.
-
-Tests use simulated telemetry/control and camera/inference; they never connect to the robot:
+## Tests without hardware
 
 ```bash
-PYTHONPATH=pipeline ../.venvs/assembly-runtime/bin/python -B -m unittest discover -s alignment_pose_cad/tests -v
-bash run.sh test
+cd /home/raca/projects/CADTracking
+PYTHONPATH=pipeline:alignment_pose_cad/tests \
+../.venvs/assembly-runtime/bin/python -B -m pytest -p no:cacheprovider -q alignment_pose_cad/tests
 ```
 
-API behavior follows the installed 1.6.5 bindings and the official [ur_rtde quick start](https://sdurobotics.gitlab.io/ur_rtde/pages/getting_started/quick_start.html) and [asynchronous movement example](https://sdurobotics.gitlab.io/ur_rtde/pages/examples/basic_motion/move_async_example.html).
+HTTP and browser tests use simulated robot/camera/inference. They check automatic
+IK failures, TCP changes, freshness, multiple CADs, automatic identity selection,
+mesh/catalog changes, explicit consent, single-use plans,
+preview-only blocking and cancellation of the final confirmation. Local HTTP
+ports and headless Chrome require host permissions. They do not validate physical
+collision clearance or hand-eye accuracy.

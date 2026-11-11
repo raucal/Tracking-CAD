@@ -46,7 +46,7 @@ async function status(){
     if(data.error)note(data.error,true);
     else if(recording)note('Recording RGB-D · '+data.recording.frames+' frames saved.');
     else if(data.last_recording?.error)note('Recording stopped: '+data.last_recording.error,true);
-    else if(active)note('Directo activo · fotograma '+data.frame_number+' · '+(data.camera?.serial||''));
+    else if(active)note('Live camera · frame '+data.frame_number+' · '+(data.camera?.serial||''));
     else if(!pending)note('Camera closed. Saved captures and recordings remain available.');
     stream();controls();
   }catch(error){note(error.message,true);if(window.VisionApp?.isLiveDetection())window.VisionApp.stopLiveDetection('Could not query camera status.');}

@@ -49,6 +49,7 @@ class RealSenseSource:
                            'depth_scale': self.profile.get_device().first_depth_sensor().get_depth_scale() * 1000,
                            'depth_scale_unit': 'millimeters_per_raw_unit', 'dist_coeffs': [0.] * 5,
                            'source_dist_coeffs': coefficients.tolist(), 'rectified': True,
+                           'aligned_to': 'color', 'optical_frame': 'realsense_color_optical',
                            'serial': serial, 'width': width, 'height': height, 'fps': fps}
         except BaseException:
             self.pipeline.stop()

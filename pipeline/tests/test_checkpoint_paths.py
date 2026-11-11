@@ -8,6 +8,30 @@ from foundationpose_sdu import configure_predictor_weights
 import settings
 
 
+def test_foundationpose_ui_checks_the_configured_weights_directory(tmp_path, monkeypatch):
+    from sam6d_ui.backends import foundationpose
+    paths = {key: tmp_path / key for key in ('foundationpose', 'foundationpose_weights', 'foundationpose_python')}
+    paths['foundationpose'].mkdir()
+    paths['foundationpose_python'].touch()
+    for stamp in ('2024-01-11-20-02-45', '2023-10-28-18-33-37'):
+        folder = paths['foundationpose_weights'] / stamp
+        folder.mkdir(parents=True)
+        for name in ('config.yml', 'model_best.pth'):(folder / name).touch()
+    monkeypatch.delenv('FOUNDATIONPOSE_ROOT', raising=False)
+    monkeypatch.delenv('FOUNDATIONPOSE_PYTHON', raising=False)
+    monkeypatch.setattr(foundationpose, 'path', paths.__getitem__)
+    status = foundationpose.configured()
+    assert status['available'] and not status['verified']
+    assert status['reason'] is None
+    assert not (paths['foundationpose'] / 'weights').exists()
+    missing = paths['foundationpose_weights'] / '2024-01-11-20-02-45/model_best.pth'
+    missing.unlink()
+    status = foundationpose.configured()
+    assert not status['available']
+    assert status['missing_weight_files'] == [str(missing)]
+    assert str(missing) in status['reason']
+
+
 def test_installer_reuses_configured_external_weights_without_links(tmp_path, monkeypatch):
     target = tmp_path/'shared'/'custom-name.pth'
     target.parent.mkdir()

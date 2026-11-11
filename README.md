@@ -1,6 +1,6 @@
 # CAD Tracking
 
-Identify a CAD part in an RGB-D image, estimate its 6D pose, and track it with an Intel RealSense camera. The browser application and maintained documentation use English.
+Identify a CAD part in an RGB-D image, estimate its 6D pose, and track it with an Intel RealSense camera.
 
 SAM ViT-H generates masks. **DINOv2 ViT-L/14** supplies the global and patch descriptors used by SAM6D ISM. The identification evaluator compares every CAD on the same primary mask, chooses the highest eligible full ISM score, and registers that CAD with **FoundationPose**. FoundationPose does not rerank CAD identities. The older suite uses **PEM** and remains a separate experiment.
 
@@ -19,7 +19,7 @@ git clone --recurse-submodules <your-repository-url> CADTracking
 cd CADTracking
 ```
 
-For an existing checkout, run `git submodule update --init --recursive`. Submodules are pinned to commits; do not use `--remote` to reproduce an experiment. When publishing local submodule changes, push the SAM-6D fork commit before the parent commit that references it.
+For an existing checkout, run `git submodule update --init --recursive`. Submodules are pinned to commits; do not use `--remote` to reproduce an experiment.
 
 Paths in `config/settings.json` are relative to that file. The supplied layout expects sibling `.venvs/` and `.runtime/` directories. Select other locations with a settings JSON and `bash run.sh --settings /path/to/settings.json ...`, or set `CAD_TRACKING_SETTINGS`. The installers use the selected environments; they do not bootstrap a missing base Python automatically.
 
@@ -27,7 +27,7 @@ Paths in `config/settings.json` are relative to that file. The supplied layout e
 
 ### Shared DINOv2 checkpoint in this workspace
 
-The local DINOv2 ViT-L/14 checkpoint is stored once at `../PDDL/DINO/torch_hub/checkpoints/dinov2_vitl14_pretrain.pth`. The `paths.dinov2_checkpoint` entry in `config/settings.json` points directly to that file; no checkpoint symlinks are needed. The bytes and SAM6D model are unchanged; DINOPDDL can load the same weights for reference/stage comparison. Each process still has its own RAM/VRAM allocation.
+Configure the DINOv2 ViT-L/14 checkpoint location using `paths.dinov2_checkpoint` in `config/settings.json`. The path can be absolute or relative to the settings file directory and should point directly to the checkpoint file. CAD Tracking and DINOPDDL can share the same physical checkpoint for reference/stage comparison. Each process loads its own copy into RAM/VRAM.
 
 This is a local asset arrangement, excluded from Git. Model **source repositories** are pinned Git submodules, not symlinked folders. All model locations are explicit entries in `config/settings.json`: `dinov2_checkpoint`, `sam_vit_h_checkpoint` (also `vit_l` and `vit_b`), `fastsam_checkpoint`, `pem_checkpoint`, and `foundationpose_weights`. Relative paths start at the settings file directory. Adjust these before installation on another machine. Installers reuse or download the configured files directly; evaluation provenance hashes each physical checkpoint once.
 
@@ -77,7 +77,7 @@ ssh -N -L 8770:127.0.0.1:8770 user@server
 
 For saved data, expand **Try prepared assembly data**, choose a capture and CAD, then **Run example**. For live input, choose **Live Intel RealSense**, click **Open camera**, select the CAD or assembly, choose FoundationPose, then **Locate and start fast tracking**. **Start live detection** instead repeats complete analyses.
 
-The [robot alignment extension](alignment_pose_cad/README.md) adds capture, preview and explicit execution controls. It starts with motion disabled and requires verified device-specific calibration and limits.
+The [robot alignment extension](alignment_pose_cad/README.md) adds capture, preview and explicit execution controls. It currently selects a supervised UR10 trial with provisional hand-eye calibration. Use Detect pose → Execute alignment. Controller TCP/IK/limit checks run automatically, and execution requires explicit confirmation; see the trial protocol.
 
 ## Evaluate identification and pose
 

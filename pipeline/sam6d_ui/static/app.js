@@ -80,6 +80,13 @@ document.querySelectorAll('.browse-server').forEach(button=>button.onclick=()=>{
 $('browser-close').onclick=()=>$('server-browser').close();$('browser-go').onclick=()=>browse($('browser-path').value);$('browser-up').onclick=()=>{if(browseParent)browse(browseParent);};$('browser-path').onkeydown=event=>{if(event.key==='Enter'){event.preventDefault();browse($('browser-path').value);}};
 document.querySelectorAll('[data-location]').forEach(button=>button.onclick=()=>browse(serverRoot+(button.dataset.location?'/'+button.dataset.location:'')));
 $('run-example').onclick=()=>submit({example:$('example-frame').value,example_cad:$('example-cad').value,options:config()});
+function updateFoundationPoseStatus(fp){
+  const available=!!fp?.available;
+  $('foundationpose-state').textContent=available?(fp.verified?'FoundationPose ready · CUDA':'FoundationPose configured · runtime verification pending'):(fp?.reason||'FoundationPose unavailable');
+  $('foundationpose-state').classList.toggle('error',!available);
+  $('pose-backend').querySelector('option[value=foundationpose]').disabled=!available;
+  if(window.visionEnvironment)window.visionEnvironment.foundationpose=fp;
+}
 fetch('/api/status').then(r=>r.json()).then(data=>{const env=data.environment;if(data.startup?.segmentor){$('segmentor').value=data.startup.segmentor;$('backbone').value=data.startup.backbone||'vit_h';$('segmentor').onchange();}window.visionEnvironment=data;
 const assemblies=data.assemblies||[];
 $('assembly-select').replaceChildren(...assemblies.map(a=>new Option(a.label,a.key)));
@@ -92,7 +99,7 @@ for(const [key,value] of Object.entries(data.defaults||{})){const el=$(ids[key]|
 if($('pose-backend').value==='foundationpose'&&!data.foundationpose?.available)$('pose-backend').value='pem';
 const cam=data.camera_defaults||{};if(cam.width)$('camera-resolution').value=cam.width+'x'+cam.height;if(cam.fps)$('camera-fps').value=cam.fps;
 if(data.tracking_defaults?.identify_assembly)$('camera-cad-source').value='assembly';
-if(data.tracking_defaults)$('sam-refresh').value=data.tracking_defaults.redetect_interval_s;$('foundationpose-state').textContent=data.foundationpose?.available?'FoundationPose ready · CUDA':(data.foundationpose?.reason||'FoundationPose unavailable');$('foundationpose-state').classList.toggle('error',!data.foundationpose?.available);$('pose-backend').querySelector('option[value=foundationpose]').disabled=!data.foundationpose?.available;serverRoot=data.file_root||serverRoot;document.querySelectorAll('[data-location]').forEach(button=>{if(button.dataset.location)button.hidden=true;else button.textContent='Root directory';});$('segmentor').querySelector('option[value=fastsam]').disabled=!env.fastsam_weights;$('pose').disabled=!env.pose_available||!env.cuda_available;$('device').textContent=env.cuda_available?env.gpu+' · CUDA available':'CPU · CUDA unavailable';if(!env.cuda_available)$('device-select').value='cpu';for(const option of $('backbone').options){option.disabled=!env.sam_weights[option.value];option.textContent=option.value.toUpperCase()+(env.sam_weights[option.value]?' · available':' · weights missing');}$('example-frame').innerHTML=data.examples.map(f=>`<option value="${escape(f.name)}">${escape(f.label)}</option>`).join('');$('example-frame').value=data.example_defaults?.frame||'';$('example-cad').innerHTML=data.catalog.map(p=>`<option value="${escape(p.key)}">${escape(p.key)} · ${escape(p.name)}</option>`).join('');$('example-cad').value=data.example_defaults?.cad||'';updateBackend();if(!env.dino_weights||!env.sam_weights.vit_h)message('Weights are missing. Read the installation guide before running.',true);}).catch(error=>message('Failed to query the server: '+error.message,true));
+if(data.tracking_defaults)$('sam-refresh').value=data.tracking_defaults.redetect_interval_s;updateFoundationPoseStatus(data.foundationpose);serverRoot=data.file_root||serverRoot;document.querySelectorAll('[data-location]').forEach(button=>{if(button.dataset.location)button.hidden=true;else button.textContent='Root directory';});$('segmentor').querySelector('option[value=fastsam]').disabled=!env.fastsam_weights;$('pose').disabled=!env.pose_available||!env.cuda_available;$('device').textContent=env.cuda_available?env.gpu+' · CUDA available':'CPU · CUDA unavailable';if(!env.cuda_available)$('device-select').value='cpu';for(const option of $('backbone').options){option.disabled=!env.sam_weights[option.value];option.textContent=option.value.toUpperCase()+(env.sam_weights[option.value]?' · available':' · weights missing');}$('example-frame').innerHTML=data.examples.map(f=>`<option value="${escape(f.name)}">${escape(f.label)}</option>`).join('');$('example-frame').value=data.example_defaults?.frame||'';$('example-cad').innerHTML=data.catalog.map(p=>`<option value="${escape(p.key)}">${escape(p.key)} · ${escape(p.name)}</option>`).join('');$('example-cad').value=data.example_defaults?.cad||'';updateBackend();if(!env.dino_weights||!env.sam_weights.vit_h)message('Weights are missing. Read the installation guide before running.',true);}).catch(error=>message('Failed to query the server: '+error.message,true));
 
 let compactWindow=null,compactTimer=null;
 $('open-viewer').onclick=()=>{
@@ -104,6 +111,7 @@ async function startupStatus(){
   try{const r=await fetch('/api/viewer/status');const data=await r.json();if(!r.ok)return;
     $('startup-state').textContent=data.startup.message;$('startup-state').classList.toggle('error',data.startup.state==='error');
     if(data.startup.state==='loading')setTimeout(startupStatus,500);
+    else{const status=await fetch('/api/status');if(status.ok)updateFoundationPoseStatus((await status.json()).foundationpose);}
   }catch(error){$('startup-state').textContent='Failed to query preload status.';}
 }
 startupStatus();
@@ -127,7 +135,7 @@ function updateSource(){
   $('depth-files').hidden=live||$('mode').value!=='rgbd';
   $('live-camera').hidden=!live;
   $('source-note').textContent=live?'Select the CAD, open the camera and click Start live detection, or analyse one current frame.':source==='server'?'Browse server files.':'Upload files from the computer running this browser.';
-  $('run').textContent=live?'Analizar fotograma actual':'Detect object';
+  $('run').textContent=live?'Analyse current frame':'Detect object';
   window.VisionCamera?.sourceChanged(live);
 }
 const legacyModeChanged=$('mode').onchange;
@@ -172,12 +180,24 @@ async function buildRequest(recordingId=null){
   return request;
 }
 $('form').onsubmit=async event=>{event.preventDefault();if(running||liveDetection)return;try{await submit(await buildRequest());}catch(error){message(error.message,true);}};
+function alignmentSelectionSignature(){
+  const source=$('camera-cad-source').value;
+  const selection={image_source:$('file-source').value,source};
+  if(source==='assembly')selection.assembly=$('assembly-select').value;
+  else if(source==='server'){selection.cad=$('server-cad').value.trim();selection.units=$('cad_units').value;}
+  else{const f=$('cad').files[0];selection.file=f?{name:f.name,size:f.size,modified:f.lastModified}:null;selection.units=$('cad_units').value;}
+  return JSON.stringify(selection);
+}
 window.VisionApp={
-  buildAlignmentRequest:async()=>{
+  alignmentSelectionSignature,
+  buildAlignmentRequest:async(fixedTarget=null)=>{
     if(running||liveDetection)throw new Error('Stop continuous detection and wait for analyses to finish.');
     if($('file-source').value!=='realsense')throw new Error('Select live Intel RealSense.');
     if(window.VisionManual?.active())throw new Error('Select automatic SAM initialization.');
-    const request=await buildRequest();
+    const signature=alignmentSelectionSignature();
+    const request=fixedTarget?{live_camera:true,target_cad_key:fixedTarget,options:config()}:await buildRequest();
+    if(signature!==alignmentSelectionSignature())throw new Error('CAD selection changed while preparing the request. Try again.');
+    request.selection_signature=signature;
     request.options={...request.options,mode:'rgbd',device:'cuda',pose:true,pose_backend:'foundationpose',segmentor:'sam'};
     return request;
   },

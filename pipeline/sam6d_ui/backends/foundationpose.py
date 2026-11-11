@@ -23,15 +23,23 @@ def configured():
     """
     python = python_path()
     root = Path(os.environ.get('FOUNDATIONPOSE_ROOT', path('foundationpose')))
-    weights = all((root / 'weights' / stamp / name).is_file()
-                  for stamp in ('2024-01-11-20-02-45', '2023-10-28-18-33-37')
-                  for name in ('model_best.pth', 'config.yml'))
-    available = python.is_file() and root.is_dir() and weights
+    weights_root = path('foundationpose_weights')
+    missing = [str(weights_root / stamp / name)
+               for stamp in ('2024-01-11-20-02-45', '2023-10-28-18-33-37')
+               for name in ('model_best.pth', 'config.yml')
+               if not (weights_root / stamp / name).is_file()]
+    problems = []
+    if not python.is_file():problems.append('Python environment not found: '+str(python))
+    if not root.is_dir():problems.append('Source directory not found: '+str(root))
+    if missing:problems.append('Missing weight files: '+', '.join(missing))
+    available = not problems
     return {
         'available': available,
         'verified': False,
         'python': str(python),
-        'reason': None if available else 'FoundationPose environment, code or weights are missing.',
+        'weights_path': str(weights_root),
+        'missing_weight_files': missing,
+        'reason': '; '.join(problems) or None,
     }
 
 
