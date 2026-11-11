@@ -15,7 +15,14 @@
     "ui_reference_cache": "../.cache/ui_reference_features",
     "runtime_cache": "../../.runtime/cache",
     "matplotlib_cache": "../../.runtime/matplotlib",
-    "dataset": "../data/dataset.json"
+    "dataset": "../data/dataset.json",
+    "dinov2_checkpoint": "../../PDDL/DINO/torch_hub/checkpoints/dinov2_vitl14_pretrain.pth",
+    "sam_vit_h_checkpoint": "../checkpoints/sam_vit_h_4b8939.pth",
+    "sam_vit_l_checkpoint": "../checkpoints/sam_vit_l_0b3195.pth",
+    "sam_vit_b_checkpoint": "../checkpoints/sam_vit_b_01ec64.pth",
+    "fastsam_checkpoint": "../checkpoints/FastSAM-x.pt",
+    "pem_checkpoint": "../checkpoints/sam-6d-pem-base.pth",
+    "foundationpose_weights": "../checkpoints/foundationpose"
   },
   "runtime": {
     "threads": 16,

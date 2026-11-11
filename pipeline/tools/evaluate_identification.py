@@ -25,7 +25,7 @@ import traceback
 
 PIPELINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PIPELINE))
-from settings import ISM, PREPARED, ROOT, path
+from settings import ISM, PREPARED, ROOT, path, SETTINGS
 from region_filters import reject_vertical_option_a_corner, rank_candidates, CORNER_FILTER_REASON
 
 
@@ -378,15 +378,17 @@ def main():
     source_files = [PIPELINE/'region_filters.py', PIPELINE/'tools/evaluate_identification.py', ISM/'run_suite_pddl.py', ISM/'model/detector.py', ISM/'model/loss.py', ISM/'utils/bbox_utils.py', PIPELINE/'tools/score_all_cads.py', PIPELINE/'sam6d_ui/backends/foundationpose_worker.py']
     run['environment']['sources'] = {str(p):digest(p) for p in source_files}
     run['environment']['model_revisions'] = {name:command_record(['git','-C',str(ROOT/'models'/name),'rev-parse','HEAD']) for name in ('SAM-6D','FoundationPoseOfficial')}
-    # Shared checkpoint aliases are still inference inputs. Hash each physical
-    # file once, retaining a stable path relative to this checkout for audits.
+    # Hash configured physical files, including shared weights outside the checkout.
+    # Keep relative paths so historical provenance remains auditable.
     weights = []
     seen_weights = set()
-    for checkpoint in sorted((ROOT/'checkpoints').rglob('*.pth'), key=lambda p:(len(p.parts),str(p))):
+    configured = [path(key) for key in SETTINGS['paths'] if key.endswith('_checkpoint')]
+    configured.extend(path('foundationpose_weights').rglob('*.pth'))
+    for checkpoint in sorted(configured, key=str):
         if checkpoint.is_file() and checkpoint.resolve() not in seen_weights:
             weights.append(checkpoint)
             seen_weights.add(checkpoint.resolve())
-    run['environment']['checkpoint_sha256'] = {str(p.relative_to(ROOT)):digest(p) for p in weights}
+    run['environment']['checkpoint_sha256'] = {os.path.relpath(p, ROOT):digest(p) for p in weights}
     run['setup_timing']['provenance_s'] = time.perf_counter()-started
     run['validation']=validate_dataset(dataset,base);write_json(output/'validation.json',run['validation'])
     write_json(output/'run.json',run)

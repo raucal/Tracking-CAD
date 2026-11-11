@@ -25,6 +25,8 @@ def main():
     official = path('foundationpose')
     sys.path[:0] = [str(path('native') / 'foundationpose'), str(HERE / 'files'), str(official)]
     install(official, ROOT / '.cache/foundationpose_sdu')
+    from foundationpose_sdu import configure_weights
+    configure_weights()
     sys.argv = [str(HERE / 'files' / args.script), *remaining]
     runpy.run_path(sys.argv[0], run_name='__sdu_startup_check__' if args.check else '__main__')
     if args.check:

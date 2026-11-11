@@ -58,6 +58,8 @@ The UI reuses resident SAM/DINOv2 and FoundationPose workers. The default preloa
 
 Paths in JSON files resolve relative to the containing file; CLI paths resolve relative to the current directory. Absolute paths and `~` are supported. `--settings FILE` overrides `CAD_TRACKING_SETTINGS`; `ui --config FILE` and `suite run --config FILE` select profiles, also selectable through `CAD_TRACKING_INTERFACE_CONFIG` and `CAD_TRACKING_SUITE_CONFIG`.
 
+Model files are selected by `paths.dinov2_checkpoint`, `paths.sam_vit_h_checkpoint` (or `sam_vit_l_checkpoint` / `sam_vit_b_checkpoint`), `paths.fastsam_checkpoint`, and `paths.pem_checkpoint`. `paths.foundationpose_weights` selects the root containing both complementary FoundationPose checkpoints and their `config.yml` files. These paths point directly to physical files/directories; installers do not create checkpoint symlinks.
+
 Custom interface/suite profiles inherit omitted fields and reject unknown keys. `tracking.quality` supports partial overrides. CLI options override profiles, and web controls can override parameters per request. Settings require the complete paths/runtime configuration; example snippets are edits, not complete replacements. Startup segmentor preload and initial inference segmentor are separate settings.
 
 For example, save this as `config/interface.local.json`:
@@ -361,7 +363,7 @@ An exported report can be copied to another computer and viewed without models, 
 | Address already in use | Use the existing service, stop it from its terminal, or select another `--port`. |
 | Remote browser cannot connect | Keep the service running and forward its port through SSH/VS Code. |
 | RealSense missing or busy | Check server connection, SDK/USB permissions, and other camera users. |
-| Missing weights, runtime, or templates | Run `settings` and `sam doctor`; follow Installation. FoundationPose weights belong under `models/FoundationPoseOfficial/weights/`. |
+| Missing weights, runtime, or templates | Run `settings` and `sam doctor`; follow Installation. Set `paths.foundationpose_weights` to the directory containing both dated weight/config directories. |
 | Missing pose matrices/axes | In the historical PEM report open `#poses` and inspect saved errors. In the FoundationPose report open the case overlay and `poses.json`. Newly generated suites can use `suite pose`. |
 | Correct mask but poor CAD projection | Check CAD units, aligned depth, intrinsics, and transforms. A good mask does not guarantee a good pose. |
 | Smooth stream but slow detections | Acquisition and inference have different rates. Use fast FoundationPose tracking and inspect stage timings. |

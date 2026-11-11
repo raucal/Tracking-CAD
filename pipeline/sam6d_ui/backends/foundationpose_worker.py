@@ -12,7 +12,7 @@ import time
 
 
 from settings import path
-from foundationpose_sdu import install as install_sdu_compatibility
+from foundationpose_sdu import install as install_sdu_compatibility, configure_weights
 FOUNDATIONPOSE = Path(os.environ.get('FOUNDATIONPOSE_ROOT', path('foundationpose')))
 NATIVE = Path(os.environ.get('FOUNDATIONPOSE_NATIVE', path('native')/'foundationpose'))
 
@@ -22,7 +22,7 @@ def probe():
     sys.path[:0] = [str(NATIVE), str(FOUNDATIONPOSE / 'mycpp/build')]
     modules = ['pytorch3d', 'nvdiffrast', 'open3d', 'warp', 'kornia', 'transformations', 'mycpp']
     missing = [name for name in modules if importlib.util.find_spec(name) is None]
-    weights = all((FOUNDATIONPOSE / 'weights' / stamp / name).is_file()
+    weights = all((path('foundationpose_weights') / stamp / name).is_file()
                   for stamp in ('2024-01-11-20-02-45', '2023-10-28-18-33-37')
                   for name in ('model_best.pth', 'config.yml'))
     available = not missing and weights and torch.cuda.is_available()
@@ -50,6 +50,7 @@ def load_models():
     sys.path[:0] = [str(NATIVE), str(FOUNDATIONPOSE)]
     import mycpp
     install_sdu_compatibility(FOUNDATIONPOSE)
+    configure_weights()
     from estimater import ScorePredictor, PoseRefinePredictor
     import nvdiffrast.torch as dr
     torch.set_num_threads(4)
@@ -177,7 +178,7 @@ def main():
         print(json.dumps(probe()))
         return
     if not all((args.folder, args.mesh, args.mask, args.transform, args.output)):
-        parser.error('Se necesitan folder, mesh, mask, transform y output.')
+        parser.error('folder, mesh, mask, transform and output are required.')
     estimate(args)
 
 

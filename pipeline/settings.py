@@ -31,6 +31,12 @@ def path(key):
         raise ValueError(f'Missing path {key!r} in {SETTINGS_FILE}') from error
     return relative_path(value, SETTINGS_FILE)
 
+def checkpoint(kind, backbone='vit_h'):
+    """Physical model paths configured relative to the settings file."""
+    key = f'sam_{backbone}_checkpoint' if kind == 'sam' else f'{kind}_checkpoint'
+    return path(key)
+
+
 def profile(kind, filename=None):
     default_file = CONFIG / f'{kind}.json'
     source = Path(filename or os.environ.get('CAD_TRACKING_' + kind.upper() + '_CONFIG', default_file)).expanduser().resolve()

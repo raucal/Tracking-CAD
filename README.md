@@ -27,11 +27,11 @@ Paths in `config/settings.json` are relative to that file. The supplied layout e
 
 ### Shared DINOv2 checkpoint in this workspace
 
-The local DINOv2 ViT-L/14 checkpoint is stored once at `../PDDL/DINO/torch_hub/checkpoints/dinov2_vitl14_pretrain.pth`. The existing `checkpoints/dinov2_vitl14_pretrain.pth`, grouped checkpoint path and SAM6D checkpoint path are relative symlink aliases to it. The bytes and SAM6D model are unchanged; DINOPDDL can load the same weights for reference/stage comparison. Each process still has its own RAM/VRAM allocation.
+The local DINOv2 ViT-L/14 checkpoint is stored once at `../PDDL/DINO/torch_hub/checkpoints/dinov2_vitl14_pretrain.pth`. The `paths.dinov2_checkpoint` entry in `config/settings.json` points directly to that file; no checkpoint symlinks are needed. The bytes and SAM6D model are unchanged; DINOPDDL can load the same weights for reference/stage comparison. Each process still has its own RAM/VRAM allocation.
 
-This is a local asset arrangement, excluded from Git. Model **source repositories** are pinned Git submodules, not symlinked folders. A fresh clone installs its weights through the documented installers; it does not contain this workspace's checkpoint aliases. Installers reuse valid shared aliases rather than downloading another copy, and evaluation provenance hashes each physical checkpoint once.
+This is a local asset arrangement, excluded from Git. Model **source repositories** are pinned Git submodules, not symlinked folders. All model locations are explicit entries in `config/settings.json`: `dinov2_checkpoint`, `sam_vit_h_checkpoint` (also `vit_l` and `vit_b`), `fastsam_checkpoint`, `pem_checkpoint`, and `foundationpose_weights`. Relative paths start at the settings file directory. Adjust these before installation on another machine. Installers reuse or download the configured files directly; evaluation provenance hashes each physical checkpoint once.
 
-The SAM ViT-H, two FoundationPose checkpoints (refiner and scorer), optional FastSAM and optional PEM weights are different models. They were retained so the available backends continue to work. Standalone DINOv2 does not supply SAM masks or FoundationPose poses.
+The SAM ViT-H, two FoundationPose checkpoints (refiner and scorer), optional FastSAM and optional PEM weights are different models. Both FoundationPose checkpoints are required: the refiner improves candidate poses and the scorer selects between them. Deleting either disables the supported FoundationPose pipeline. They were retained so the available backends continue to work. Standalone DINOv2 does not supply SAM masks or FoundationPose poses.
 
 ## Dependencies and installation
 

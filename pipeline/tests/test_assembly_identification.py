@@ -88,6 +88,7 @@ class EngineIdentificationTests(unittest.TestCase):
                                     [np.ones((8,8),bool) for _ in detections],accepted))
         with ExitStack() as stack:
             stack.enter_context(patch.object(engine,'ISM',root))
+            stack.enter_context(patch.object(engine,'checkpoint',side_effect=lambda kind, *args:root/'checkpoints'/('FastSAM/FastSAM-x.pt' if kind=='fastsam' else 'dinov2/dinov2_vitl14_pretrain.pth')))
             stack.enter_context(patch.object(engine,'environment',return_value={}))
             stack.enter_context(patch.object(engine,'process_frame',process))
             load = stack.enter_context(patch.object(engine,'load_references',return_value={'parts':[{'cache_hit':True}]*2}))

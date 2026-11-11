@@ -27,7 +27,6 @@ def main():
     threads = str(cfg.SETTINGS['runtime']['threads'])
     for key,value in {'OMP_NUM_THREADS':threads,'MKL_NUM_THREADS':threads,
                       'CAD_TRACKING_ROOT':str(cfg.ROOT),'MAX_JOBS':str(cfg.SETTINGS['runtime']['build_jobs']),'CAD_TRACKING_PYTHON':str(python),'CAD_TRACKING_SAM6D':str(cfg.SAM6D),'CAD_TRACKING_NATIVE':str(cfg.NATIVE),
-                      'SAM6D_CHECKPOINT_CACHE':str(cfg.path('checkpoints')),
                       'FOUNDATIONPOSE_PYTHON':str(cfg.path('foundationpose_python')),'FOUNDATIONPOSE_ROOT':str(cfg.path('foundationpose')),
                       'FOUNDATIONPOSE_NATIVE':str(cfg.NATIVE/'foundationpose'),
                       'MPLCONFIGDIR':str(cfg.path('matplotlib_cache')),'XDG_CACHE_HOME':str(cfg.path('runtime_cache')),

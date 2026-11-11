@@ -29,4 +29,4 @@ cmake -S "${FOUNDATIONPOSE_ROOT}/mycpp" -B "$native/build-cadtracking" \
     '-DCMAKE_CXX_FLAGS_RELEASE=-O2 -DNDEBUG -g0'
 cmake --build "$native/build-cadtracking" --parallel 2
 cp "$native"/build-cadtracking/mycpp*.so "$native/"
-echo "FoundationPose installed in $target. Existing weights in FoundationPose/weights/ are preserved."
+echo "FoundationPose installed in $target. Weights are loaded from paths.foundationpose_weights in config/settings.json."

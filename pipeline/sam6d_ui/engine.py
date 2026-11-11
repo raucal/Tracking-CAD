@@ -13,7 +13,7 @@ import torch
 from hydra import compose, initialize_config_dir
 from hydra.utils import instantiate
 
-from settings import ROOT, PIPELINE, ISM, NATIVE, PREPARED, CONFIG, path, display_names
+from settings import checkpoint, ROOT, PIPELINE, ISM, NATIVE, PREPARED, CONFIG, path, display_names
 sys.path.insert(0, str(ISM))
 from model.utils import Detections, mask_to_rle  # noqa: E402
 from run_inference_pddl import visualize  # noqa: E402
@@ -32,10 +32,10 @@ def reject_repeated_region(detection, image_size):
 def environment():
     return {"cuda_available": torch.cuda.is_available(), "torch": str(torch.__version__),
             "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
-            "sam_weights": {name: (ISM / "checkpoints/segment-anything" / filename).is_file() for name, filename in WEIGHTS.items()},
-            "dino_weights": (ISM / "checkpoints/dinov2/dinov2_vitl14_pretrain.pth").is_file(),
-            "fastsam_weights": (ISM / "checkpoints/FastSAM/FastSAM-x.pt").is_file(),
-            "pose_available": (ISM.parent / "Pose_Estimation_Model/checkpoints/sam-6d-pem-base.pth").is_file() and bool(list((NATIVE / "pointnet2").glob("*.so"))), "render_backend": "Blender 3.3.1 Cycles CPU; inference CUDA/CPU"}
+            "sam_weights": {name: checkpoint('sam', name).is_file() for name, filename in WEIGHTS.items()},
+            "dino_weights": checkpoint('dinov2').is_file(),
+            "fastsam_weights": checkpoint('fastsam').is_file(),
+            "pose_available": checkpoint('pem').is_file() and bool(list((NATIVE / "pointnet2").glob("*.so"))), "render_backend": "Blender 3.3.1 Cycles CPU; inference CUDA/CPU"}
 
 
 def rgb_inference(model, rgb, part, device, min_score):
@@ -155,7 +155,7 @@ class Engine:
         return timing
 
     def reference_key(self,part,base):
-        paths=[ISM/'checkpoints/dinov2/dinov2_vitl14_pretrain.pth',ISM/'model/dinov2.py',ISM/'utils/bbox_utils.py',base/part['sam_ply']]
+        paths=[checkpoint('dinov2'),ISM/'model/dinov2.py',ISM/'utils/bbox_utils.py',base/part['sam_ply']]
         folder=base/part['sam_template_dir']
         paths.extend(folder/f'{prefix}_{i}.png' for i in range(42) for prefix in ('rgb','mask'))
         return (self.model_key,part['key'],tuple((str(p),p.stat().st_size,p.stat().st_mtime_ns) for p in paths))
@@ -169,8 +169,8 @@ class Engine:
         torch.set_num_threads(16)
         key = (config["segmentor"], config["backbone"], str(device))
         weights = environment()
-        selected = ISM / "checkpoints" / ("segment-anything/" + WEIGHTS[config["backbone"]] if config["segmentor"] == "sam" else "FastSAM/FastSAM-x.pt")
-        required = [selected, ISM / "checkpoints/dinov2/dinov2_vitl14_pretrain.pth"]
+        selected = checkpoint(config["segmentor"], config["backbone"])
+        required = [selected, checkpoint('dinov2')]
         missing = [path for path in required if not path.is_file()]
         if missing:
             temporary = any(path.is_symlink() and str(path.resolve()).startswith("/dev/shm/") for path in missing)

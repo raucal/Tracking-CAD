@@ -1,16 +1,15 @@
-"""Download the official ISM checkpoints into a selected cache, then link them."""
+"""Download official ISM checkpoints directly to their configured model paths."""
 import sys as _sys
 from pathlib import Path as _Path
 _sys.path.insert(0, str(next(p for p in _Path(__file__).resolve().parents if (p / 'settings.py').is_file())))
 from pathlib import Path
-import os
 import argparse
 import hashlib
 import json
 import time
 import urllib.request
 
-from settings import ISM, PREPARED
+from settings import checkpoint
 ASSETS = [
     ("sam_vit_h_4b8939.pth", "https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth", "segment-anything"),
     ("dinov2_vitl14_pretrain.pth", "https://dl.fbaipublicfiles.com/dinov2/dinov2_vitl14/dinov2_vitl14_pretrain.pth", "dinov2"),
@@ -19,13 +18,11 @@ ASSETS = [
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--cache", type=Path, required=True)
-    args = parser.parse_args()
-    cache = args.cache.resolve()
-    cache.mkdir(parents=True, exist_ok=True)
+    parser.parse_args()
     report = []
     for name, url, group in ASSETS:
-        target = cache / name
+        target = checkpoint("sam" if group == "segment-anything" else "dinov2")
+        target.parent.mkdir(parents=True, exist_ok=True)
         if not target.exists():
             temporary = target.with_suffix(".download")
             print(f"Downloading {name}", flush=True)
@@ -50,12 +47,6 @@ def main():
         with target.open("rb") as source:
             while block := source.read(4 * 1024 * 1024):
                 digest.update(block)
-        link = ISM / "checkpoints" / group / name
-        link.parent.mkdir(parents=True, exist_ok=True)
-        if link.is_symlink() and link.resolve() != target.resolve():
-            raise ValueError(f"Checkpoint link already points elsewhere: {link}")
-        if not link.exists() and not link.is_symlink():
-            link.symlink_to(os.path.relpath(target, link.parent))
         report.append({"name": name, "url": url, "cache": str(target),
                        "canonical_cache": str(target.resolve()),
                        "bytes": target.stat().st_size, "sha256": digest.hexdigest()})

@@ -129,7 +129,7 @@ If `nvcc` is not on PATH, set `CUDA_HOME` to the CUDA Toolkit directory and add 
 bash run.sh install
 ```
 
-The installer installs `pipeline/setup/requirements-sam6d.txt` with `constraints-assembly-runtime.txt`, downloads or reuses SAM ViT-H, DINOv2, FastSAM, and PEM weights in `checkpoints/`, creates relative weight links, builds PointNet2 in `pipeline/native/pointnet2/` if missing, and runs diagnostics.
+The installer installs `pipeline/setup/requirements-sam6d.txt` with `constraints-assembly-runtime.txt`, downloads or reuses SAM ViT-H, DINOv2, FastSAM, and PEM at the physical paths configured in `config/settings.json` (DINOv2 defaults to the shared `../PDDL/DINO/torch_hub/checkpoints/`), builds PointNet2 in `pipeline/native/pointnet2/` if missing, and runs diagnostics.
 
 ViT-B and ViT-L require their own compatible checkpoints. FoundationPose weights and example data/templates are separate steps.
 
@@ -138,7 +138,7 @@ ViT-B and ViT-L require their own compatible checkpoints. FoundationPose weights
 Obtain the official refiner and scorer weights following [FoundationPose data preparation](https://github.com/NVlabs/FoundationPose#data-prepare). No training dataset is needed. The expected layout is:
 
 ```text
-models/FoundationPoseOfficial/weights/
+checkpoints/foundationpose/
 ├── 2023-10-28-18-33-37/
 │   ├── model_best.pth
 │   └── config.yml
@@ -147,7 +147,7 @@ models/FoundationPoseOfficial/weights/
     └── config.yml
 ```
 
-In the existing installation these weights are kept in `checkpoints/foundationpose/` and linked from the model checkout. Then run:
+Set `paths.foundationpose_weights` in `config/settings.json` to this directory. Both dated directories, including their configuration files, are required: the 2023 checkpoint refines poses and the 2024 checkpoint scores candidates. The integration redirects their paths in memory and leaves the official source checkout unchanged. No weight symlinks are created. Then run:
 
 ```bash
 bash run.sh install-foundationpose

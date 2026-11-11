@@ -14,7 +14,7 @@ import torch
 from PIL import Image
 from omegaconf import OmegaConf
 
-from settings import PEM, NATIVE
+from settings import PEM, NATIVE, checkpoint as model_checkpoint
 sys.path[:0]=[str(NATIVE),str(PEM),str(PEM/'provider'),str(PEM/'utils'),str(PEM/'model'),str(PEM/'model/pointnet2')]
 
 def main():
@@ -37,7 +37,7 @@ def main():
     if model_from_input.shape!=(4,4) or not np.isfinite(model_from_input).all() or not np.allclose(model_from_input[3],[0,0,0,1]) or not np.allclose(model_from_input[:3,:3].T@model_from_input[:3,:3],np.eye(3),atol=1e-5) or not np.isclose(np.linalg.det(model_from_input[:3,:3]),1,atol=1e-5):raise ValueError('Invalid model-from-input rigid transform')
     exact_bounds=np.asarray(trimesh.load_mesh(a.cad).bounds)
     model=Net(cfg.model).cuda().eval()
-    checkpoint=torch.load(PEM/'checkpoints/sam-6d-pem-base.pth',map_location='cpu',weights_only=False)
+    checkpoint=torch.load(model_checkpoint('pem'),map_location='cpu',weights_only=False)
     state=checkpoint.get('model',checkpoint.get('state_dict',checkpoint))
     state={k.removeprefix('module.'):v for k,v in state.items()}
     model.load_state_dict(state,strict=True)

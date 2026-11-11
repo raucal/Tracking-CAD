@@ -6,10 +6,9 @@ sam_python="${CAD_TRACKING_PYTHON}"
 sam_base="$("$sam_python" -c 'import sys; print(sys.base_prefix)')"
 export LD_LIBRARY_PATH="$sam_base/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 export PATH="${CAD_TRACKING_PYTHON%/python}:$PATH"
-sam_cache="$SAM6D_CHECKPOINT_CACHE"
 "$sam_python" -m pip install --no-cache-dir --constraint "$cad_root/pipeline/setup/constraints-assembly-runtime.txt" -r "$cad_root/pipeline/setup/requirements-sam6d.txt"
-"$sam_python" "$cad_root/pipeline/tools/download_runtime_assets.py" --cache "$sam_cache"
-"$sam_python" "$cad_root/pipeline/tools/download_pose_assets.py" --cache "$sam_cache"
+"$sam_python" "$cad_root/pipeline/tools/download_runtime_assets.py"
+"$sam_python" "$cad_root/pipeline/tools/download_pose_assets.py"
 if ! compgen -G "${CAD_TRACKING_NATIVE}/pointnet2/_ext*.so" > /dev/null; then
     if [[ -z "${CUDA_HOME:-}" ]]; then
         cuda_compiler="$(command -v nvcc || true)"
