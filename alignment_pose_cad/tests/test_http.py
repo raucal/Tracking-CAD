@@ -2,6 +2,7 @@
 from http.server import ThreadingHTTPServer
 from io import BytesIO
 import json
+import os
 import hashlib
 import base64
 from pathlib import Path
@@ -27,7 +28,8 @@ from sam6d_ui.camera.service import CameraService
 from alignment_pose_cad.service import AlignmentService
 from alignment_pose_cad.robot import RTDERobot
 from alignment_pose_cad.config import load as load_settings, DEFAULT
-from test_alignment import config,FakeReceive,FakeControl
+from test_alignment import config,FakeReceive,FakeControl,make_demo,write_bindings
+from alignment_pose_cad.geometry import from_pose
 
 
 class Source:
@@ -90,17 +92,21 @@ class HTTPTests(unittest.TestCase):
             time.sleep(.02)
         self.fail('Service did not finish')
 
-    def use_shared_hand_eye(self, confirmed=False):
+    def use_shared_hand_eye(self, serial='123'):
+        """Production matrix_calibration.yaml + a copy of its Calibration.xml, bound to the fake camera."""
         production,_=load_settings(DEFAULT)
         source=Path(production['robot']['hand_eye_file'])
         data=yaml.safe_load(source.read_text())
-        data.update(camera_id='123' if confirmed else None,camera_frame_confirmed=confirmed)
-        data['source_xml']=str((source.parent/data['source_xml']).resolve())
-        self.hand_eye=self.root/'synthetic_camera_hand_eye.yaml'
+        self.calibration_xml=self.root/'Calibration.xml'
+        self.calibration_xml.write_bytes((source.parent/data['calibration_xml']).read_bytes())
+        data.update(camera={'serial':serial},calibration_xml=self.calibration_xml.name)
+        data.pop('measurements_xml',None)
+        self.hand_eye=self.root/'matrix_calibration.yaml'
         self.hand_eye.write_text(yaml.safe_dump(data))
         self.cfg['robot'].update(hand_eye_file=str(self.hand_eye),preview_only=True)
         self.app.alignment.settings_file.write_text(json.dumps(self.cfg))
-        return data
+        from alignment_pose_cad import calibration
+        return calibration._core.load_calibration(self.hand_eye)
 
     def test_status_assets_and_same_origin_guard(self):
         s=self.request('/api/alignment/status');self.assertFalse(s['connected'])
@@ -163,25 +169,19 @@ class HTTPTests(unittest.TestCase):
         self.assertIn('moved',state['message'])
         self.assertFalse(self.app.alignment.robot.control.calls)
 
-    def test_confirmation_binds_live_serial_without_enabling_motion(self):
-        self.use_shared_hand_eye()
+    def test_calibration_of_another_camera_blocks_targets(self):
+        self.use_shared_hand_eye(serial='another-camera')
         state=self.request('/api/alignment/status')
-        self.assertFalse(state['config']['hand_eye']['preview_ready'])
-        digest=state['config']['hand_eye']['config_sha256']
-        original=self.hand_eye.read_bytes()
-        request={'camera_serial':'123','calibration_sha256':digest,'physical_confirmed':True,'optical_confirmed':False}
-        with self.assertRaises(HTTPError):self.request('/api/alignment/confirm-camera',request)
-        self.assertEqual(self.hand_eye.read_bytes(),original)
-        request['optical_confirmed']=True
-        result=self.request('/api/alignment/confirm-camera',request)
-        self.assertTrue(result['config']['hand_eye']['preview_ready'])
-        saved=yaml.safe_load(self.hand_eye.read_text())
-        self.assertEqual(saved['status'],'provisional');self.assertEqual(saved['camera_id'],'123')
-        self.assertFalse(saved['camera_confirmation']['accuracy_validated'])
-        self.assertTrue(result['config']['preview_only']);self.assertIsNone(self.app.alignment.robot)
+        self.assertEqual(state['config']['hand_eye']['robot_model'],'UR5e')
+        self.assertEqual(state['config']['camera_serial'],'another-camera')
+        self.request('/api/alignment/connect',{});self.wait_idle()
+        self.request('/api/alignment/plan',{'live_camera':True,'server_files':{'cad':'part.stl'}})
+        state=self.wait_idle();self.assertEqual(state['state'],'error');self.assertIsNone(state['plan'])
+        self.assertIn('camera',state['message'])
+        self.assertFalse(self.app.alignment.robot.control.calls)
 
     def test_shared_yaml_is_used_for_200mm_preview_and_execution_is_blocked(self):
-        data=self.use_shared_hand_eye(confirmed=True)
+        data=self.use_shared_hand_eye()
         self.request('/api/alignment/connect',{});self.wait_idle()
         self.request('/api/alignment/plan',{'live_camera':True,'server_files':{'cad':'part.stl'}})
         state=self.wait_idle();self.assertEqual(state['state'],'planned',state)
@@ -195,30 +195,19 @@ class HTTPTests(unittest.TestCase):
         with self.assertRaises(HTTPError):self.request('/api/alignment/execute',{'plan_id':plan['id']})
         self.assertFalse(self.app.alignment.robot.control.calls)
 
-    def test_camera_frame_and_stale_confirmation_fail_closed(self):
-        self.use_shared_hand_eye()
-        digest=self.request('/api/alignment/status')['config']['hand_eye']['config_sha256']
-        original=self.hand_eye.read_bytes()
-        payload=dict(camera_serial='old-serial',calibration_sha256=digest,physical_confirmed=True,optical_confirmed=True)
-        with self.assertRaises(HTTPError):self.request('/api/alignment/confirm-camera',payload)
-        payload['camera_serial']='123'
-        frame=self.app.camera.frame();frame['camera']['optical_frame']='realsense_depth_optical'
-        with patch.object(self.app.camera,'frame',return_value=frame):
-            with self.assertRaises(HTTPError):self.request('/api/alignment/confirm-camera',payload)
-        self.assertEqual(self.hand_eye.read_bytes(),original)
-
     def test_yaml_change_invalidates_the_displayed_target(self):
-        self.use_shared_hand_eye(confirmed=True)
+        self.use_shared_hand_eye()
         self.request('/api/alignment/connect',{});self.wait_idle()
         self.request('/api/alignment/plan',{'live_camera':True,'server_files':{'cad':'part.stl'}})
         state=self.wait_idle();self.assertEqual(state['state'],'planned',state)
-        data=yaml.safe_load(self.hand_eye.read_text());data['direction_evidence']='Edited after preview'
-        self.hand_eye.write_text(yaml.safe_dump(data))
+        # A new Calibration.xml (recalibration) invalidates targets computed with the old one.
+        self.calibration_xml.write_text(self.calibration_xml.read_text()+'\n')
+        self.assertNotEqual(load_settings(self.app.alignment.settings_file)[1],state['plan']['settings_sha256'])
         with self.assertRaises(HTTPError):self.request('/api/alignment/execute',{'plan_id':state['plan']['id']})
         self.assertFalse(self.app.alignment.robot.control.calls)
 
     def test_motion_flags_cannot_override_a_provisional_yaml(self):
-        self.use_shared_hand_eye(confirmed=True)
+        self.use_shared_hand_eye()
         self.cfg['robot']['preview_only']=False
         self.app.alignment.settings_file.write_text(json.dumps(self.cfg))
         _,digest=load_settings(self.app.alignment.settings_file)
@@ -227,7 +216,7 @@ class HTTPTests(unittest.TestCase):
         self.assertIsNone(self.app.alignment.robot)
 
     def setup_trial(self):
-        data=self.use_shared_hand_eye(confirmed=True)
+        data=self.use_shared_hand_eye()
         production,_=load_settings(DEFAULT)
         self.cfg['alignment']=production['alignment']
         self.cfg['robot'].update(execution_mode='supervised_trial',preview_only=False,
@@ -293,6 +282,184 @@ class HTTPTests(unittest.TestCase):
                       'bounds_local_mm':cassette.bounds.tolist()})
         manifest.write_text(json.dumps({'parts':parts}))
         return manifest,parts
+
+    def setup_skill_demo(self, shift_mm=(30, 0, 0)):
+        """Trial setup plus a synthetic HMI demo whose CAD sits shift_mm away in the camera."""
+        self.setup_trial();robot=self.app.alignment.robot
+        T=np.eye(4);T[:3,3]=np.add([100,200,700],shift_mm);T[1,:3]=[0,0,1];T[2,:3]=[0,-1,0]
+        digest=hashlib.sha256((self.root/'part.stl').read_bytes()).hexdigest()
+        common=dict(cad_sha256=digest,tcp_offset=robot.control.getTCPOffset(),robot_id=self.cfg['robot']['ip'])
+        self.demo=make_demo(self.root,'hmi_demo','02_control_panel',T,[-.4,.3,.3,0,3.1,0],**common)
+        make_demo(self.root,'cassette_demo','03_option_cassette',T,[-.4,.3,.3,0,3.1,0],image=b'c',**common)
+        self.cfg['alignment']['skill_bindings_file']=str(write_bindings(self.root,{'hmi_panel':'hmi_demo','option_cassette':'cassette_demo'}))
+        self.app.alignment.settings_file.write_text(json.dumps(self.cfg))
+        robot.cfg=load_settings(self.app.alignment.settings_file)[0]
+        return T
+
+    def test_skill_demo_target_reproduces_demo_relative_pose_and_executes_once(self):
+        demo_T=self.setup_skill_demo()
+        status=self.request('/api/alignment/status')
+        self.assertEqual({d['demo_id']:d['cad_key'] for d in status['config']['skill_demos']},
+                         {'hmi_demo':'02_control_panel','cassette_demo':'03_option_cassette'})
+        target={'mode':'skill_demo','demo_id':None}
+        self.request('/api/alignment/plan',{'live_camera':True,'target_cad_key':'02_control_panel','alignment_target':target})
+        state=self.wait_idle();self.assertEqual(state['state'],'planned',state)
+        plan=state['plan'];self.assertEqual(plan['alignment_mode'],'skill_demo')
+        self.assertEqual(plan['skill_demo']['demo_id'],'hmi_demo');self.assertEqual(plan['alignment_target'],target)
+        self.assertTrue(plan['controller_path_checked'])
+        now=np.asarray(plan['T_camera_from_input_cad_m']);demo=np.asarray(demo_T,dtype=float);demo[:3,3]*=.001
+        tcp_camera=np.asarray(plan['T_tcp_from_camera'])
+        expected=np.asarray(plan['T_base_from_tcp_capture'])@tcp_camera@now@np.linalg.inv(demo)@np.linalg.inv(tcp_camera)
+        np.testing.assert_allclose(plan['T_base_from_tcp_target'],expected,atol=1e-9)
+        self.assertAlmostEqual(plan['translation_m'],.03,places=9)
+        robot=self.app.alignment.robot;c=robot.control;r=robot.receive
+        # The execute request must name the same target; a face-mode client cannot reuse it.
+        with self.assertRaises(HTTPError):self.request('/api/alignment/execute',{'plan_id':plan['id'],'confirmed':True})
+        def dispatch(p,*args):c.calls.append(('moveL',p));r.pose=p;c.progress=-2;return True
+        c.moveL=dispatch
+        self.request('/api/alignment/execute',{'plan_id':plan['id'],'confirmed':True,'alignment_target':target})
+        self.assertEqual(self.wait_idle()['state'],'completed')
+        moves=[p for n,p in c.calls if n=='moveL'];self.assertEqual(len(moves),1)
+        np.testing.assert_allclose(moves[0],plan['tcp_target_m_rad'],atol=1e-9)
+
+    def test_skill_demo_rejects_wrong_cad_and_demo_changed_before_motion(self):
+        self.setup_skill_demo();robot=self.app.alignment.robot
+        with self.assertRaises(HTTPError):
+            self.request('/api/alignment/plan',{'live_camera':True,'target_cad_key':'02_control_panel',
+                                                'alignment_target':{'mode':'skill_demo','demo_id':'cassette_demo'}})
+        with self.assertRaises(HTTPError):
+            self.request('/api/alignment/plan',{'live_camera':True,'server_files':{'cad':'part.stl'},
+                                                'alignment_target':{'mode':'skill_demo','demo_id':'missing'}})
+        target={'mode':'skill_demo','demo_id':'hmi_demo'}
+        self.request('/api/alignment/plan',{'live_camera':True,'target_cad_key':'02_control_panel','alignment_target':target})
+        plan=self.wait_idle()['plan'];self.assertEqual(plan['skill_demo']['demo_id'],'hmi_demo')
+        (self.demo/'btn_rgb.png').write_bytes(b're-recorded')
+        with self.assertRaises(HTTPError) as rejected:
+            self.request('/api/alignment/execute',{'plan_id':plan['id'],'confirmed':True,'alignment_target':target})
+        self.assertIn(b'skill demo changed',rejected.exception.read())
+        self.assertFalse([n for n,*_ in robot.control.calls if n=='moveL'])
+
+    def align_to_skill_demo(self):
+        """Complete a skill-demo alignment with fake hardware; return the executed plan."""
+        self.setup_skill_demo()
+        self.cfg['alignment']['skill_python']=sys.executable
+        self.app.alignment.settings_file.write_text(json.dumps(self.cfg))
+        robot=self.app.alignment.robot;robot.cfg=load_settings(self.app.alignment.settings_file)[0]
+        c,r=robot.control,robot.receive
+        def dispatch(p,*args):
+            c.calls.append(('moveL',p));r.pose=p
+            c.progress=-1 if c.progress==-2 else -2
+            return True
+        c.moveL=dispatch
+        target={'mode':'skill_demo','demo_id':'hmi_demo'}
+        self.request('/api/alignment/plan',{'live_camera':True,'target_cad_key':'02_control_panel','alignment_target':target})
+        plan=self.wait_idle()['plan']
+        self.request('/api/alignment/execute',{'plan_id':plan['id'],'confirmed':True,'alignment_target':target})
+        state=self.wait_idle();self.assertEqual(state['state'],'completed',state)
+        return plan,state
+
+    def test_realign_before_skill_uses_fresh_capture_and_replaces_skill_readiness(self):
+        first,state=self.align_to_skill_demo()
+        camera_thread=self.app.camera.thread
+        camera_sequence=self.app.camera.sequence
+        self.assertTrue(self.app.camera.status()['running'])
+        reference=self.app.alignment.robot.receive.pose.copy()
+        target={'mode':'skill_demo','demo_id':'hmi_demo'}
+        self.request('/api/alignment/plan',{'live_camera':True,'target_cad_key':'02_control_panel',
+                                            'alignment_target':target})
+        state=self.wait_idle();self.assertEqual(state['state'],'planned',state)
+        self.assertIsNone(state['skill_ready'])
+        second=state['plan']
+        self.assertNotEqual(second['id'],first['id'])
+        self.assertNotEqual(second['capture_id'],first['capture_id'])
+        np.testing.assert_allclose(second['reference']['tcp_pose_m_rad'],reference)
+        with self.assertRaises(HTTPError):
+            self.request('/api/alignment/execute-skill',{'plan_id':first['id'],'confirmed':True})
+        self.request('/api/alignment/execute',{'plan_id':second['id'],'confirmed':True,'alignment_target':target})
+        state=self.wait_idle();self.assertEqual(state['state'],'completed',state)
+        self.assertEqual(state['skill_ready']['plan_id'],second['id'])
+        self.assertTrue(self.app.camera.status()['running'])
+        self.assertIs(self.app.camera.thread,camera_thread)
+        self.assertGreater(self.app.camera.sequence,camera_sequence)
+        np.testing.assert_allclose(state['skill_ready']['aligned_tcp_m_rad'],second['tcp_target_m_rad'])
+        with self.assertRaises(HTTPError):
+            self.request('/api/alignment/execute-skill',{'plan_id':first['id'],'confirmed':True})
+        calls=self.fake_runner()
+        self.request('/api/alignment/execute-skill',{'plan_id':second['id'],'confirmed':True})
+        state=self.wait_idle();self.assertEqual(state['state'],'completed',state)
+        self.assertEqual(len(calls),1)
+
+    def fake_runner(self,status='completed',block=None):
+        calls=[]
+        class Process:
+            returncode=None
+            def __init__(self,command):
+                self.command=command;self.signals=[]
+            def send_signal(self,sig):
+                self.signals.append(sig)
+                if block:block.set()
+            def wait(self):
+                if block:block.wait(5)
+                result=Path(self.command[self.command.index('--result')+1])
+                final='stopped' if self.signals else status
+                result.write_text(json.dumps({'status':final,'demo_id':'hmi_demo','error':None if final=='completed' else final,
+                                              'replay':{'completed_samples':3,'total_samples':3}}))
+                self.returncode=0 if final=='completed' else 1
+                return self.returncode
+        def launch(command,log):
+            process=Process(command);calls.append(process);return process
+        self.app.alignment.skill_launcher=launch
+        return calls
+
+    def test_execute_skill_after_skill_demo_alignment_hands_robot_to_dinobot_once(self):
+        plan,state=self.align_to_skill_demo();calls=self.fake_runner()
+        ready=state['skill_ready'];self.assertEqual(ready['demo_id'],'hmi_demo');self.assertEqual(ready['plan_id'],plan['id'])
+        self.assertNotIn('demo_files',ready)
+        for request in ({'plan_id':plan['id']},{'plan_id':'other','confirmed':True}):
+            with self.assertRaises(HTTPError):self.request('/api/alignment/execute-skill',request)
+        self.request('/api/alignment/execute-skill',{'plan_id':plan['id'],'confirmed':True})
+        state=self.wait_idle();self.assertEqual(state['state'],'completed',state)
+        self.assertIn('Skill hmi_demo completed',state['message']);self.assertFalse(state['connected'])
+        self.assertIsNone(state['skill_ready']);self.assertEqual(len(calls),1)
+        command=calls[0].command
+        self.assertEqual(command[0],os.path.abspath(sys.executable));self.assertTrue(command[1].endswith('skill_runner.py'))
+        self.assertEqual(command[command.index('--demo')+1],'hmi_demo')
+        self.assertEqual(Path(command[command.index('--demos-root')+1]),self.root/'demos')
+        np.testing.assert_allclose(json.loads(command[command.index('--expected-start')+1]),plan['tcp_target_m_rad'])
+        folder=Path(plan['artifact_folder']);self.assertTrue(list(folder.glob('skill_execution_request_*.json')))
+        with self.assertRaises(HTTPError):self.request('/api/alignment/execute-skill',{'plan_id':plan['id'],'confirmed':True})
+
+    def test_execute_skill_requires_unmoved_tcp_and_unchanged_demo(self):
+        plan,_=self.align_to_skill_demo();calls=self.fake_runner()
+        robot=self.app.alignment.robot;aligned=list(robot.receive.pose)
+        robot.receive.pose=[aligned[0]+.01,*aligned[1:]]
+        with self.assertRaises(HTTPError) as moved:
+            self.request('/api/alignment/execute-skill',{'plan_id':plan['id'],'confirmed':True})
+        self.assertIn(b'away from the aligned pose',moved.exception.read())
+        robot.receive.pose=aligned;(self.demo/'btn_rgb.png').write_bytes(b'changed')
+        with self.assertRaises(HTTPError):self.request('/api/alignment/execute-skill',{'plan_id':plan['id'],'confirmed':True})
+        self.assertFalse(calls)
+
+    def test_stop_during_skill_signals_the_runner(self):
+        plan,_=self.align_to_skill_demo();block=threading.Event();calls=self.fake_runner(block=block)
+        self.request('/api/alignment/execute-skill',{'plan_id':plan['id'],'confirmed':True})
+        deadline=time.monotonic()+5
+        while not calls and time.monotonic()<deadline:time.sleep(.01)
+        self.assertEqual(self.request('/api/alignment/status')['state'],'skill')
+        with self.assertRaises(HTTPError):self.request('/api/alignment/plan',{'live_camera':True,'target_cad_key':'02_control_panel'})
+        self.request('/api/alignment/stop',{})
+        state=self.wait_idle();self.assertEqual(state['state'],'error');self.assertIn('stopped',state['message'])
+        self.assertEqual(len(calls[0].signals),1)
+
+    def test_face_alignment_does_not_offer_skill_execution(self):
+        self.setup_trial();robot=self.app.alignment.robot;c,r=robot.control,robot.receive
+        def dispatch(p,*args):c.calls.append(('moveL',p));r.pose=p;c.progress=-2;return True
+        c.moveL=dispatch
+        self.request('/api/alignment/plan',{'live_camera':True,'target_cad_key':'02_control_panel'})
+        plan=self.wait_idle()['plan']
+        self.request('/api/alignment/execute',{'plan_id':plan['id'],'confirmed':True})
+        state=self.wait_idle();self.assertEqual(state['state'],'completed');self.assertIsNone(state['skill_ready'])
+        with self.assertRaises(HTTPError):self.request('/api/alignment/execute-skill',{'plan_id':plan['id'],'confirmed':True})
 
     def test_switch_selected_cads_in_one_connection_and_invalidate_on_selection_change(self):
         self.setup_multi_trial();robot=self.app.alignment.robot
@@ -385,7 +552,7 @@ class HTTPTests(unittest.TestCase):
 
     def test_joint_rejection_reports_the_joint_and_saves_candidate_and_ik_evidence(self):
         self.setup_trial()
-        self.app.alignment.robot.control.branch=[0,0,0,0,0,2.]
+        self.app.alignment.robot.control.branch=[0,0,0,0,0,self.cfg['motion']['max_joint_delta_rad']+.5]
         self.request('/api/alignment/plan',{'live_camera':True,'target_cad_key':'02_control_panel'})
         state=self.wait_idle();self.assertEqual(state['state'],'error')
         self.assertIsNone(state['plan']);self.assertIn('wrist_3 (joint 6)',state['message'])

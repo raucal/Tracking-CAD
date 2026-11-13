@@ -17,6 +17,7 @@ Run all commands from the project root. Use this document for operational detail
 | `bash run.sh suite pose --output results/suites/ID` | Add PEM to saved detections; requires CUDA and dataset resources. |
 | `bash run.sh detect --example control_board --part 05_control_board --mode rgbd --pose` | Analyze one example; defaults to `results/runs/`. |
 | `bash run.sh scores --run results/suites/ID` | Compare CAD hypotheses on the same primary region. |
+| `bash run.sh estimate --rgb RGB.png --depth DEPTH.npy --camera CAMERA.json --cad-key 02_control_panel --output NEW_DIR` | 6D pose of one catalog CAD (`--segmentor sam\|fastsam`, `--backbone`, `--pose-backend foundationpose\|pem`). `--serve` keeps the models loaded and answers JSON requests on stdin; DINOPDDL uses it for `alignment.method: cad_pose`. |
 | `bash run.sh sam doctor` | Check SAM6D/PEM dependencies, CUDA, weights, and templates without inference or camera acquisition. |
 | `bash run.sh sam render` | Render 42 catalog views per CAD with Blender; `--part CAD_KEY` selects one part. |
 | `bash run.sh sam segment --frame control_board` | Advanced model-adapter ISM run; defaults under `data/prepared/sam6d/results/`. |

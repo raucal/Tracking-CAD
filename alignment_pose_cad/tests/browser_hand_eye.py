@@ -29,7 +29,7 @@ def main():
                 if args[2].get('auto_assembly'):
                     with fixture.app.lock:fixture.app.jobs[args[0]]['result']['cad_key']='03_option_cassette'
             fixture.app._run=infer
-        else:fixture.use_shared_hand_eye(confirmed=True)
+        else:fixture.use_shared_hand_eye()
         if rotation:
             fixture.cfg['alignment']['orientation_mode']='cad_axes'
             fixture.cfg['motion']['max_rotation_deg']=90

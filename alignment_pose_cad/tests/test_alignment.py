@@ -246,7 +246,8 @@ class RobotTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError,'active TCP'):self.robot.validate_path(self.plan,self.ref)
 
     def test_path_rejection_or_joint_branch_never_moves(self):
-        for field,value in [('safe',False),('ik',False),('qsafe',False),('branch',[2]*6)]:
+        limit=self.robot.cfg['motion']['max_joint_delta_rad']
+        for field,value in [('safe',False),('ik',False),('qsafe',False),('branch',[limit+.5]*6)]:
             with self.subTest(field=field):
                 old=getattr(self.robot.control,field);setattr(self.robot.control,field,value)
                 with self.assertRaises(RuntimeError):self.robot.move(self.plan,self.ref)
@@ -273,20 +274,22 @@ class RobotTests(unittest.TestCase):
         self.assertEqual(self.robot.move(plan,self.ref)['status'],'completed')
 
     def test_joint_excursion_is_distinguished_from_an_adjacent_ik_jump(self):
+        limit=self.robot.cfg['motion']['max_joint_delta_rad']
+        step=limit/15
         count=[-1]
         def continuous(*args):
             count[0]+=1
-            return [0,0,0,0,0,.11*count[0]]
+            return [0,0,0,0,0,step*count[0]]
         self.robot.control.getInverseKinematics=continuous
         with self.assertRaises(JointPathError) as caught:self.robot.validate_path(self.plan,self.ref)
         detail=caught.exception.details
         self.assertEqual(detail['rejection_type'],'joint_excursion_from_start')
         self.assertEqual(detail['joint_name'],'wrist_3')
-        self.assertAlmostEqual(detail['adjacent_delta_rad'][5],.11)
-        self.assertGreater(detail['from_initial_delta_rad'][5],1.5)
+        self.assertAlmostEqual(detail['adjacent_delta_rad'][5],step)
+        self.assertGreater(detail['from_initial_delta_rad'][5],limit)
         self.assertIn('starting posture',str(caught.exception))
         self.assertFalse(self.robot.control.calls)
-        self.robot.control.getInverseKinematics=lambda *args:[0,0,0,0,0,2.]
+        self.robot.control.getInverseKinematics=lambda *args:[0,0,0,0,0,limit+.5]
         with self.assertRaises(JointPathError) as caught:self.robot.validate_path(self.plan,self.ref)
         self.assertEqual(caught.exception.details['rejection_type'],'adjacent_joint_step')
         self.assertEqual(caught.exception.details['sample_index'],0)
@@ -389,3 +392,135 @@ class ServiceTests(unittest.TestCase):
 
 
 if __name__=='__main__':unittest.main()
+
+
+# --- Alignment to recorded skill demos -------------------------------------
+import hashlib
+import pickle
+import yaml
+from alignment_pose_cad.geometry import build_demo_plan
+from alignment_pose_cad import skill_demos
+
+
+def make_demo(root, demo_id, cad_key, camera_from_cad_mm, tcp_pose, *, cad_sha256='cad-hash',
+              tcp_offset=(0, 0, .15, 0, 0, 0), robot_id='192.168.1.11', image=b'rgb'):
+    """A synthetic DINOBOT demo with the real file layout and hash links."""
+    folder = Path(root) / 'demos' / demo_id;folder.mkdir(parents=True, exist_ok=True)
+    (folder/'btn_rgb.png').write_bytes(image);(folder/'btn_depth.npy').write_bytes(b'depth-'+image)
+    (folder/'rel_trajectory.pkl').write_bytes(pickle.dumps([([0.]*6, 0)]))
+    hashes = {n: hashlib.sha256((folder/n).read_bytes()).hexdigest() for n in ('btn_rgb.png','btn_depth.npy','rel_trajectory.pkl')}
+    start = {'schema_version': 1, 'frame': 'robot_base', 'pose': list(tcp_pose), 'replay_start_pose': list(tcp_pose),
+             'geometry': {'base_frame_id': '', 'robot_id': robot_id, 'tcp_offset': list(tcp_offset), 'camera_id': '0',
+                          'camera_offset': [0, .115, -.13, .78, 0, 0]}, 'file_hashes': hashes}
+    (folder/'trajectory_meta.json').write_text(json.dumps({'servo_dt': .01, 'reference_start': start}))
+    pose_folder = folder/'sam6d_foundationpose_20261109';pose_folder.mkdir(exist_ok=True)
+    (pose_folder/'source_provenance.json').write_text(json.dumps({'cad_key': cad_key, 'cad_sha256': cad_sha256,
+        'original_sha256': {n: hashes[n] for n in ('btn_rgb.png','btn_depth.npy')}}))
+    (pose_folder/'cad_pose_camera.json').write_text(json.dumps({'demo': demo_id, 'cad_key': cad_key, 'cad_name': cad_key,
+        'status': 'estimated', 'T_camera_from_input_cad_mm': np.asarray(camera_from_cad_mm).tolist(), 'sam6d_score': .5}))
+    return folder
+
+
+def write_bindings(root, demos):
+    path = Path(root)/'pddl_to_robot.yaml'
+    path.write_text(yaml.safe_dump({'schema_version': 1, 'demos_root': 'demos', 'bindings': {'assembly': {'remove': {
+        part: {'skill_id': 'remove_'+part+'_v1', 'demo_id': demo} for part, demo in demos.items()}}}}))
+    return path
+
+
+def random_pose(seed, scale=.3):
+    rng = np.random.default_rng(seed)
+    return np.r_[rng.uniform(-scale, scale, 3), Rotation.random(random_state=seed).as_rotvec()].tolist()
+
+
+class SkillDemoGeometryTests(unittest.TestCase):
+    def scene(self, moved):
+        """Demo and current captures of one object, consistent with a hand-eye camera."""
+        tcp_camera = from_pose([.01, .115, -.13, .78, .05, -.02])
+        demo_tcp = from_pose([-.43, .34, .28, -2.55, 1.78, -.06])
+        cad_demo = demo_tcp @ tcp_camera @ np.r_[np.c_[Rotation.from_euler('xyz', [80, 5, -10], degrees=True).as_matrix(),
+                                                         [.02, .1, .39]], [[0, 0, 0, 1]]]
+        cad_now = moved @ cad_demo
+        def camera_from_cad(base_tcp, cad):
+            T = np.linalg.inv(base_tcp @ tcp_camera) @ cad;T[:3, 3] *= 1000;return T
+        demo = {'demo_id': 'd', 'skills': [], 'pose_folder': 'p', 'cad_key': 'k', 'sam6d_score': .5,
+                'tcp_offset_m_rad': [0, 0, .15, 0, 0, 0], 'tcp_pose_m_rad': to_pose(demo_tcp),
+                'T_camera_from_input_cad_mm': camera_from_cad(demo_tcp, cad_demo).tolist()}
+        return tcp_camera, demo_tcp, cad_now, camera_from_cad, demo
+
+    def test_target_reproduces_demo_tcp_relative_to_moved_cad_from_any_capture_pose(self):
+        moved = from_pose([.07, -.05, .01, 0, 0, .4])
+        tcp_camera, demo_tcp, cad_now, camera_from_cad, demo = self.scene(moved)
+        cfg = config()
+        for capture in ([-.40, .30, .30, -2.5, 1.8, 0], [-.38, .36, .33, -2.4, 1.9, -.2]):
+            capture_tcp = from_pose(capture)
+            plan = build_demo_plan(camera_from_cad(capture_tcp, cad_now), capture, cfg, demo, tcp_from_camera=tcp_camera)
+            goal = np.asarray(plan['T_base_from_tcp_target'])
+            np.testing.assert_allclose(goal, moved @ demo_tcp, atol=1e-9)
+            # Same relative TCP/CAD pose as in the demo.
+            np.testing.assert_allclose(np.linalg.inv(goal) @ cad_now,
+                                       np.linalg.inv(demo_tcp) @ np.linalg.inv(moved) @ cad_now, atol=1e-9)
+            np.testing.assert_allclose(plan['T_base_from_cad_demo'], np.linalg.inv(moved) @ cad_now, atol=1e-9)
+            self.assertAlmostEqual(plan['object_rotation_from_demo_deg'], np.rad2deg(.4), places=6)
+            self.assertEqual(plan['alignment_mode'], 'skill_demo')
+            self.assertEqual(len(plan['path_samples_m_rad']), cfg['motion']['path_samples'])
+            np.testing.assert_allclose(plan['path_samples_m_rad'][0], to_pose(capture_tcp), atol=1e-9)
+
+    def test_unmoved_object_returns_exactly_to_the_demo_tcp(self):
+        tcp_camera, demo_tcp, cad_now, camera_from_cad, demo = self.scene(np.eye(4))
+        capture = from_pose([-.40, .31, .30, -2.5, 1.8, 0])
+        plan = build_demo_plan(camera_from_cad(capture, cad_now), to_pose(capture), config(), demo, tcp_from_camera=tcp_camera)
+        np.testing.assert_allclose(plan['tcp_target_m_rad'], demo['tcp_pose_m_rad'], atol=1e-9)
+        self.assertAlmostEqual(plan['object_displacement_from_demo_m'], 0, places=9)
+
+    def test_demo_target_keeps_step_and_workspace_limits(self):
+        moved = from_pose([.5, 0, 0, 0, 0, 0])
+        tcp_camera, demo_tcp, cad_now, camera_from_cad, demo = self.scene(moved)
+        cfg = config();cfg['motion']['max_translation_m'] = .3
+        capture = from_pose([-.40, .30, .30, -2.5, 1.8, 0])
+        with self.assertRaisesRegex(ValueError, 'step limit'):
+            build_demo_plan(camera_from_cad(capture, cad_now), to_pose(capture), cfg, demo, tcp_from_camera=tcp_camera)
+        behind = copy.deepcopy(demo);behind['T_camera_from_input_cad_mm'][2][3] = -10
+        with self.assertRaisesRegex(ValueError, 'behind'):
+            build_demo_plan(camera_from_cad(capture, cad_now), to_pose(capture), cfg, behind, tcp_from_camera=tcp_camera)
+
+
+class SkillDemoFileTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup);self.root = Path(self.tmp.name)
+        self.pose = visual()
+        make_demo(self.root, 'hmi_demo', '02_control_panel', self.pose, [-.4, .3, .3, 0, 3.1, 0])
+        make_demo(self.root, 'cassette_demo', '03_option_cassette', self.pose, [-.4, .3, .3, 0, 3.1, 0], image=b'other')
+        self.bindings = write_bindings(self.root, {'hmi_panel': 'hmi_demo', 'option_cassette': 'cassette_demo'})
+
+    def test_catalog_and_selection_by_detected_cad(self):
+        entries = {e['demo_id']: e for e in skill_demos.catalog(self.bindings)}
+        self.assertEqual(entries['hmi_demo']['cad_key'], '02_control_panel');self.assertTrue(entries['hmi_demo']['available'])
+        self.assertEqual(entries['hmi_demo']['skills'][0]['skill_id'], 'remove_hmi_panel_v1')
+        demo = skill_demos.select(self.bindings, '02_control_panel')
+        self.assertEqual(demo['demo_id'], 'hmi_demo');self.assertEqual(demo['tcp_pose_m_rad'], [-.4, .3, .3, 0, 3.1, 0])
+        np.testing.assert_allclose(demo['T_camera_from_input_cad_mm'], self.pose)
+        with self.assertRaisesRegex(ValueError, 'No skill demo'):skill_demos.select(self.bindings, '07_thermal_core')
+        with self.assertRaisesRegex(ValueError, 'not bound'):skill_demos.load(self.bindings, 'unbound')
+
+    def test_ambiguous_cad_requires_an_explicit_demo(self):
+        make_demo(self.root, 'hmi_second', '02_control_panel', self.pose, [-.4, .3, .3, 0, 3.1, 0], image=b'2')
+        bindings = write_bindings(self.root, {'a': 'hmi_demo', 'b': 'hmi_second'})
+        with self.assertRaisesRegex(ValueError, 'Several'):skill_demos.select(bindings, '02_control_panel')
+        self.assertEqual(skill_demos.select(bindings, '02_control_panel', 'hmi_second')['demo_id'], 'hmi_second')
+
+    def test_rerecorded_demo_rejects_the_stale_pose(self):
+        # Re-recording rewrites the image and reference_start, but not the pose.
+        make_demo(self.root, 'fresh', '02_control_panel', self.pose, [-.4, .3, .3, 0, 3.1, 0], image=b'old')
+        folder = self.root/'demos'/'fresh';old = (folder/'sam6d_foundationpose_20261109'/'source_provenance.json').read_text()
+        make_demo(self.root, 'fresh', '02_control_panel', self.pose, [-.4, .3, .3, 0, 3.1, 0], image=b'new')
+        (folder/'sam6d_foundationpose_20261109'/'source_provenance.json').write_text(old)
+        bindings = write_bindings(self.root, {'p': 'fresh'})
+        with self.assertRaisesRegex(ValueError, 'different reference image'):skill_demos.load(bindings, 'fresh')
+
+    def test_changed_image_without_new_reference_and_later_changes_are_detected(self):
+        demo = skill_demos.load(self.bindings, 'hmi_demo')
+        skill_demos.verify(demo)
+        (self.root/'demos'/'hmi_demo'/'btn_rgb.png').write_bytes(b'changed')
+        with self.assertRaisesRegex(ValueError, 'changed after'):skill_demos.verify(demo)
+        with self.assertRaises(ValueError):skill_demos.load(self.bindings, 'hmi_demo')

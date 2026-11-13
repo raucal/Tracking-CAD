@@ -120,9 +120,22 @@ def build_plan(camera_from_cad_mm, capture_tcp_pose, settings, bounds_mm, cad_ke
                                                                        [0., 0., -sign],
                                                                        [-1., 0., 0.]])
         plane_from_target = np.linalg.inv(base_from_plane) @ target
+    motion = motion_plan(base_from_tcp, target, settings['motion'], rotation_preview=rotation_preview)
+    return {'cad_key': cad_key, 'alignment_mode': 'cad_face', 'offset_m': cfg['offset_m'], 'offset_frame': 'CAD plane outward normal',
+            'orientation_mode': cfg.get('orientation_mode', 'plane_frame'),
+            'plane_origin_cad_mm': (cad_from_plane[:3,3]*1000).tolist(),
+            'plane_normal_cad': cad_from_plane[:3,2].tolist(),
+            'plane_origin_source': 'CAD bounding-box face center' if cfg['plane_origin_cad_mm'] is None else 'configured CAD point',
+            'T_tcp_from_camera': tcp_from_camera.tolist(),
+            'T_camera_from_input_cad_m': camera_from_cad.tolist(), 'T_cad_from_plane': cad_from_plane.tolist(),
+            'T_base_from_cad': base_from_cad.tolist(), 'T_base_from_plane': base_from_plane.tolist(),
+            'T_plane_from_tcp_target': plane_from_target.tolist(), **motion}
+
+
+def motion_plan(base_from_tcp, target, limits, *, rotation_preview=False):
+    """Shared step/workspace limits and sampled straight-line TCP path."""
     translation, rotation = difference(base_from_tcp, target)
-    limits = settings['motion']
-    policy = rotation_policy(base_from_tcp,target,limits)
+    policy = rotation_policy(base_from_tcp, target, limits)
     rotation_exceeded = rotation > policy['effective_limit_deg'] + 1e-8
     if translation > limits['max_translation_m'] or (rotation_exceeded and not rotation_preview):
         raise ValueError(f'Target exceeds the step limit: {translation:.3f} m / {rotation:.1f} degrees.')
@@ -134,18 +147,55 @@ def build_plan(camera_from_cad_mm, capture_tcp_pose, settings, bounds_mm, cad_ke
     rotations = Slerp([0, 1], Rotation.from_matrix(np.stack([base_from_tcp[:3, :3], target[:3, :3]])))(times)
     waypoints = [np.r_[(1-t)*base_from_tcp[:3, 3]+t*target[:3, 3], r.as_rotvec()].tolist()
                  for t, r in zip(times, rotations)]
-    return {'cad_key': cad_key, 'offset_m': cfg['offset_m'], 'offset_frame': 'CAD plane outward normal',
-            'orientation_mode': cfg.get('orientation_mode', 'plane_frame'),
-            'plane_origin_cad_mm': (cad_from_plane[:3,3]*1000).tolist(),
-            'plane_normal_cad': cad_from_plane[:3,2].tolist(),
-            'plane_origin_source': 'CAD bounding-box face center' if cfg['plane_origin_cad_mm'] is None else 'configured CAD point',
-            'rotation_limit_deg': policy['effective_limit_deg'], 'rotation_limit_exceeded': rotation_exceeded,
-            'rotation_policy':policy,
+    return {'rotation_limit_deg': policy['effective_limit_deg'], 'rotation_limit_exceeded': rotation_exceeded,
+            'rotation_policy': policy,
             'speed_m_s': limits['speed_m_s'], 'acceleration_m_s2': limits['acceleration_m_s2'],
             'target_frame': 'TCP', 'translation_unit': 'm', 'rotation_unit': 'rad (rotation vector)',
-            'T_base_from_tcp_capture': base_from_tcp.tolist(), 'T_tcp_from_camera': tcp_from_camera.tolist(),
-            'T_camera_from_input_cad_m': camera_from_cad.tolist(), 'T_cad_from_plane': cad_from_plane.tolist(),
-            'T_base_from_cad': base_from_cad.tolist(), 'T_base_from_plane': base_from_plane.tolist(),
-            'T_plane_from_tcp_target': plane_from_target.tolist(), 'T_base_from_tcp_target': target.tolist(),
+            'T_base_from_tcp_capture': base_from_tcp.tolist(), 'T_base_from_tcp_target': target.tolist(),
             'tcp_target_m_rad': to_pose(target), 'translation_m': translation, 'rotation_deg': rotation,
             'path_samples_m_rad': waypoints}
+
+
+def build_demo_plan(camera_from_cad_mm, capture_tcp_pose, settings, demo, *, tcp_from_camera=None,
+                    rotation_preview=False):
+    """TCP target that reproduces the demo's TCP pose relative to the detected CAD.
+
+    The demo stores, for its reference image, T_camera_from_cad (FoundationPose)
+    and T_base_from_tcp (robot). With the eye-in-hand camera:
+
+        T_tcp_from_cad_demo = T_tcp_from_camera @ T_camera_from_cad_demo
+        T_base_from_cad_now = T_base_from_tcp_now @ T_tcp_from_camera @ T_camera_from_cad_now
+        T_base_from_tcp_target = T_base_from_cad_now @ inv(T_tcp_from_cad_demo)
+
+    After moving there the camera sees the CAD as in the demo image, and a replay
+    that starts at the current TCP (DINOBOT ask_start_pose=False) is applied in
+    the moved object's frame. The demo TCP pose itself cancels out of the target;
+    it is used only to report how far the object moved relative to the demo.
+    """
+    camera_from_cad = rigid(camera_from_cad_mm)
+    demo_camera_from_cad = rigid(demo['T_camera_from_input_cad_mm'])
+    for T, name in ((camera_from_cad, 'current'), (demo_camera_from_cad, 'demo')):
+        if T[2, 3] <= 0:
+            raise ValueError(f'The {name} CAD pose is behind the camera.')
+        T[:3, 3] *= .001
+    base_from_tcp = from_pose(capture_tcp_pose)
+    tcp_from_camera = (from_pose(settings['robot']['tcp_from_camera_m_rad'])
+                       if tcp_from_camera is None else rigid(tcp_from_camera))
+    tcp_from_cad_demo = tcp_from_camera @ demo_camera_from_cad
+    base_from_cad = base_from_tcp @ tcp_from_camera @ camera_from_cad
+    target = base_from_cad @ np.linalg.inv(tcp_from_cad_demo)
+    demo_base_from_tcp = from_pose(demo['tcp_pose_m_rad'])
+    demo_base_from_cad = demo_base_from_tcp @ tcp_from_cad_demo
+    object_translation, object_rotation = difference(demo_base_from_cad, base_from_cad)
+    motion = motion_plan(base_from_tcp, target, settings['motion'], rotation_preview=rotation_preview)
+    return {'cad_key': demo['cad_key'], 'alignment_mode': 'skill_demo',
+            'skill_demo': {key: demo[key] for key in ('demo_id', 'skills', 'pose_folder', 'cad_key', 'sam6d_score',
+                                                      'tcp_pose_m_rad', 'tcp_offset_m_rad')},
+            'T_tcp_from_camera': tcp_from_camera.tolist(),
+            'T_camera_from_input_cad_m': camera_from_cad.tolist(),
+            'T_camera_from_input_cad_demo_m': demo_camera_from_cad.tolist(),
+            'T_tcp_from_cad_demo': tcp_from_cad_demo.tolist(),
+            'T_base_from_cad': base_from_cad.tolist(),
+            'T_base_from_tcp_demo': demo_base_from_tcp.tolist(), 'T_base_from_cad_demo': demo_base_from_cad.tolist(),
+            'object_displacement_from_demo_m': object_translation,
+            'object_rotation_from_demo_deg': object_rotation, **motion}

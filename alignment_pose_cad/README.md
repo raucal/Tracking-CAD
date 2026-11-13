@@ -1,4 +1,4 @@
-# UR10 alignment: detect pose and execute
+# UR5e alignment: detect pose and execute
 
 The interface has two alignment actions: **Detect pose** and **Execute alignment**.
 Connect the robot and open the live RealSense camera first. Detect pose captures
@@ -13,10 +13,14 @@ This report does not automatically certify collision clearance or calibration ac
 
 The selected mode is `execution_mode: supervised_trial`, with
 `preview_only: false`, `motion_enabled: true`, and `calibration_confirmed: false`.
-The shared YAML at `../../PDDL/DINOPDDL/config/hand_eye_ur10.yaml` remains
-**provisional**. Its initial solution is used; iterative SDU optimization is not
-required for this experimental mode. The normal `validated` mode still requires
-validated calibration. Either `preview_only: true` or `motion_enabled: false`
+The hand-eye calibration is shared with DINOPDDL:
+`../../PDDL/DINOPDDL/config/matrix_calibration.yaml` declares the robot (model and
+IP), the calibrated RealSense serial, the TCP active during calibration and the
+status, and points to `Calibration.xml`, the unmodified output of the calibration
+repository. The matrix is read from that XML (`MovingTransform frame="Camera"`);
+to recalibrate, replace the XML. Its status is **provisional**, which this
+experimental mode accepts; the normal `validated` mode still requires
+`status: validated`. Changing the YAML or the XML invalidates any target. Either `preview_only: true` or `motion_enabled: false`
 blocks motion in both modes.
 
 ## Select different CADs in one session
@@ -42,6 +46,71 @@ Changing the source, selected file, assembly, upload or units disables execution
 and invalidates the previous target. A new target does not inherit rotation
 approval or execution consent. Execution is bound to the displayed plan ID and
 selection signature. CAD file and catalog hashes are rechecked before motion.
+
+## Align to a recorded skill demo
+
+**Alignment target** selects where the TCP goes. *CAD face standoff* is the
+original behaviour (next section). *Skill demo* reproduces the TCP pose, relative
+to the object, that DINOBOT recorded for that object's skill, so the skill can be
+replayed from the aligned pose wherever the object now is.
+
+Each demo in `PDDL/DINOBOT/alignment_and_replay-main/data_base/demos/<demo_id>/`
+stores two measurements of its reference image `btn_rgb.png`: the TCP pose in base
+(`trajectory_meta.json` → `reference_start.pose`) and the FoundationPose CAD pose
+in the camera (`sam6d_foundationpose_*/cad_pose_camera.json`, produced by
+`pipeline/tools/process_saved_demos.py`). With the same eye-in-hand calibration:
+
+```text
+T_tcp_cad_demo  = T_tcp_camera @ T_camera_cad_demo
+T_base_cad_now  = T_base_tcp_capture @ T_tcp_camera @ T_camera_cad_now
+T_base_tcp_goal = T_base_cad_now @ inv(T_tcp_cad_demo)
+```
+
+After the move the camera sees the CAD as in the demo image. If the object did not
+move, the goal equals the recorded demo TCP; the demo TCP pose is otherwise used
+only to report the object displacement since the demo. Replay the skill afterwards
+from the current TCP (DINOBOT `replay_demo(..., ask_start_pose=False)`, as the
+DINOPDDL bridge does); do **not** move to the recorded start pose first.
+
+- The demo list comes from `alignment.skill_bindings_file`
+  (default `../../PDDL/DINOPDDL/config/pddl_to_robot.yaml`: part → skill → `demo_id`).
+- *Skill demo of the detected CAD* picks the single demo whose saved pose shows the
+  detected CAD (also with automatic assembly identification); a specific demo can be
+  selected instead. Several demos of one CAD require an explicit choice.
+- Fail-closed checks: catalog CAD only (same mesh hash as the demo pose), detected CAD
+  equals the demo CAD, same robot and TCP offset as the recording, and the saved pose
+  must come from the current reference image. A demo re-recorded after its pose was
+  estimated is rejected until `process_saved_demos.py` is run again for it. Demo files
+  are rechecked immediately before motion.
+- The usual step, workspace, IK, joint, freshness and confirmation interlocks apply
+  unchanged. Changing the target selection invalidates the plan.
+- Accuracy depends on both hand-eye calibration and both FoundationPose estimates.
+  A symmetric CAD can produce a flipped pose: review the overlay and the reported
+  object rotation before executing.
+
+### Execute the skill from the aligned pose
+
+After a completed *Skill demo* alignment, **Execute skill** replays that demo's
+recorded trajectory with DINOBOT, starting from the aligned TCP. It is single-use
+per alignment and requires a new confirmation. Before handing over, CAD Tracking
+checks that the alignment is younger than `motion.max_capture_age_s`, the robot is
+stationary at the aligned pose (`position_tolerance_m` / `rotation_tolerance_deg`),
+the TCP and settings are unchanged and the demo files still match.
+
+UR RTDE accepts a single control client, and DINOBOT and CAD Tracking both have a
+top-level `settings` module, so CAD Tracking **disconnects its RTDE session** and
+starts [`skill_runner.py`](skill_runner.py) with the DINOBOT interpreter
+(`alignment.skill_python`). The runner uses DINOBOT's own robot wrapper,
+`MotionControl` and `replay_demo(..., ask_start_pose=False)`, as the DINOPDDL bridge
+does, and rechecks the start pose itself. The DINOBOT robot wrapper **activates and
+opens the Robotiq gripper** when it connects. **Stop robot** sends SIGINT to the
+runner, which brakes with DINOBOT's `stopJ` (`STOP_J_DECELERATION`).
+
+DINOBOT writes its usual replay trace to `data_base/replays/`; the alignment job
+folder keeps `skill_execution_request_*.json`, `skill_runner.log` and
+`skill_result_*.json`. After the skill, the robot is disconnected from CAD Tracking:
+select **Connect robot** before another alignment. `alignment.skill_speed_factor`
+accepts DINOBOT's replay speeds 1, 1.25, 1.5 or 2.
 
 ## CAD face center and orientation
 
@@ -94,7 +163,7 @@ Robot alignment settings belong in `alignment_pose_cad/settings.json`:
 | `motion.acceleration_m_s2` | Requested moveL acceleration | 0.01 m/s² = 10 mm/s² |
 | `motion.max_rotation_deg` | Maximum shortest-arc orientation change | 180 degrees |
 | `motion.max_translation_m` | Maximum capture-to-target translation | 0.30 m |
-| `motion.max_joint_delta_rad` | Maximum sampled IK change per joint, from initial and preceding solutions; no 2π wrapping | 1.5 rad, about 86 degrees |
+| `motion.max_joint_delta_rad` | Maximum sampled IK change per joint, from initial and preceding solutions; no 2π wrapping | 2.356194490192345 rad, 135 degrees |
 | `motion.workspace_min_m` / `workspace_max_m` | TCP box in robot-base coordinates | [-0.8,-0.8,0.05] to [0.8,0.8,0.9] m |
 | `motion.path_samples` | Number of sampled controller IK/limit queries | 21 |
 | `motion.max_plan_age_s` | Time allowed after plan calculation | 30 s |
@@ -105,6 +174,9 @@ Robot alignment settings belong in `alignment_pose_cad/settings.json`:
 | `motion.inference_timeout_s` | Pose-estimation timeout | 300 s |
 | `motion.stop_deceleration_m_s2` | Requested software-stop deceleration | 0.5 m/s² |
 | `alignment.offset_m` | Standoff along the outward CAD plane normal | 0.20 m |
+| `alignment.skill_bindings_file` | DINOPDDL part → skill → demo registry, for *Skill demo* targets | `../../PDDL/DINOPDDL/config/pddl_to_robot.yaml` |
+| `alignment.skill_python` | DINOBOT environment interpreter that runs `skill_runner.py` | `../../../anaconda3/envs/dinobot_env/bin/python` |
+| `alignment.skill_speed_factor` | DINOBOT replay speed for **Execute skill** | 1.0 |
 
 The loader accepts positive finite speed up to 0.25 m/s, acceleration up to
 0.5 m/s², rotation up to 180 degrees and 2–101 path samples. These are application
@@ -131,8 +203,8 @@ configuration. `config/suite.json` belongs to the offline evaluation suite.
 
 - Active TCP must match the configured TCP and the full calibration TCP
   `[0,0,0.150,0,0,0]`, within 0.1 mm and 0.1 degrees. The application never sets TCP.
-- Camera serial and optical frame must match the existing calibration binding;
-  RGB-D must be fresh, rectified and aligned to color.
+- The capture camera serial must equal `camera.serial` in `matrix_calibration.yaml`;
+  RGB-D must be fresh, rectified and aligned to the color optical frame.
 - The robot must remain stationary through capture and inference. TCP or joint
   drift invalidates the target.
 - Workspace, displacement, orientation, controller safety state, IK, joint
@@ -158,7 +230,7 @@ alignment accuracy. No completion changes the calibration to `validated`.
 `motion.max_joint_delta_rad` is separate from the 180-degree TCP orientation
 allowance. It is checked twice for each sampled IK solution: against the preceding
 solution and against the robot's starting joint configuration. The current
-1.5 rad threshold is about 85.9 degrees per joint. A path can therefore be smooth
+2.356194490192345 rad threshold is 135 degrees per joint. A path can therefore be smooth
 between samples and still exceed the allowed excursion from its start.
 
 Errors now distinguish **Adjacent IK step** from **Joint change from starting
@@ -178,15 +250,16 @@ perform a fresh detection/check without execution to obtain that evidence.
 ## Frames and provenance
 
 ```text
-T_base_cad = T_base_tcp_capture @ T_tcp_camera_yaml @ T_camera_input_cad
+T_base_cad = T_base_tcp_capture @ T_tcp_camera @ T_camera_input_cad
 T_base_target = T_base_cad @ T_cad_plane @ T_plane_target
 ```
 
-The shared YAML declares meters, `calibration_tcp`, `parent_from_camera` and the
-RealSense color optical frame. CAD pose translation is converted from mm to m;
-UR orientation uses rotation vectors in radians. The original CAD origin is
-restored after the estimator's internal centering. The YAML's `base_frame_id`
-is still unspecified; no independent physical frame validation is claimed.
+`T_tcp_camera` is the SDU `MovingTransform` (camera relative to the calibration
+TCP, metres), re-expressed for the active TCP using `tcp_offset_m_rad` from
+`matrix_calibration.yaml`. CAD pose translation is converted from mm to m; UR
+orientation uses rotation vectors in radians. The original CAD origin is restored
+after the estimator's internal centering. The robot's native base is used; no
+independent physical frame validation is claimed.
 
 Each result stores capture and plan metadata, calibration/CAD hashes, active TCP,
 21 sampled IK solutions in `controller_check_*.json`, explicit execution consent

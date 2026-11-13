@@ -2,6 +2,9 @@
 import base64
 import hashlib
 import os
+import signal
+import subprocess
+import sys
 import tempfile
 from concurrent.futures import ThreadPoolExecutor
 import json
@@ -11,17 +14,32 @@ import time
 import uuid
 import numpy as np
 from .config import DEFAULT, load
-from .geometry import build_plan, from_pose, difference, rotation_policy
+from .geometry import build_plan, build_demo_plan, from_pose, difference, rotation_policy
 from .robot import RTDERobot
-from . import calibration
+from . import calibration, skill_demos
+
+
+def alignment_target(request):
+    """Normalized target choice: CAD face standoff (default) or a recorded skill demo."""
+    target = request.get('alignment_target') or {'mode': 'cad_face'}
+    if not isinstance(target, dict) or target.get('mode') not in ('cad_face', 'skill_demo'):
+        raise ValueError('Invalid alignment target.')
+    if target['mode'] == 'cad_face':
+        if set(target) != {'mode'}:raise ValueError('Invalid alignment target.')
+        return {'mode': 'cad_face'}
+    demo_id = target.get('demo_id')
+    if set(target) - {'mode', 'demo_id'} or (demo_id is not None and (not isinstance(demo_id, str) or not demo_id)):
+        raise ValueError('Invalid skill demo selection.')
+    return {'mode': 'skill_demo', 'demo_id': demo_id}
 
 class AlignmentService:
     routes = {'/api/alignment/connect', '/api/alignment/disconnect', '/api/alignment/plan',
-              '/api/alignment/confirm-camera', '/api/alignment/check-path',
+              '/api/alignment/check-path',
               '/api/alignment/execute', '/api/alignment/stop', '/api/alignment/speed',
-              '/api/alignment/allow-rotation', '/api/alignment/invalidate'}
+              '/api/alignment/allow-rotation', '/api/alignment/invalidate', '/api/alignment/execute-skill'}
+    BUSY = ('connecting', 'estimating', 'checking', 'moving', 'stopping', 'skill')
 
-    def __init__(self, app, settings_file=DEFAULT, robot_factory=RTDERobot):
+    def __init__(self, app, settings_file=DEFAULT, robot_factory=RTDERobot, skill_launcher=None):
         self.app = app
         self.settings_file = Path(settings_file)
         self.robot_factory = robot_factory
@@ -30,6 +48,10 @@ class AlignmentService:
         self.lock = threading.RLock()
         self.cancel = threading.Event()
         self.plan = None
+        # Set only after a completed skill-demo alignment; single use.
+        self.skill_ready = None
+        self.skill_process = None
+        self.skill_launcher = skill_launcher or self._launch_skill
         self.state = {'state': 'disconnected', 'message': 'Robot disconnected. The application does not connect automatically.'}
         self.closed = False
 
@@ -49,7 +71,14 @@ class AlignmentService:
                           'speed_m_s': cfg['motion']['speed_m_s'], 'max_speed_m_s': .25,
                           'max_rotation_deg':cfg['motion']['max_rotation_deg'],
                           'settings_sha256': digest,
-                          'orientation_mode': cfg['alignment'].get('orientation_mode', 'plane_frame')}
+                          'orientation_mode': cfg['alignment'].get('orientation_mode', 'plane_frame'),
+                          'skill_execution_available': bool(cfg['alignment']['skill_python']),
+                          'skill_speed_factor': cfg['alignment']['skill_speed_factor']}
+                try:
+                    bindings = cfg['alignment']['skill_bindings_file']
+                    config['skill_demos'] = skill_demos.catalog(bindings) if bindings else []
+                except Exception as exc:
+                    config['skill_demos'] = [];config['skill_demos_error'] = str(exc)
                 error = None
             except Exception as exc:config = {};error = str(exc)
             camera = getattr(self.app, 'camera', None)
@@ -58,7 +87,9 @@ class AlignmentService:
                     'active_camera': camera_state.get('camera') if camera_state.get('running') else None,
                     'needs_reconnect': bool(error is None and self.robot and self.robot.connected and cfg != self.robot.cfg),
                     'settings_file': str(self.settings_file), 'config': config, 'settings_error': error,
-                    'plan': self.plan, 'busy': self.state['state'] in ('connecting','estimating','checking','moving','stopping')}
+                    'plan': self.plan, 'busy': self.state['state'] in self.BUSY,
+                    'skill_ready': ({k: v for k, v in self.skill_ready.items() if k != 'demo_files'}
+                                    if self.skill_ready else None)}
 
     def _update(self, state, message, **extra):
         with self.lock:self.state = {'state': state, 'message': message, **extra}
@@ -72,7 +103,8 @@ class AlignmentService:
                 if self.closed:raise RuntimeError('Alignment service closed.')
                 if self.state['state'] in ('moving','stopping','connecting'):
                     raise ValueError('Wait for the active robot operation before changing targets.')
-                self.plan = None
+                if self.state['state'] == 'skill':raise ValueError('Wait for the skill to finish or click Stop robot.')
+                self.plan = None;self.skill_ready = None
                 if self.state['state'] in ('estimating','checking'):
                     self.cancel.set()
                     if self.robot:self.robot.cancel.set()
@@ -85,10 +117,15 @@ class AlignmentService:
             self.cancel.set()
             with self.lock:
                 moving = self.state['state'] in ('moving', 'stopping')
-                active = self.state['state'] in ('connecting', 'estimating', 'checking', 'moving', 'stopping')
-                self.plan = None
+                active = self.state['state'] in self.BUSY
+                process = self.skill_process if self.state['state'] == 'skill' else None
+                self.plan = None;self.skill_ready = None
                 if active:self.state.update(state='stopping', message='Cancelling the operation and stopping the robot…')
-            if self.robot:
+            if process is not None:
+                # The DINOBOT runner owns RTDE now; it brakes with stopJ on SIGINT.
+                try:process.send_signal(signal.SIGINT)
+                except (OSError, ValueError):pass
+            elif self.robot:
                 self.robot.cancel.set()
                 if moving:self.robot.stop()
             if not active:self._update('stopped', 'Operation cancelled. Calculate a new plan.')
@@ -96,6 +133,7 @@ class AlignmentService:
         with self.lock:
             if self.closed:raise RuntimeError('Alignment service closed.')
             if self.status()['busy']:raise ValueError('Wait for the operation to finish or click Stop robot.')
+            if route != '/api/alignment/execute-skill':self.skill_ready = None
             if route == '/api/alignment/speed':
                 self._set_speed(request)
             elif route == '/api/alignment/allow-rotation':
@@ -106,19 +144,6 @@ class AlignmentService:
             elif route == '/api/alignment/disconnect':
                 if self.robot:self.robot.disconnect()
                 self.plan = None;self._update('disconnected', 'Robot disconnected.')
-            elif route == '/api/alignment/confirm-camera':
-                cfg, _ = load(self.settings_file)
-                frame = self.app.camera.frame()
-                if time.time() - frame['timestamp'] > cfg['motion']['max_frame_age_s']:
-                    raise ValueError('The camera frame is stale; wait for a fresh frame.')
-                calibration.confirm_camera(cfg['robot'], frame['camera'],
-                    expected_sha256=request.get('calibration_sha256'), expected_serial=request.get('camera_serial'),
-                    physical_confirmed=request.get('physical_confirmed'), optical_confirmed=request.get('optical_confirmed'))
-                self.plan = None
-                connected = bool(self.robot and self.robot.connected)
-                self._update('ready' if connected else 'disconnected',
-                    'Camera and optical frame registered. Calibration remains provisional; no motion was enabled.'
-                    + (' Disconnect and reconnect RTDE before calculating a target.' if connected else ''))
             elif route == '/api/alignment/plan':
                 if not self.robot or not self.robot.connected:raise ValueError('Connect the robot first.')
                 cfg, cfg_hash = load(self.settings_file)
@@ -148,6 +173,8 @@ class AlignmentService:
                 plan = self.plan
                 if plan.get('selection_signature') is not None and request.get('selection_signature') != plan['selection_signature']:
                     raise ValueError('The CAD selection changed; detect the pose again.')
+                if alignment_target(request) != plan.get('alignment_target', {'mode': 'cad_face'}):
+                    raise ValueError('The alignment target changed; detect the pose again.')
                 cfg, cfg_hash = load(self.settings_file)
                 if cfg_hash != plan['settings_sha256']:raise ValueError('Settings changed; calculate a new plan.')
                 review = {'confirmed': request.get('confirmed') is True}
@@ -163,8 +190,86 @@ class AlignmentService:
                 self.cancel.clear();self.robot.cancel.clear()
                 self._update('moving', 'Moving the TCP to the previewed target…', plan_id=plan['id'])
                 self.pool.submit(self._execute, plan)
+            elif route == '/api/alignment/execute-skill':
+                skill = self._authorize_skill(request)
+                self.skill_ready = None  # Single use, even on failure.
+                self.cancel.clear()
+                self._update('skill', f"Running skill {skill['demo_id']} with DINOBOT from the aligned pose…",
+                             skill={k: v for k, v in skill.items() if k != 'demo_files'})
+                self.pool.submit(self._run_skill, skill)
             else:raise ValueError('Unknown alignment action.')
         return self.status()
+
+    def _authorize_skill(self, request):
+        """The aligned pose, demo, settings and robot must be exactly those of the alignment."""
+        skill = self.skill_ready
+        if not skill or request.get('plan_id') != skill['plan_id']:
+            raise ValueError('Complete a skill-demo alignment first; the skill runs only from that aligned pose.')
+        if request.get('confirmed') is not True:
+            raise ValueError('Explicit confirmation is required to execute the skill.')
+        cfg, digest = load(self.settings_file)
+        if digest != skill['settings_sha256']:raise ValueError('Settings changed after alignment; align again.')
+        if cfg['robot']['preview_only'] or not cfg['robot']['motion_enabled']:
+            raise ValueError('Motion is disabled in alignment_pose_cad/settings.json.')
+        python = cfg['alignment']['skill_python']
+        if not python or not Path(python).is_file():
+            raise ValueError('Set alignment.skill_python to the DINOBOT environment interpreter.')
+        if time.time() - skill['aligned_at'] > cfg['motion']['max_capture_age_s']:
+            raise ValueError('The alignment is too old; the object may have moved. Detect and align again.')
+        if self.app.tracker.busy():raise ValueError('Stop tracking before executing the skill.')
+        if not self.robot or not self.robot.connected or cfg != self.robot.cfg:
+            raise ValueError('The robot connection used for alignment is no longer active; align again.')
+        snapshot = self.robot.snapshot(stationary=True)
+        distance, angle = difference(from_pose(skill['aligned_tcp_m_rad']), from_pose(snapshot['tcp_pose_m_rad']))
+        if distance > cfg['motion']['position_tolerance_m'] or angle > cfg['motion']['rotation_tolerance_deg']:
+            raise ValueError(f'The TCP moved {distance*1000:.1f} mm / {angle:.2f}° away from the aligned pose; align again.')
+        dt, dr = difference(from_pose(skill['tcp_offset_m_rad']), from_pose(self.robot.control.getTCPOffset()))
+        if dt > .0001 or dr > .1:raise ValueError('The active TCP changed after alignment.')
+        skill_demos.verify({'file_hashes': skill['demo_files']})
+        return {**skill, 'python': python, 'speed_factor': cfg['alignment']['skill_speed_factor'],
+                'robot_ip': cfg['robot']['ip'], 'position_tolerance_m': cfg['motion']['position_tolerance_m'],
+                'rotation_tolerance_deg': cfg['motion']['rotation_tolerance_deg']}
+
+    def _launch_skill(self, command, log):
+        return subprocess.Popen(command, cwd=str(skill_demos.DEMO_REFERENCE.parent), stdout=log,
+                                stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, start_new_session=True)
+
+    def _run_skill(self, skill):
+        folder = Path(skill['artifact_folder'])
+        result_file = folder / f"skill_result_{uuid.uuid4().hex}.json"
+        outcome = {'status': 'error', 'demo_id': skill['demo_id']}
+        try:
+            # UR RTDE accepts one control client: hand it over to the DINOBOT runner.
+            if self.robot:self.robot.disconnect()
+            command = [skill['python'], str(Path(__file__).with_name('skill_runner.py')),
+                       '--dinobot', str(skill_demos.DEMO_REFERENCE.parent), '--demos-root', skill['demos_root'],
+                       '--demo', skill['demo_id'], '--robot-ip', skill['robot_ip'],
+                       '--expected-start', json.dumps(skill['aligned_tcp_m_rad']),
+                       '--tolerance-m', repr(skill['position_tolerance_m']),
+                       '--tolerance-deg', repr(skill['rotation_tolerance_deg']),
+                       '--speed-factor', repr(float(skill['speed_factor'])), '--result', str(result_file)]
+            self._audit(folder, 'skill_execution_request_'+uuid.uuid4().hex+'.json',
+                        {'command': command, 'requested_at': time.time(),
+                         **{k: v for k, v in skill.items() if k != 'demo_files'}})
+            with (folder / 'skill_runner.log').open('a') as log:
+                process = self.skill_launcher(command, log)
+                with self.lock:self.skill_process = process
+                process.wait()
+            outcome = json.loads(result_file.read_text()) if result_file.is_file() else {
+                'status': 'error', 'error': f'The skill runner exited with code {process.returncode} without a result; see skill_runner.log.'}
+        except Exception as exc:
+            outcome.update(error=str(exc))
+        finally:
+            with self.lock:self.skill_process = None
+        replay = outcome.get('replay') or {}
+        detail = (f" ({replay.get('completed_samples')}/{replay.get('total_samples')} samples)" if replay else '')
+        if outcome.get('status') == 'completed':
+            self._update('completed', f"Skill {skill['demo_id']} completed{detail}. DINOBOT released the robot; "
+                         'connect it again before another alignment.', skill_result=outcome)
+        else:
+            self._update('error', f"Skill {skill['demo_id']} {outcome.get('status', 'error')}{detail}: "
+                         + str(outcome.get('error', 'unknown error'))
+                         + ' The robot is disconnected; check it and connect again.', skill_result=outcome)
 
     def _allow_rotation(self, request):
         # Old clients cannot bypass configured limits with per-plan consent.
@@ -259,9 +364,19 @@ class AlignmentService:
             raise ValueError('Invalid CAD selection signature.')
         cfg, _ = load(self.settings_file)
         if request.get('target_cad_key'):self._catalog_cad(request['target_cad_key'])
+        target = alignment_target(request)
+        if target['mode'] == 'skill_demo':
+            if not cfg['alignment']['skill_bindings_file']:
+                raise ValueError('Configure alignment.skill_bindings_file to align to skill demos.')
+            if request.get('cad'):
+                raise ValueError('Skill demo alignment needs a catalog CAD: its saved pose uses that CAD frame.')
+            if target['demo_id']:
+                demo = skill_demos.load(cfg['alignment']['skill_bindings_file'], target['demo_id'])
+                if request.get('target_cad_key') and request['target_cad_key'] != demo['cad_key']:
+                    raise ValueError(f"Demo {demo['demo_id']} shows {demo['cad_key']}, not the selected {request['target_cad_key']}.")
         hand_eye = calibration.load(cfg['robot'])
         if hand_eye is not None and not calibration.describe(hand_eye)['preview_ready']:
-            raise ValueError('Register the calibrated camera, optical frame and calibration TCP before calculating a target.')
+            raise ValueError('matrix_calibration.yaml must declare camera.serial and tcp_offset_m_rad before calculating a target.')
 
     def _catalog_cad(self, key, manifest_path=None):
         """Resolve a selected/identified canonical mesh and verify its provenance."""
@@ -287,6 +402,18 @@ class AlignmentService:
             if not manifest.is_file() or hashlib.sha256(manifest.read_bytes()).hexdigest()!=plan['cad_manifest_sha256']:
                 raise ValueError('The CAD catalog changed; detect the pose again.')
 
+    def _check_demo(self, demo, cad_key, cad_digest, active_tcp, cfg):
+        """The demo must describe the same CAD frame, TCP and robot as this capture."""
+        if demo['cad_key'] != cad_key:
+            raise ValueError(f"Detected {cad_key}, but demo {demo['demo_id']} shows {demo['cad_key']}.")
+        if demo['cad_sha256'] != cad_digest:
+            raise ValueError(f"The CAD mesh differs from the one used for the pose of demo {demo['demo_id']}.")
+        dt, dr = difference(from_pose(demo['tcp_offset_m_rad']), from_pose(active_tcp))
+        if dt > .0001 or dr > .1:
+            raise ValueError(f"Demo {demo['demo_id']} was recorded with a different TCP offset.")
+        if demo['robot_id'] != cfg['robot']['ip']:
+            raise ValueError(f"Demo {demo['demo_id']} was recorded on robot {demo['robot_id']}.")
+
     def _check_trial_tcp(self, cfg):
         if cfg['robot']['execution_mode'] != 'supervised_trial':return
         hand = calibration.load(cfg['robot'])
@@ -299,6 +426,8 @@ class AlignmentService:
     def _authorize_motion(self, cfg, plan, review=None):
         if cfg['robot']['preview_only']:
             raise ValueError('Preview-only mode: motion is blocked.')
+        if plan.get('alignment_mode') == 'skill_demo':
+            skill_demos.verify({'file_hashes': plan['skill_demo_files']})
         if plan.get('T_base_from_tcp_target') is not None:
             distance, angle = difference(from_pose(plan['reference']['tcp_pose_m_rad']), plan['T_base_from_tcp_target'])
             policy = rotation_policy(from_pose(plan['reference']['tcp_pose_m_rad']),plan['T_base_from_tcp_target'],cfg['motion'])
@@ -348,8 +477,13 @@ class AlignmentService:
                 with self.app.camera.condition:
                     sequence = self.app.camera.sequence
                     ok = self.app.camera.condition.wait_for(
-                        lambda: self.app.camera.sequence > sequence or self.cancel.is_set(), timeout=3)
-                if not ok or self.cancel.is_set():raise RuntimeError('Capture cancelled or no new camera frames.')
+                        lambda: self.app.camera.sequence > sequence or self.cancel.is_set()
+                        or self.app.camera.error or self.app.camera.stop_event.is_set(), timeout=10)
+                if self.cancel.is_set():raise RuntimeError('Capture cancelled.')
+                camera_status = self.app.camera.status()
+                if camera_status['error']:raise RuntimeError('Camera capture failed: '+camera_status['error'])
+                if not camera_status['running']:raise RuntimeError('The camera was closed before capture.')
+                if not ok:raise RuntimeError('No new camera frames. '+(camera_status.get('frame_warning') or 'Check the camera connection.'))
                 captured = self.app.camera.capture()
                 source = self.app.camera.capture_folder(captured['id'])
                 camera_metadata = json.loads((source / 'camera.json').read_text())
@@ -449,9 +583,18 @@ class AlignmentService:
                 tcp_camera = calibration.resolve(hand_eye, active_tcp, camera_metadata) if hand_eye else None
                 if hand_eye and np.linalg.norm(np.asarray(best['T_camera_from_input_cad_mm'])[:3,3]) * .001 > hand_eye['preview_limits']['max_camera_distance_m']:
                     raise ValueError('Pose exceeds the camera range; check the units.')
-                plan = build_plan(best['T_camera_from_input_cad_mm'], reference['tcp_pose_m_rad'], cfg, bounds,
-                                  cad_key, tcp_from_camera=tcp_camera,
-                                  rotation_preview=trial and {**cfg['alignment'], **cfg['alignment']['cad_overrides'].get(cad_key, {})}.get('orientation_mode') in ('cad_axes', 'cad_axes_inward', 'plane_frame'))
+                target = alignment_target(request)
+                if target['mode'] == 'skill_demo':
+                    demo = skill_demos.select(cfg['alignment']['skill_bindings_file'], cad_key, target['demo_id'])
+                    self._check_demo(demo, cad_key, cad_digest, active_tcp, cfg)
+                    plan = build_demo_plan(best['T_camera_from_input_cad_mm'], reference['tcp_pose_m_rad'], cfg, demo,
+                                           tcp_from_camera=tcp_camera, rotation_preview=trial)
+                    plan['skill_demo_files'] = demo['file_hashes']
+                else:
+                    plan = build_plan(best['T_camera_from_input_cad_mm'], reference['tcp_pose_m_rad'], cfg, bounds,
+                                      cad_key, tcp_from_camera=tcp_camera,
+                                      rotation_preview=trial and {**cfg['alignment'], **cfg['alignment']['cad_overrides'].get(cad_key, {})}.get('orientation_mode') in ('cad_axes', 'cad_axes_inward', 'plane_frame'))
+                plan['alignment_target'] = target
                 preview = cfg['robot']['preview_only'] or bool(hand_eye and hand_eye['status'] != 'validated' and not trial)
                 needs_check = preview or trial
                 if not needs_check:
@@ -530,7 +673,19 @@ class AlignmentService:
                 result.update(accuracy_validated=False, collision_checked=False,
                               execution_mode=cfg['robot']['execution_mode'])
                 self._audit(Path(plan['artifact_folder']), 'robot_alignment_execution.json', result)
-                self._update('completed', 'TCP aligned. Capture again to verify visually.', result=result)
+                if plan.get('alignment_mode') == 'skill_demo':
+                    demo = plan['skill_demo']
+                    with self.lock:
+                        self.skill_ready = {'plan_id': plan['id'], 'demo_id': demo['demo_id'], 'skills': demo['skills'],
+                                            'cad_key': plan['cad_key'], 'aligned_tcp_m_rad': plan['tcp_target_m_rad'],
+                                            'aligned_at': time.time(), 'artifact_folder': plan['artifact_folder'],
+                                            'settings_sha256': plan['settings_sha256'],
+                                            'tcp_offset_m_rad': plan['active_tcp_offset_m_rad'],
+                                            'demos_root': str(Path(next(iter(plan['skill_demo_files']))).parents[1]),
+                                            'demo_files': plan['skill_demo_files']}
+                    self._update('completed', f"TCP aligned to skill demo {demo['demo_id']}. Choose Align again (detect pose) to refine the alignment, review the new target and execute alignment again, or Execute skill when ready.", result=result)
+                else:
+                    self._update('completed', 'TCP aligned. Choose Align again (detect pose), review the new target and execute alignment again if needed.', result=result)
         except Exception as exc:
             self._update('error', str(exc))
             try:
@@ -542,6 +697,10 @@ class AlignmentService:
     def close(self):
         self.closed = True
         self.cancel.set()
+        process = self.skill_process
+        if process is not None:
+            try:process.send_signal(signal.SIGINT)
+            except (OSError, ValueError):pass
         if self.robot:
             self.robot.cancel.set()
             if self.state['state'] in ('moving','stopping'):

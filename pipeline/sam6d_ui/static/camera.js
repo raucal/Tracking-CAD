@@ -44,6 +44,7 @@ async function status(){
     const data=await api('status');active=data.running;recording=!!data.recording;
     if((!active||data.error)&&window.VisionApp?.isLiveDetection())window.VisionApp.stopLiveDetection(data.error||'Detection stopped: camera closed.');
     if(data.error)note(data.error,true);
+    else if(data.frame_warning)note('Camera remains open · '+data.frame_warning,true);
     else if(recording)note('Recording RGB-D · '+data.recording.frames+' frames saved.');
     else if(data.last_recording?.error)note('Recording stopped: '+data.last_recording.error,true);
     else if(active)note('Live camera · frame '+data.frame_number+' · '+(data.camera?.serial||''));

@@ -35,6 +35,7 @@ class CameraService:
         self.jpeg = None
         self.sequence = 0
         self.error = None
+        self.frame_warning = None
         self.recording = None
         self.last_recording = None
         self.options = {}
@@ -43,7 +44,7 @@ class CameraService:
         with self.condition:
             return {'running': bool(self.thread and self.thread.is_alive() and not self.stop_event.is_set()),
                     'frame_number': self.sequence, 'frame_age_s': time.monotonic() - self.latest['received'] if self.latest else None,
-                    'error': self.error, 'options': self.options,
+                    'error': self.error, 'frame_warning': self.frame_warning, 'options': self.options,
                     'camera': self.latest['camera'] if self.latest else None,
                     'recording': self._recording_info(self.recording) if self.recording else None,
                     'last_recording': self.last_recording}
@@ -62,6 +63,7 @@ class CameraService:
             with self.condition:
                 self.latest = self.jpeg = None
                 self.error = None
+                self.frame_warning = None
                 self.sequence = 0
             # Opening here lets the browser report a device-busy error.
             source = self.source_factory(self.options)
@@ -71,15 +73,45 @@ class CameraService:
             return self.status()
 
     def _acquire(self, source):
+        timeouts = 0
         try:
             while not self.stop_event.is_set():
-                frame = source.read()
+                if source is None:
+                    try:
+                        source = self.source_factory(dict(self.options))
+                    except Exception as warning:
+                        with self.condition:
+                            self.frame_warning = 'Reconnecting camera: '+str(warning)
+                            self.condition.notify_all()
+                        self.stop_event.wait(.5)
+                        continue
+                    if self.stop_event.is_set():break
+                try:
+                    frame = source.read()
+                except (TimeoutError, ConnectionError) as warning:
+                    timeouts += 1
+                    reconnect = isinstance(warning, ConnectionError) or timeouts >= 3
+                    with self.condition:
+                        self.frame_warning = ('Reconnecting camera: ' if reconnect else '')+str(warning)
+                        self.condition.notify_all()
+                    if reconnect:
+                        try:source.close()
+                        except Exception:pass  # A stopped/disconnected SDK pipeline may reject stop().
+                        source = None
+                        timeouts = 0
+                    self.stop_event.wait(.05)
+                    continue
+                timeouts = 0
                 frame['received'] = time.monotonic()
                 output = BytesIO()
                 preview = Image.fromarray(frame['rgb'])
                 preview.thumbnail((self.config['preview_width'], self.config['preview_height']))
                 preview.save(output, format='JPEG', quality=self.config['jpeg_quality'])
                 with self.condition:
+                    # Pin automatic recovery to the originally opened device.
+                    if not self.options.get('serial') and frame['camera'].get('serial'):
+                        self.options['serial'] = frame['camera']['serial']
+                    self.frame_warning = None
                     self.latest = frame
                     self.sequence += 1
                     self.jpeg = output.getvalue()
@@ -93,7 +125,7 @@ class CameraService:
                 self.condition.notify_all()
         finally:
             try:
-                source.close()
+                if source is not None:source.close()
             finally:
                 with self.operations:
                     if self.recording:

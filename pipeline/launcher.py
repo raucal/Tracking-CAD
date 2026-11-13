@@ -9,7 +9,7 @@ import sys
 def main():
     parser = argparse.ArgumentParser(description=__doc__, add_help=False)
     parser.add_argument('--settings', type=Path, help='JSON paths/runtime configuration')
-    parser.add_argument('command', choices=('ui','suite','evaluate','detect','scores','sam','prepare','inspect','audit','install','install-foundationpose','settings','test'))
+    parser.add_argument('command', choices=('ui','suite','evaluate','detect','scores','sam','prepare','inspect','audit','estimate','install','install-foundationpose','settings','test'))
     if sys.argv[1:] in ([], ['--help'], ['-h']): parser.print_help(); return 0
     args, extra = parser.parse_known_args()
     if args.settings: os.environ['CAD_TRACKING_SETTINGS'] = str(args.settings.expanduser().resolve())
@@ -33,7 +33,7 @@ def main():
                       'TORCH_EXTENSIONS_DIR':str(cfg.path('runtime_cache')/'torch_extensions')}.items(): env.setdefault(key,value)
     routes = {'ui':cfg.PIPELINE/'sam6d_gui.py','suite':cfg.PIPELINE/'suites/sam6d_suite.py',
               'evaluate':cfg.PIPELINE/'tools/evaluate_identification.py',
-              'detect':cfg.PIPELINE/'tools/run_detection.py','scores':cfg.PIPELINE/'tools/score_all_cads.py',
+              'detect':cfg.PIPELINE/'tools/run_detection.py','estimate':cfg.PIPELINE/'tools/estimate_cad_pose.py','scores':cfg.PIPELINE/'tools/score_all_cads.py',
               'prepare':cfg.PIPELINE/'tools/prepare.py','inspect':cfg.PIPELINE/'tools/inspect_data.py',
               'audit':cfg.PIPELINE/'tools/audit_templates.py','sam':cfg.SAM6D/'pddl_pipeline.py'}
     if args.command.startswith('install'):

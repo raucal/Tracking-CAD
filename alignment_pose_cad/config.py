@@ -2,6 +2,7 @@
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
 import numpy as np
 from .geometry import from_pose, vector, plane_frame
@@ -18,7 +19,8 @@ def load(filename=DEFAULT):
         raise ValueError('settings.json requires robot, alignment and motion.')
     defaults = json.loads(DEFAULT.read_text())
     for section in cfg:
-        optional = {'hand_eye_file', 'preview_only', 'execution_mode'} if section == 'robot' else set()
+        optional = ({'hand_eye_file', 'preview_only', 'execution_mode'} if section == 'robot'
+                    else {'skill_bindings_file', 'skill_python', 'skill_speed_factor'} if section == 'alignment' else set())
         if set(cfg[section]) - set(defaults[section]) or (set(defaults[section]) - optional) - set(cfg[section]):
             raise ValueError('Invalid settings keys: ' + section)
     robot, alignment, motion = cfg['robot'], cfg['alignment'], cfg['motion']
@@ -39,9 +41,10 @@ def load(filename=DEFAULT):
         robot['hand_eye_file'] = str((filename.resolve().parent / robot['hand_eye_file']).resolve())
         hand_eye = calibration.load(robot)
         if hand_eye['robot_id'] != robot['ip']:
-            raise ValueError('The robot does not match the identity declared in the hand-eye YAML.')
+            raise ValueError('robot.ip in matrix_calibration.yaml does not match the robot IP in settings.json.')
         robot['camera_serial'] = hand_eye.get('camera_id') or ''
-        calibration_bytes = Path(robot['hand_eye_file']).read_bytes()
+        # Covers matrix_calibration.yaml and its Calibration.xml.
+        calibration_bytes = hand_eye['config_sha256'].encode()
     for name, value in {**motion, 'frequency_hz': robot['frequency_hz'], 'offset_m': alignment['offset_m']}.items():
         if name in ('workspace_min_m', 'workspace_max_m'):continue
         if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
@@ -56,6 +59,19 @@ def load(filename=DEFAULT):
     low = vector(motion['workspace_min_m'], 3, 'workspace_min_m')
     high = vector(motion['workspace_max_m'], 3, 'workspace_max_m')
     if np.any(low >= high): raise ValueError('Invalid workspace.')
+    alignment.setdefault('skill_bindings_file', '')
+    if not isinstance(alignment['skill_bindings_file'], str):raise ValueError('skill_bindings_file must be a path.')
+    if alignment['skill_bindings_file']:
+        # DINOPDDL registry: PDDL part -> skill -> DINOBOT demo folder.
+        alignment['skill_bindings_file'] = str((filename.resolve().parent / alignment['skill_bindings_file']).resolve())
+    alignment.setdefault('skill_python', '')
+    alignment.setdefault('skill_speed_factor', 1.0)
+    if not isinstance(alignment['skill_python'], str):raise ValueError('skill_python must be a path.')
+    if alignment['skill_python']:
+        # Interpreter of the DINOBOT environment; abspath keeps venv symlinks intact.
+        alignment['skill_python'] = os.path.abspath(filename.resolve().parent / alignment['skill_python'])
+    if isinstance(alignment['skill_speed_factor'], bool) or alignment['skill_speed_factor'] not in (1, 1.25, 1.5, 2):
+        raise ValueError('skill_speed_factor must be 1, 1.25, 1.5 or 2 (DINOBOT replay speeds).')
     if not isinstance(alignment['cad_overrides'], dict):raise ValueError('cad_overrides must be an object.')
     for extra in [{}, *alignment['cad_overrides'].values()]:
         if not isinstance(extra, dict) or set(extra) - {'plane_normal_cad','plane_x_cad','plane_origin_cad_mm','in_plane_offset_m','tool_yaw_deg','offset_m','orientation_mode'}:

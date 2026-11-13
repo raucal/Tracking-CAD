@@ -21,7 +21,7 @@
     "camera_serial": "",
     "calibration_confirmed": false,
     "motion_enabled": true,
-    "hand_eye_file": "../../PDDL/DINOPDDL/config/hand_eye_ur10.yaml",
+    "hand_eye_file": "../../PDDL/DINOPDDL/config/matrix_calibration.yaml",
     "preview_only": false,
     "execution_mode": "supervised_trial"
   },
@@ -52,7 +52,10 @@
         ]
       }
     },
-    "orientation_mode": "plane_frame"
+    "orientation_mode": "plane_frame",
+    "skill_bindings_file": "../../PDDL/DINOPDDL/config/pddl_to_robot.yaml",
+    "skill_python": "../../../anaconda3/envs/dinobot_env/bin/python",
+    "skill_speed_factor": 1.0
   },
   "motion": {
     "speed_m_s": 0.25,
@@ -60,7 +63,7 @@
     "stop_deceleration_m_s2": 0.5,
     "max_translation_m": 0.3,
     "max_rotation_deg": 180.0,
-    "max_joint_delta_rad": 1.5,
+    "max_joint_delta_rad": 2.356194490192345,
     "workspace_min_m": [
       -0.8,
       -0.8,

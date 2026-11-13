@@ -1,13 +1,11 @@
-"""One YAML source of truth; reuse DINOPDDL's device-free calibration core."""
-from datetime import datetime, timezone
+"""Shared hand-eye calibration: DINOPDDL's matrix_calibration.yaml + SDU Calibration.xml.
+
+The device-free loader lives in DINOPDDL so both projects read the same files.
+"""
 import importlib.util
-import json
-import os
 from pathlib import Path
-import tempfile
 
 import numpy as np
-import yaml
 
 from .geometry import from_pose
 
@@ -25,7 +23,8 @@ def describe(config):
     if config is None:
         return {'source': 'legacy_settings', 'status': 'legacy', 'preview_ready': True, 'pending': []}
     result = _core.inspect_calibration(config)
-    result.update(source=config['config_path'], status=config['status'], camera_serial=config.get('camera_id'),
+    result.update(source=config['config_path'], source_xml=config.get('source_xml'), status=config['status'],
+                  robot_model=config.get('robot_model'), camera_serial=config.get('camera_id'),
                   camera_frame=config['camera_frame'], camera_frame_confirmed=config.get('camera_frame_confirmed') is True,
                   preview_ready=bool(config.get('camera_id') and config.get('camera_frame_confirmed') is True
                                      and (config['parent_frame'] == 'flange' or config.get('tcp_offset_m_rad') is not None)),
@@ -44,51 +43,8 @@ def camera_contract(camera):
 def resolve(config, active_tcp, camera):
     camera_contract(camera)
     if config.get('camera_id') != camera['serial'] or config.get('camera_frame_confirmed') is not True:
-        raise ValueError('Register the physical camera and optical axes for this calibration first.')
+        raise ValueError(f"The active RealSense ({camera['serial']}) is not the calibrated camera "
+                         f"({config.get('camera_id')}) declared in matrix_calibration.yaml.")
     if config['camera_frame'] != camera['optical_frame']:
         raise ValueError('The optical frame does not match the calibration.')
     return _core.resolve_tcp_camera(config, active_tcp, from_pose)
-
-
-def confirm_camera(robot, camera, *, expected_sha256, expected_serial, physical_confirmed, optical_confirmed):
-    """An explicit operator acknowledgement, never an accuracy/motion approval."""
-    camera_contract(camera)
-    config = load(robot)
-    if config is None:
-        raise ValueError('No hay un YAML hand-eye seleccionado.')
-    if expected_sha256 != config['config_sha256']:
-        raise ValueError('Calibration changed; review and confirm again.')
-    if physical_confirmed is not True or optical_confirmed is not True:
-        raise ValueError('Explicitly confirm the calibrated camera and color optical frame.')
-    if expected_serial != camera['serial']:
-        raise ValueError('The active camera changed since it was displayed.')
-    if config.get('camera_id') and config['camera_id'] != camera['serial']:
-        raise ValueError('The active camera does not match the camera bound to the YAML.')
-    if config['camera_frame'] != camera['optical_frame']:
-        raise ValueError('The calibration declares a different optical frame.')
-    path = Path(config['config_path'])
-    data = yaml.safe_load(path.read_text())
-    data.update(camera_id=camera['serial'], camera_frame_confirmed=True,
-                camera_confirmation={'source': 'operator_in_cadtracking_preview',
-                    'confirmed_at_utc': datetime.now(timezone.utc).isoformat(),
-                    'camera_metadata': camera, 'physical_camera_confirmed': True,
-                    'optical_frame_confirmed': True, 'accuracy_validated': False})
-    # Do not modify status, matrix, TCP, optimization result or motion flags.
-    temporary = None
-    try:
-        with tempfile.NamedTemporaryFile('w', dir=path.parent, prefix='.hand_eye_', suffix='.yaml', delete=False) as out:
-            temporary = Path(out.name)
-            yaml.safe_dump(data, out, sort_keys=False, allow_unicode=True)
-        os.chmod(temporary, path.stat().st_mode & 0o777)
-        if _core.sha256(path) != expected_sha256:
-            raise ValueError('Calibration changed during confirmation.')
-        os.replace(temporary, path)
-    finally:
-        if temporary is not None and temporary.exists():
-            temporary.unlink()
-    result = load(robot)
-    with path.with_name('hand_eye_confirmations.jsonl').open('a') as log:
-        log.write(json.dumps({'event': 'camera_identity_confirmed', 'before_sha256': expected_sha256,
-                   'after_sha256': result['config_sha256'], 'camera': data['camera_confirmation'],
-                   'calibration_status': result['status'], 'motion_enabled_by_this_action': False})+'\n')
-    return result

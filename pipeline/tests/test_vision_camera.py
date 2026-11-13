@@ -20,6 +20,7 @@ import trimesh
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from sam6d_ui.camera.service import CameraService
+from sam6d_ui.camera.realsense import RealSenseSource
 from sam6d_ui.inputs import options
 from sam6d_ui.server import App, handler
 
@@ -83,6 +84,76 @@ class CameraTests(unittest.TestCase):
         self.camera.stop()
         with self.assertRaises(RuntimeError):
             self.camera.capture()
+
+    def test_temporary_frame_loss_keeps_camera_open_and_resumes_same_source(self):
+        lose_frames=threading.Event()
+        sources=[]
+        class IntermittentSource(Source):
+            def __init__(self,config):
+                super().__init__(config);sources.append(self)
+            def read(self):
+                if lose_frames.is_set():raise TimeoutError('Temporary frame timeout')
+                return super().read()
+        self.camera.source_factory=IntermittentSource
+        self.start()
+        thread=self.camera.thread
+        lose_frames.set()
+        with self.camera.condition:
+            self.assertTrue(self.camera.condition.wait_for(lambda:self.camera.frame_warning,2))
+        status=self.camera.status()
+        self.assertTrue(status['running']);self.assertIsNone(status['error'])
+        self.assertFalse(sources[0].closed)
+        previous=status['frame_number']
+        lose_frames.clear()
+        with self.camera.condition:
+            self.assertTrue(self.camera.condition.wait_for(
+                lambda:self.camera.sequence>previous and self.camera.frame_warning is None,2))
+        self.assertIs(self.camera.thread,thread)
+        self.assertEqual(len(sources),1)
+        self.assertTrue(self.camera.capture()['id'])
+        self.camera.stop()
+        self.assertTrue(sources[0].closed)
+        self.assertFalse(self.camera.status()['running'])
+
+    def test_stop_during_frame_loss_closes_camera_without_retrying(self):
+        self.start()
+        with patch.object(Source,'read',side_effect=TimeoutError('No frame')):
+            with self.camera.condition:
+                self.assertTrue(self.camera.condition.wait_for(lambda:self.camera.frame_warning,2))
+            self.camera.stop()
+        self.assertFalse(self.camera.status()['running'])
+
+    def test_native_pipeline_failure_requests_reconnection(self):
+        source=RealSenseSource.__new__(RealSenseSource)
+        with patch.object(source,'_read',side_effect=RuntimeError('cannot be called before start()')):
+            with self.assertRaisesRegex(ConnectionError,'cannot be called before start'):
+                source.read()
+
+    def test_disconnected_pipeline_recovers_same_camera_without_manual_start(self):
+        disconnected=threading.Event()
+        sources=[];options=[]
+        class RecoveringSource(Source):
+            def read(self):
+                if self is sources[0] and disconnected.is_set():
+                    raise ConnectionError('pipeline stopped')
+                frame=super().read();frame['camera']['serial']='original-camera'
+                return frame
+        def factory(config):
+            options.append(dict(config))
+            if len(options)==2:raise RuntimeError('USB device temporarily unavailable')
+            source=RecoveringSource(config);sources.append(source);return source
+        self.camera.source_factory=factory
+        self.start();thread=self.camera.thread
+        disconnected.set()
+        with self.camera.condition:
+            self.assertTrue(self.camera.condition.wait_for(
+                lambda:len(sources)==2 and self.camera.frame_warning is None,3))
+        self.assertIs(self.camera.thread,thread)
+        self.assertTrue(self.camera.status()['running']);self.assertIsNone(self.camera.error)
+        self.assertTrue(sources[0].closed);self.assertFalse(sources[1].closed)
+        self.assertTrue(all(config['serial']=='original-camera' for config in options[1:]))
+        self.assertTrue(self.camera.capture()['id'])
+        self.camera.stop();self.assertTrue(sources[1].closed)
 
     def test_recording_keeps_rgb_depth_timestamps_and_video(self):
         self.start()

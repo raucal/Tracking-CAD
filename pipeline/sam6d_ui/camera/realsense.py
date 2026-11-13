@@ -56,7 +56,17 @@ class RealSenseSource:
             raise
 
     def read(self):
-        frames = self.pipeline.wait_for_frames(timeout_ms=2000)
+        try:
+            return self._read()
+        except RuntimeError as error:
+            # USB resets can stop the native pipeline without an application
+            # stop request. Let the shared service reconnect the same device.
+            raise ConnectionError('RealSense acquisition interrupted: '+str(error)) from error
+
+    def _read(self):
+        received, frames = self.pipeline.try_wait_for_frames(timeout_ms=2000)
+        if not received:
+            raise TimeoutError('Waiting for a new RealSense RGB-D frame.')
         # Align only the newest synchronized frameset, not every queued pair.
         for _ in range(64):
             newer=self.pipeline.poll_for_frames()
@@ -65,7 +75,7 @@ class RealSenseSource:
         frames = self.align.process(frames)
         color, depth = frames.get_color_frame(), frames.get_depth_frame()
         if not color or not depth:
-            raise RuntimeError('RealSense did not deliver an aligned RGB-D pair.')
+            raise TimeoutError('Waiting for an aligned RealSense RGB-D pair.')
         rgb = np.asanyarray(color.get_data()).copy()
         raw = np.asanyarray(depth.get_data()).copy()
         if self.maps is not None:

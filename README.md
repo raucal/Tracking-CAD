@@ -77,7 +77,7 @@ ssh -N -L 8770:127.0.0.1:8770 user@server
 
 For saved data, expand **Try prepared assembly data**, choose a capture and CAD, then **Run example**. For live input, choose **Live Intel RealSense**, click **Open camera**, select the CAD or assembly, choose FoundationPose, then **Locate and start fast tracking**. **Start live detection** instead repeats complete analyses.
 
-The [robot alignment extension](alignment_pose_cad/README.md) adds capture, preview and explicit execution controls. It currently selects a supervised UR10 trial with provisional hand-eye calibration. Use Detect pose → Execute alignment. Controller TCP/IK/limit checks run automatically, and execution requires explicit confirmation; see the trial protocol.
+The [robot alignment extension](alignment_pose_cad/README.md) adds capture, preview and explicit execution controls. It currently selects a supervised UR5e trial with the provisional hand-eye calibration in `PDDL/DINOPDDL/config/matrix_calibration.yaml`. Use Detect pose → Execute alignment. Controller TCP/IK/limit checks run automatically, and execution requires explicit confirmation; see the trial protocol.
 
 ## Evaluate identification and pose
 
